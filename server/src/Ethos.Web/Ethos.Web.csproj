@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.10" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Ethos.Application.Contracts\Ethos.Application.Contracts.csproj" />
+        <ProjectReference Include="..\Ethos.Application\Ethos.Application.csproj" />
+        <ProjectReference Include="..\Ethos.EntityFrameworkCore\Ethos.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

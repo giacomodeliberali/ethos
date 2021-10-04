@@ -1,0 +1,10 @@
+:host {
+  font-size: 2rem;
+  .container {
+    h3 {
+      margin-bottom: var(--space-1);
+    }
+    margin: var(--space-3) var(--current-space-3) var(--space-2)
+      var(--current-space-3);
+  }
+}

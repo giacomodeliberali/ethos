@@ -1,0 +1,7 @@
+{
+  "name": "ethos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -5,15 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ethos.EntityFrameworkCore
 {
+    /// <summary>
+    /// The application context with the default Identity tables.
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
-        public DbSet<ApplicationUser> Users { get; set; }
-        public DbSet<ApplicationRole> Roles { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        /// <inheritdoc />
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
         }
 
+        /// <inheritdoc />
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

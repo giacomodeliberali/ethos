@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Identity
 {
+    /// <inheritdoc />
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -21,6 +22,9 @@ namespace Application.Identity
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtConfig _jwtConfig;
 
+        /// <summary>
+        /// Creates a new IdentityService.
+        /// </summary>
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
@@ -33,6 +37,7 @@ namespace Application.Identity
             _jwtConfig = jwtConfigOptions.Value;
         }
 
+        /// <inheritdoc />
         public async Task CreateUserAsync(RegisterRequestDto input, string roleName)
         {
             var user = new ApplicationUser()
@@ -59,6 +64,7 @@ namespace Application.Identity
             throw new Exception(errors);
         }
 
+        /// <inheritdoc />
         public async Task<LoginResponseDto> GetTokenAsync(LoginRequestDto input)
         {
             var result = await _signInManager.PasswordSignInAsync(
@@ -76,13 +82,13 @@ namespace Application.Identity
 
             var userClaims = await _userManager.GetClaimsAsync(user);
 
-            IdentityOptions _options = new IdentityOptions();
+            var identityOptions = new IdentityOptions();
 
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, "api"), // TODO @GDL from configuration?
-                new Claim(_options.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
-                new Claim(_options.ClaimsIdentity.UserNameClaimType, user.UserName)
+                new Claim(identityOptions.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
+                new Claim(identityOptions.ClaimsIdentity.UserNameClaimType, user.UserName),
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);

@@ -10,22 +10,27 @@ using Microsoft.Extensions.Options;
 
 namespace Ethos.Web.Controllers
 {
+    /// <inheritdoc />
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching",
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
 
+        /// <inheritdoc />
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Test.
+        /// </summary>
         [HttpGet]
         [Authorize(Roles = RoleConstants.Admin)]
         public IEnumerable<WeatherForecastDto> Get()
@@ -35,7 +40,7 @@ namespace Ethos.Web.Controllers
                 {
                     Date = DateTime.Now.AddDays(index),
                     TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
+                    Summary = Summaries[rng.Next(Summaries.Length)],
                 })
                 .ToArray();
         }

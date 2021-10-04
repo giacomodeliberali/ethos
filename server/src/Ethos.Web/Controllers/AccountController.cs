@@ -21,23 +21,38 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Ethos.Web.Controllers
 {
+    /// <summary>
+    /// Manages all the operations on identity.
+    /// </summary>
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
+        /// <summary>
+        /// Creates a new AccountController.
+        /// </summary>
         public AccountController(IIdentityService identityService)
         {
             _identityService = identityService;
         }
 
+        /// <summary>
+        /// Tries to authenticate the given user.
+        /// </summary>
+        /// <param name="input">The user to authenticate.</param>
+        /// <returns>The token or null.</returns>
         [HttpPost("authenticate")]
         public async Task<LoginResponseDto> GetAuthToken(LoginRequestDto input)
         {
             return await _identityService.GetTokenAsync(input);
         }
 
+        /// <summary>
+        /// Creates a new user in the system with the specified role.
+        /// </summary>
+        /// <param name="input">The user to create.</param>
         [HttpPost("register")]
         public async Task RegisterUser(RegisterRequestDto input)
         {

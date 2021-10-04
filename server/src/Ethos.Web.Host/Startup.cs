@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application;
@@ -18,23 +20,31 @@ using Microsoft.OpenApi.Models;
 
 namespace Ethos.Web.Host
 {
+    /// <summary>
+    /// The startup class.
+    /// </summary>
     public class Startup
     {
-        private IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Initializes the startup with the configuration.
+        /// </summary>
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JwtConfig>(Configuration.GetSection(nameof(JwtConfig)));
+            services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("Default"));
+                options.UseSqlServer(_configuration.GetConnectionString("Default"));
             });
 
             services
@@ -53,22 +63,12 @@ namespace Ethos.Web.Host
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtConfig:Secret"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtConfig:Secret"])),
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidIssuer = Configuration["JwtConfig:TokenIssuer"],
-                        ValidAudience = Configuration["JwtConfig:ValidAudience"],
-                        ValidateLifetime = true
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = context =>
-                        {
-                            Console.WriteLine("Validated", context.SecurityToken.Id);
-                            return Task.CompletedTask;
-                        }
+                        ValidIssuer = _configuration["JwtConfig:TokenIssuer"],
+                        ValidAudience = _configuration["JwtConfig:ValidAudience"],
+                        ValidateLifetime = true,
                     };
                 });
 
@@ -80,11 +80,22 @@ namespace Ethos.Web.Host
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Ethos.Web.Host", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Ethos",
+                    Version = "v1",
+                });
+                var path = Path.Combine(Path.GetDirectoryName(AppContext.BaseDirectory));
+                foreach (var filePath in Directory.GetFiles(path, "*.xml"))
+                {
+                    c.IncludeXmlComments(filePath);
+                }
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

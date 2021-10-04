@@ -9,13 +9,22 @@ using Microsoft.Extensions.Logging;
 
 namespace Ethos.Web.Host
 {
+    /// <summary>
+    /// The program.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main method.
+        /// </summary>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
         }
 
+        /// <summary>
+        /// Creates the host builder reading environment variables.
+        /// </summary>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host
                 .CreateDefaultBuilder(args)

@@ -2,8 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>Application</RootNamespace>
     </PropertyGroup>
+
+    <Import Project="../../codeAnalysis.props" />
 
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Application.Contracts\Ethos.Application.Contracts.csproj" />

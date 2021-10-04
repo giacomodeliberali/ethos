@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 
-namespace Application.Identity
+namespace Ethos.Application.Identity
 {
     /// <summary>
     /// The identity service.

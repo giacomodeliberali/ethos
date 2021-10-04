@@ -1,7 +1,7 @@
-using Application.Identity;
+using Ethos.Application.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application
+namespace Ethos.Application
 {
     /// <summary>
     /// Register the needed services in the DI container.

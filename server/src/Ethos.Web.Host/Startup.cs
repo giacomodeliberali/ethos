@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Application;
+using Ethos.Application;
 using Ethos.Domain.Identity;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;

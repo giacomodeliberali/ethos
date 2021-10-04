@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Application.Identity
+namespace Ethos.Application.Identity
 {
     /// <inheritdoc />
     public class IdentityService : IIdentityService

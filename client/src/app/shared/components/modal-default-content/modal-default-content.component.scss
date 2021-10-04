@@ -1,0 +1,44 @@
+@import "mixins";
+:host {
+  --buttons-padding: 0 var(--current-space-3) var(--space-3)
+    var(--current-space-3);
+  .button-container {
+    display: flex;
+    width: 100%;
+    padding: var(--buttons-padding);
+    ion-button {
+      flex: 1;
+      margin-top: var(--space-1);
+      &:first-child:not(.alone) {
+        margin-right: var(--space-1);
+      }
+      &:last-child:not(.alone) {
+        margin-left: var(--space-1);
+      }
+      &.primary {
+        @include ion-button-style("primary", "clean");
+        &.fill {
+          @include ion-button-style("primary");
+        }
+      }
+      &.secondary {
+        @include ion-button-style("secondary", "clean");
+        &.fill {
+          @include ion-button-style("secondary");
+        }
+      }
+      &.tertiary {
+        @include ion-button-style("tertiary", "clean");
+        &.fill {
+          @include ion-button-style("tertiary");
+        }
+      }
+      &.danger {
+        @include ion-button-style("danger", "clean");
+        &.fill {
+          @include ion-button-style("danger");
+        }
+      }
+    }
+  }
+}

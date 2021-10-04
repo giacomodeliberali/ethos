@@ -59,7 +59,7 @@ namespace Application.Identity
             throw new Exception(errors);
         }
 
-        public async Task<string> GetTokenAsync(LoginRequestDto input)
+        public async Task<LoginResponseDto> GetTokenAsync(LoginRequestDto input)
         {
             var result = await _signInManager.PasswordSignInAsync(
                 input.UserName,
@@ -117,7 +117,10 @@ namespace Application.Identity
             var handler = new JwtSecurityTokenHandler();
             var tokenString = handler.WriteToken(token);
 
-            return tokenString;
+            return new LoginResponseDto()
+            {
+                AccessToken = tokenString,
+            };
         }
     }
 }

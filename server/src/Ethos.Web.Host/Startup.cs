@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Application;
 using Ethos.Domain.Identity;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
@@ -70,6 +71,9 @@ namespace Ethos.Web.Host
                         }
                     };
                 });
+
+            // add application module
+            services.AddApplicationModule();
 
             services.AddControllers()
                 .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(IEthosWebAssemblyMarker).Assembly));

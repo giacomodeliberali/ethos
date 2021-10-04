@@ -33,7 +33,7 @@ namespace Ethos.Web.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<string> GetAuthToken(LoginRequestDto input)
+        public async Task<LoginResponseDto> GetAuthToken(LoginRequestDto input)
         {
             return await _identityService.GetTokenAsync(input);
         }

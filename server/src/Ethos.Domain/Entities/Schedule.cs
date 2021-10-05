@@ -1,9 +1,9 @@
 using System;
 using Ardalis.GuardClauses;
 using Cronos;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Common;
 
-namespace Ethos.Domain.Schedule
+namespace Ethos.Domain.Entities
 {
     public class Schedule : Entity
     {

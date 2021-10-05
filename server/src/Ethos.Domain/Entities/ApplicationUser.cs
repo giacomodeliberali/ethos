@@ -1,8 +1,8 @@
-namespace Ethos.Domain.Identity
-{
-    using System;
-    using Microsoft.AspNetCore.Identity;
+using System;
+using Microsoft.AspNetCore.Identity;
 
+namespace Ethos.Domain.Entities
+{
     /// <summary>
     /// It represents a user which can access the application once it registers.
     /// </summary>

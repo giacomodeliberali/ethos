@@ -1,5 +1,5 @@
 using System;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore.Booking;
 using Ethos.EntityFrameworkCore.Booking.Configuration;
 using Ethos.EntityFrameworkCore.Identity;

@@ -1,5 +1,5 @@
 using System;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

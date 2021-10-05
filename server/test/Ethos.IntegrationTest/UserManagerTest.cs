@@ -1,13 +1,8 @@
-using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Ethos.Domain.Identity;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Shared;
-using Ethos.Web;
 using Ethos.Web.Host;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
@@ -24,6 +19,9 @@ namespace Ethos.IntegrationTest
         {
             var response = await UserManager.GetUsersInRoleAsync(RoleConstants.Admin);
             response.Count.ShouldBe(1);
+            var admin = response.Single();
+            admin.Email.ShouldBe("admin@ethos.it");
+            admin.UserName.ShouldBe("admin");
         }
     }
 }

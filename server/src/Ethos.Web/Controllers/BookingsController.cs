@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Ethos.Application.Booking;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
-using Ethos.Application.Schedule;
+using Ethos.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

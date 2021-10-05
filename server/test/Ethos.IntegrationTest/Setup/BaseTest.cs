@@ -1,5 +1,5 @@
 using System.Net.Http;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Web.Host;
 using Microsoft.AspNetCore.Identity;

@@ -1,7 +1,7 @@
 using System;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Common;
 
-namespace Ethos.Domain.Booking
+namespace Ethos.Domain.Entities
 {
     public class Booking : Entity
     {
@@ -11,10 +11,10 @@ namespace Ethos.Domain.Booking
 
         public DateTime EndDate { get; private set; }
 
-        public Schedule.Schedule Schedule { get; private set; }
+        public Schedule Schedule { get; private set; }
 
         public Booking(
-            Schedule.Schedule schedule,
+            Schedule schedule,
             ApplicationUser user,
             DateTime startDate,
             DateTime endDate)

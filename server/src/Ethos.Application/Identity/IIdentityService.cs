@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 
 namespace Ethos.Application.Identity
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Ethos.Domain
+namespace Ethos.Domain.Common
 {
     public class Entity
     {

@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
 
-namespace Ethos.Application.Schedule
+namespace Ethos.Application.Services
 {
     public interface IScheduleApplicationService
     {

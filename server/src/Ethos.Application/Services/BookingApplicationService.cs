@@ -4,7 +4,7 @@ using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Identity;
 using Ethos.Domain.Repositories;
 
-namespace Ethos.Application.Booking
+namespace Ethos.Application.Services
 {
     public class BookingApplicationService : IBookingApplicationService
     {
@@ -28,7 +28,7 @@ namespace Ethos.Application.Booking
 
             var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
 
-            var booking = new Domain.Booking.Booking(
+            var booking = new Domain.Entities.Booking(
                 schedule,
                 currentUser,
                 input.StartDate,

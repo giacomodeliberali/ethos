@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 

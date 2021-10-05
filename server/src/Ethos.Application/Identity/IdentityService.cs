@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;

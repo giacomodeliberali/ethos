@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
-using Ethos.Application.Schedule;
+using Ethos.Application.Services;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

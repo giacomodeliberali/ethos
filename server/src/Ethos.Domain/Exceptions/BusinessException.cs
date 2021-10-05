@@ -1,6 +1,6 @@
 using System;
 
-namespace Ethos.Domain
+namespace Ethos.Domain.Exceptions
 {
     public class BusinessException : Exception
     {

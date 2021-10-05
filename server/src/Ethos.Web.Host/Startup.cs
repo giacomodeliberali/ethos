@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Ethos.Application;
 using Ethos.Application.Identity;
 using Ethos.Application.Seed;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

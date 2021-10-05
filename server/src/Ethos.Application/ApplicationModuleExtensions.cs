@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using Ethos.Application.Email;
 using Ethos.Application.Identity;
-using Ethos.Application.Schedule;
 using Ethos.Application.Seed;
+using Ethos.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ethos.Application

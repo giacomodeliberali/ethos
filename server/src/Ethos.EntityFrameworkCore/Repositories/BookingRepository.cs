@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Ethos.Domain.Identity;
+using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.EntityFrameworkCore.Booking;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +20,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             _userManager = userManager;
         }
 
-        public async Task<Guid> CreateAsync(Domain.Booking.Booking booking)
+        public async Task<Guid> CreateAsync(Domain.Entities.Booking booking)
         {
             var bookingData = new BookingData()
             {

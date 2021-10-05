@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalDefaultContentButton } from '../../models/ModalDefaultContentButton';
+import { Component } from '@angular/core';
 
 @Component({
   selector: '[modal-default-content]',
@@ -9,19 +8,4 @@ import { ModalDefaultContentButton } from '../../models/ModalDefaultContentButto
     class: 'inner-content'
   }
 })
-export class ModalDefaultContentComponent {
-
-  @Input()
-  cancelButton: ModalDefaultContentButton;
-  @Input()
-  successButton: ModalDefaultContentButton;
-  @Output()
-  buttonClicked = new EventEmitter<'success' | 'cancel'>();
-
-  constructor() { }
-
-  emitClick(result: 'success' | 'cancel'){
-    this.buttonClicked.emit(result);
-  }
-
-}
+export class ModalDefaultContentComponent {}

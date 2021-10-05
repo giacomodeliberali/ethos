@@ -3,7 +3,7 @@ $breakpoints: (
     max-width: 359px,
   ),
   "tablet": (
-    min-width: 768px,
+    min-width: 800px,
   ),
   "desktop": (
     min-width: 1024px,
@@ -59,32 +59,33 @@ $breakpoints: (
 }
 
 @mixin ion-button-style($color: "primary", $type: "fill") {
-  @if $type == fill {
+  @if $type == "fill" {
     @include default-gradient(
       "--background",
       var(--ion-color-#{$color}-tint),
       var(--ion-color-#{$color})
     );
+  } @else if $type == "shade"{
+    --background: white;
   } @else {
     --background: white;
   }
   @if $type != fill {
     color: var(--ion-color-#{$color});
-    --border-width: 2px;
-    --border-color: var(--ion-color-#{$color});
-    --border-style: solid;
   } @else {
     color: var(--ion-color-#{$color}-contrast);
     --border-width: 0px;
   }
-  font-size: 2rem;
+
+  font-size: 0.75rem;
   font-weight: bold;
   text-transform: none;
   letter-spacing: normal;
-  height: 6rem;
-  --padding-top: 2rem;
-  --padding-bottom: 2rem;
-  --border-radius: 10000px;
+  height: 2rem;
+  --padding-top: 0.5rem;
+  --padding-bottom: 0.5rem;
+  margin-bottom: 0;
+  --border-radius: 4px;
   --box-shadow: none;
 }
 

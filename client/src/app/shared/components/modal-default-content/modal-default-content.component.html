@@ -1,6 +1,1 @@
-
 <ng-content></ng-content>
-<div *ngIf="cancelButton || successButton" class="button-container">
-  <ion-button *ngIf="cancelButton" mode="md" class="{{cancelButton.type}}" [ngClass]="{ fill: cancelButton.fill, alone: !successButton }" (click)="emitClick('cancel')" [disabled]="cancelButton.disabled">{{cancelButton.title}}</ion-button>
-  <ion-button *ngIf="successButton" mode="md" class="{{successButton.type}}" [ngClass]="{ fill: successButton.fill, alone: !cancelButton}" (click)="emitClick('success')" [disabled]="successButton.disabled">{{successButton.title}}</ion-button>
-</div>

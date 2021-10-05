@@ -1,5 +1,6 @@
 using System;
 using Ethos.Domain.Identity;
+using Ethos.EntityFrameworkCore.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,35 +22,9 @@ namespace Ethos.EntityFrameworkCore
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ApplicationUser>(b =>
-            {
-                var propertyBuilder = b.Property(u => u.Id);
-
-                if (Database.IsSqlServer())
-                {
-                    propertyBuilder.HasDefaultValueSql("newsequentialid()");
-                }
-
-                if (Database.IsSqlite())
-                {
-                    propertyBuilder.HasDefaultValue(Guid.NewGuid());
-                }
-            });
-
-            builder.Entity<ApplicationRole>(b =>
-            {
-                var propertyBuilder = b.Property(u => u.Id);
-
-                if (Database.IsSqlServer())
-                {
-                    propertyBuilder.HasDefaultValueSql("newsequentialid()");
-                }
-
-                if (Database.IsSqlite())
-                {
-                    propertyBuilder.HasDefaultValue(Guid.NewGuid());
-                }
-            });
+            builder.ApplyConfiguration(new ApplicationUserConfiguration(this));
+            builder.ApplyConfiguration(new ApplicationRoleConfiguration(this));
+            // builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
     }
 }

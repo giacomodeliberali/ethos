@@ -24,16 +24,16 @@ namespace Ethos.Web.Controllers
     /// <summary>
     /// Manages all the operations on identity.
     /// </summary>
-    [Route("api/account")]
+    [Route("api/accounts")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountsController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
         /// <summary>
         /// Creates a new AccountController.
         /// </summary>
-        public AccountController(IIdentityService identityService)
+        public AccountsController(IIdentityService identityService)
         {
             _identityService = identityService;
         }

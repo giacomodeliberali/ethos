@@ -44,24 +44,18 @@ namespace Ethos.Application.Identity
             {
                 Email = input.Email,
                 UserName = input.UserName,
+                FullName = input.FullName,
             };
 
             var result = await _userManager.CreateAsync(user, input.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var role = new ApplicationRole()
-                {
-                    Name = roleName,
-                };
-
-                await _roleManager.CreateAsync(role);
-
-                await _userManager.AddToRoleAsync(user, roleName);
+                var errors = string.Join(",", result.Errors.Select(e => e.Description));
+                throw new Exception(errors);
             }
 
-            var errors = string.Join(",", result.Errors.Select(e => e.Description));
-            throw new Exception(errors);
+            await _userManager.AddToRoleAsync(user, roleName);
         }
 
         /// <inheritdoc />
@@ -126,6 +120,13 @@ namespace Ethos.Application.Identity
             return new LoginResponseDto()
             {
                 AccessToken = tokenString,
+                User = new UserDto()
+                {
+                    Id = user.Id.ToString(),
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    UserName = user.UserName,
+                },
             };
         }
 

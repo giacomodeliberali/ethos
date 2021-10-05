@@ -51,7 +51,7 @@ namespace Ethos.Web.Host
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedAccount = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

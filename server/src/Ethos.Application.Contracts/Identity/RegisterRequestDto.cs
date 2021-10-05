@@ -22,6 +22,13 @@ namespace Ethos.Application.Contracts.Identity
         public string UserName { get; set; }
 
         /// <summary>
+        /// The first and last name.
+        /// </summary>
+        [Required]
+        [MinLength(5)]
+        public string FullName { get; set; }
+
+        /// <summary>
         /// The user password.
         /// </summary>
         [Required]

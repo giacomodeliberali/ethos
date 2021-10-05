@@ -1,4 +1,4 @@
-namespace Ethos.Web
+namespace Ethos.Shared
 {
     /// <summary>
     /// The available roles.

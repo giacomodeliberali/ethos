@@ -10,18 +10,11 @@ namespace Ethos.IntegrationTest.Setup
     {
         protected readonly CustomWebApplicationFactory<Startup> Factory;
         protected readonly HttpClient Client;
-        protected readonly IServiceScope ServiceScope;
-        protected readonly ApplicationDbContext DbContext;
 
         protected BaseTest(CustomWebApplicationFactory<Startup> factory)
         {
             Factory = factory;
             Client = Factory.CreateClient();
-
-            var scope = Factory.Services.CreateScope();
-            DbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            DbContext.Database.EnsureCreated();
-            ServiceScope = scope;
         }
     }
 }

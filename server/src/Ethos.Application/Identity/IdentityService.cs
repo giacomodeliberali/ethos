@@ -128,5 +128,21 @@ namespace Ethos.Application.Identity
                 AccessToken = tokenString,
             };
         }
+
+        /// <inheritdoc />
+        public async Task CreateRoleAsync(string name)
+        {
+            var role = new ApplicationRole()
+            {
+                Name = name,
+            };
+            await _roleManager.CreateAsync(role);
+        }
+
+        /// <inheritdoc />
+        public async Task<ApplicationRole> GetRoleAsync(string name)
+        {
+            return await _roleManager.FindByNameAsync(name);
+        }
     }
 }

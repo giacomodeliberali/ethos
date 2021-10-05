@@ -23,12 +23,32 @@ namespace Ethos.EntityFrameworkCore
 
             builder.Entity<ApplicationUser>(b =>
             {
-                b.Property(u => u.Id).HasDefaultValueSql("newsequentialid()");
+                var propertyBuilder = b.Property(u => u.Id);
+
+                if (Database.IsSqlServer())
+                {
+                    propertyBuilder.HasDefaultValueSql("newsequentialid()");
+                }
+
+                if (Database.IsSqlite())
+                {
+                    propertyBuilder.HasDefaultValue(Guid.NewGuid());
+                }
             });
 
             builder.Entity<ApplicationRole>(b =>
             {
-                b.Property(u => u.Id).HasDefaultValueSql("newsequentialid()");
+                var propertyBuilder = b.Property(u => u.Id);
+
+                if (Database.IsSqlServer())
+                {
+                    propertyBuilder.HasDefaultValueSql("newsequentialid()");
+                }
+
+                if (Database.IsSqlite())
+                {
+                    propertyBuilder.HasDefaultValue(Guid.NewGuid());
+                }
             });
         }
     }

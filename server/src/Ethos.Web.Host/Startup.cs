@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ethos.Application;
+using Ethos.Application.Seed;
 using Ethos.Domain.Identity;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
@@ -102,7 +103,10 @@ namespace Ethos.Web.Host
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos.Web.Host v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
+                });
             }
 
             app.UseHttpsRedirection();
@@ -112,7 +116,16 @@ namespace Ethos.Web.Host
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            using var scope = app.ApplicationServices.CreateScope();
+            foreach (var dataSeedContributor in scope.ServiceProvider.GetServices<IDataSeedContributor>())
+            {
+                dataSeedContributor.SeedAsync().Wait();
+            }
         }
     }
 }

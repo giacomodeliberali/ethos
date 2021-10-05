@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
+using Ethos.Domain.Identity;
 
 namespace Ethos.Application.Identity
 {
@@ -17,5 +18,15 @@ namespace Ethos.Application.Identity
         /// Tries to authenticate the given user.
         /// </summary>
         Task<LoginResponseDto> GetTokenAsync(LoginRequestDto input);
+
+        /// <summary>
+        /// Creates a new role with the given name.
+        /// </summary>
+        Task CreateRoleAsync(string name);
+
+        /// <summary>
+        /// Returns the given role or null.
+        /// </summary>
+        Task<ApplicationRole> GetRoleAsync(string name);
     }
 }

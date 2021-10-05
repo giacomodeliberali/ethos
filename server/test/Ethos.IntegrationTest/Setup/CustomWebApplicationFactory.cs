@@ -25,6 +25,7 @@ namespace Ethos.IntegrationTest.Setup
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            var connection = CreateInMemoryDatabase();
             builder.ConfigureServices(services =>
             {
                 var descriptor =
@@ -53,7 +54,7 @@ namespace Ethos.IntegrationTest.Setup
                 // database for testing.
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    options.UseSqlite(CreateInMemoryDatabase());
+                    options.UseSqlite(connection);
                     options.UseInternalServiceProvider(provider);
                 });
 

@@ -1,28 +1,15 @@
-using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
-using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
-using Ethos.Domain.Identity;
-using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Ethos.Web.Controllers
 {
     /// <summary>
-    /// Manages all the operations on identity.
+    ///     Manages all the operations on identity, such as user creation, authentication and role management.
     /// </summary>
     [Route("api/accounts")]
     [ApiController]
@@ -30,51 +17,58 @@ namespace Ethos.Web.Controllers
     {
         private readonly IIdentityService _identityService;
 
-        /// <summary>
-        /// Creates a new AccountController.
-        /// </summary>
         public AccountsController(IIdentityService identityService)
         {
             _identityService = identityService;
         }
 
         /// <summary>
-        /// Tries to authenticate the given user.
+        ///     Try to authenticate the given user.
         /// </summary>
         /// <param name="input">The user to authenticate.</param>
         /// <returns>The token or null.</returns>
         [HttpPost("authenticate")]
-        public async Task<LoginResponseDto> GetAuthToken(LoginRequestDto input)
+        public async Task<LoginResponseDto> AuthenticateAsync(LoginRequestDto input)
         {
-            return await _identityService.GetTokenAsync(input);
+            return await _identityService.AuthenticateAsync(input);
         }
 
         /// <summary>
-        /// Creates a new user in the system with the specified role.
+        ///     Create a new user in the system with the default role.
         /// </summary>
         /// <param name="input">The user to create.</param>
         [HttpPost("register")]
-        public async Task RegisterUser(RegisterRequestDto input)
+        public async Task RegisterUserAsync(RegisterRequestDto input)
         {
             await _identityService.CreateUserAsync(input, RoleConstants.Default);
         }
 
         /// <summary>
-        /// Sends the password reset link.
+        ///     Send the password reset link.
         /// </summary>
-        [HttpPost("send-reset-password")]
-        public async Task SendResetPasswordAsync(string email)
+        [HttpPost("send-password-reset-link")]
+        public async Task SendPasswordResetLinkAsync(string email)
         {
-            await _identityService.SendPasswordRecoveryLinkAsync(email);
+            await _identityService.SendPasswordResetLinkAsync(email);
         }
 
         /// <summary>
-        /// Reset the password using the reset link.
+        ///     Reset the password using the reset link.
         /// </summary>
         [HttpPost("reset-password")]
         public async Task ResetPasswordAsync(ResetPasswordRequestDto input)
         {
             await _identityService.ResetPasswordAsync(input);
+        }
+
+        /// <summary>
+        ///     Return the list of all registered users.
+        /// </summary>
+        [Authorize(Roles = RoleConstants.Admin)]
+        [HttpGet]
+        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        {
+            return await _identityService.GetUsersAsync();
         }
     }
 }

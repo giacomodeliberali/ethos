@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Domain.Identity;
+using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +24,7 @@ namespace Ethos.Application.Identity
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly JwtConfig _jwtConfig;
 
         /// <summary>
@@ -32,12 +35,14 @@ namespace Ethos.Application.Identity
             RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<JwtConfig> jwtConfigOptions,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext applicationDbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _applicationDbContext = applicationDbContext;
             _jwtConfig = jwtConfigOptions.Value;
         }
 
@@ -63,7 +68,7 @@ namespace Ethos.Application.Identity
         }
 
         /// <inheritdoc />
-        public async Task<LoginResponseDto> GetTokenAsync(LoginRequestDto input)
+        public async Task<LoginResponseDto> AuthenticateAsync(LoginRequestDto input)
         {
             var result = await _signInManager.PasswordSignInAsync(
                 input.UserName,
@@ -151,7 +156,7 @@ namespace Ethos.Application.Identity
         }
 
         /// <inheritdoc />
-        public async Task SendPasswordRecoveryLinkAsync(string email)
+        public async Task SendPasswordResetLinkAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -182,6 +187,20 @@ namespace Ethos.Application.Identity
                 var errors = string.Join(",", result.Errors.Select(e => e.Description));
                 throw new Exception(errors);
             }
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<UserDto>> GetUsersAsync()
+        {
+            var users = await _applicationDbContext.Users.ToListAsync();
+
+            return users.Select(u => new UserDto()
+            {
+                Id = u.Id.ToString(),
+                Email = u.Email,
+                FullName = u.FullName,
+                UserName = u.UserName,
+            });
         }
     }
 }

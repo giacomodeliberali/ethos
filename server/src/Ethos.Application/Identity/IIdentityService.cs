@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Domain.Identity;
@@ -17,7 +19,7 @@ namespace Ethos.Application.Identity
         /// <summary>
         /// Tries to authenticate the given user.
         /// </summary>
-        Task<LoginResponseDto> GetTokenAsync(LoginRequestDto input);
+        Task<LoginResponseDto> AuthenticateAsync(LoginRequestDto input);
 
         /// <summary>
         /// Creates a new role with the given name.
@@ -32,11 +34,16 @@ namespace Ethos.Application.Identity
         /// <summary>
         /// Sends the password reset link.
         /// </summary>
-        Task SendPasswordRecoveryLinkAsync(string email);
+        Task SendPasswordResetLinkAsync(string email);
 
         /// <summary>
         /// Reset the password using the reset link.
         /// </summary>
         Task ResetPasswordAsync(ResetPasswordRequestDto input);
+
+        /// <summary>
+        /// Return the list of all registered users.
+        /// </summary>
+        Task<IEnumerable<UserDto>> GetUsersAsync();
     }
 }

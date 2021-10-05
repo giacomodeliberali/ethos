@@ -20,7 +20,7 @@ namespace Ethos.IntegrationTest
             var response = await Client.GetAsync("/WeatherForecast");
 
             // Assert
-            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
     }
 }

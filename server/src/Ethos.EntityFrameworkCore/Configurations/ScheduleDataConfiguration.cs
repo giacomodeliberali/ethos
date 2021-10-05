@@ -1,32 +1,16 @@
-using System;
+using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ethos.EntityFrameworkCore.Schedule.Configuration
+namespace Ethos.EntityFrameworkCore.Configurations
 {
     public class ScheduleDataConfiguration : IEntityTypeConfiguration<ScheduleData>
     {
-        private readonly ApplicationDbContext _context;
-
-        public ScheduleDataConfiguration(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         /// <inheritdoc />
         public void Configure(EntityTypeBuilder<ScheduleData> builder)
         {
-            var propertyBuilder = builder.Property(u => u.Id);
-
-            if (_context.Database.IsSqlite())
-            {
-                propertyBuilder.HasDefaultValue(Guid.NewGuid());
-            }
-            else
-            {
-                propertyBuilder.HasDefaultValueSql("newsequentialid()");
-            }
-
+            builder.ToTable("Schedules");
+            builder.Property(u => u.Id).ValueGeneratedOnAdd();
             builder.Property(s => s.OrganizerId).IsRequired();
             builder.Property(s => s.StartDate).IsRequired();
             builder.Property(s => s.RecurringExpression).HasMaxLength(32);

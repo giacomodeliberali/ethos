@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
-using Ethos.EntityFrameworkCore.Booking;
+using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Ethos.EntityFrameworkCore.Repositories

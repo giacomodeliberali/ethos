@@ -1,7 +1,6 @@
 using Ethos.Domain;
 using Ethos.Domain.Repositories;
 using Ethos.EntityFrameworkCore.Repositories;
-using Ethos.EntityFrameworkCore.Schedule;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ethos.EntityFrameworkCore

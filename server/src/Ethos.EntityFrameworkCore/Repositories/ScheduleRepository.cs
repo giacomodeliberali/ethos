@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Cronos;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
-using Ethos.EntityFrameworkCore.Schedule;
+using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

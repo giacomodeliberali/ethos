@@ -1,7 +1,6 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace Ethos.EntityFrameworkCore.Schedule
+namespace Ethos.EntityFrameworkCore.Entities
 {
     public class ScheduleData
     {

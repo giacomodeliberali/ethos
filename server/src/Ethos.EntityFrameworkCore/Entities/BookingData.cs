@@ -1,6 +1,6 @@
 using System;
 
-namespace Ethos.EntityFrameworkCore.Booking
+namespace Ethos.EntityFrameworkCore.Entities
 {
     public class BookingData
     {

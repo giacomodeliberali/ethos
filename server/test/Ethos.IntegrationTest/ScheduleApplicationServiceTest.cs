@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Application.Services;
+using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Web.Host;
@@ -89,6 +90,26 @@ namespace Ethos.IntegrationTest
             var schedules = await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober);
 
             schedules.Count().ShouldBe(21);
+        }
+
+        [Fact]
+        public async Task ShouldCreateASchedule_WithTheGivenGuid()
+        {
+            var admin = await UserManager.FindByNameAsync("admin");
+
+            var schedule = Schedule.Factory.CreateNonRecurring(
+                admin,
+           "Name",
+       "Description",
+        DateTime.Now,
+                DateTime.Now.AddHours(2));
+
+            var guid = await _scheduleRepository.CreateAsync(schedule);
+
+            var created = await _scheduleRepository.GetByIdAsync(guid);
+            created.Organizer.Id.ShouldBe(admin.Id);
+
+            await _scheduleRepository.CreateAsync(schedule);
         }
     }
 }

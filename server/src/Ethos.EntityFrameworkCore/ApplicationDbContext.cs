@@ -1,10 +1,7 @@
 using System;
 using Ethos.Domain.Entities;
-using Ethos.EntityFrameworkCore.Booking;
-using Ethos.EntityFrameworkCore.Booking.Configuration;
-using Ethos.EntityFrameworkCore.Identity;
-using Ethos.EntityFrameworkCore.Schedule;
-using Ethos.EntityFrameworkCore.Schedule.Configuration;
+using Ethos.EntityFrameworkCore.Configurations;
+using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,12 +26,14 @@ namespace Ethos.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfiguration(new ApplicationUserConfiguration(this));
-            builder.ApplyConfiguration(new ApplicationRoleConfiguration(this));
 
-            builder.ApplyConfiguration(new BookingDataConfiguration(this));
-            builder.ApplyConfiguration(new ScheduleDataConfiguration(this));
-            // builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            // Identity
+            builder.ApplyConfiguration(new ApplicationUserConfiguration());
+            builder.ApplyConfiguration(new ApplicationRoleConfiguration());
+
+            // Custom tables
+            builder.ApplyConfiguration(new BookingDataConfiguration());
+            builder.ApplyConfiguration(new ScheduleDataConfiguration());
         }
     }
 }

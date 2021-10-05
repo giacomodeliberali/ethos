@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Ethos.Application.Email;
 using Ethos.Application.Identity;
 using Ethos.Application.Seed;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ namespace Ethos.Application
         public static void AddApplicationModule(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IIdentityService, IdentityService>();
+            serviceCollection.AddTransient<IEmailSender, EmailSender>();
 
             serviceCollection.AddDataSeedContributors();
         }

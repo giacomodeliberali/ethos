@@ -28,5 +28,15 @@ namespace Ethos.Application.Identity
         /// Returns the given role or null.
         /// </summary>
         Task<ApplicationRole> GetRoleAsync(string name);
+
+        /// <summary>
+        /// Sends the password reset link.
+        /// </summary>
+        Task SendPasswordRecoveryLinkAsync(string email);
+
+        /// <summary>
+        /// Reset the password using the reset link.
+        /// </summary>
+        Task ResetPasswordAsync(ResetPasswordRequestDto input);
     }
 }

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
+using Ethos.Application.Email;
 using Ethos.Domain.Identity;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,7 @@ namespace Ethos.Application.Identity
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailSender _emailSender;
         private readonly JwtConfig _jwtConfig;
 
         /// <summary>
@@ -29,11 +31,13 @@ namespace Ethos.Application.Identity
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
-            IOptions<JwtConfig> jwtConfigOptions)
+            IOptions<JwtConfig> jwtConfigOptions,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
             _jwtConfig = jwtConfigOptions.Value;
         }
 
@@ -144,6 +148,40 @@ namespace Ethos.Application.Identity
         public async Task<ApplicationRole> GetRoleAsync(string name)
         {
             return await _roleManager.FindByNameAsync(name);
+        }
+
+        /// <inheritdoc />
+        public async Task SendPasswordRecoveryLinkAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            var resetLink = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            await _emailSender.SendEmail(user.Email, "Reset Link", $"Reset the password using the link '{resetLink}'");
+        }
+
+        /// <inheritdoc />
+        public async Task ResetPasswordAsync(ResetPasswordRequestDto input)
+        {
+            var user = await _userManager.FindByEmailAsync(input.Email);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, input.ResetToken, input.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(",", result.Errors.Select(e => e.Description));
+                throw new Exception(errors);
+            }
         }
     }
 }

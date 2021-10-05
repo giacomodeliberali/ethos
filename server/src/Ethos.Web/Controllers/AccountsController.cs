@@ -58,5 +58,23 @@ namespace Ethos.Web.Controllers
         {
             await _identityService.CreateUserAsync(input, RoleConstants.Default);
         }
+
+        /// <summary>
+        /// Sends the password reset link.
+        /// </summary>
+        [HttpPost("send-reset-password")]
+        public async Task SendResetPasswordAsync(string email)
+        {
+            await _identityService.SendPasswordRecoveryLinkAsync(email);
+        }
+
+        /// <summary>
+        /// Reset the password using the reset link.
+        /// </summary>
+        [HttpPost("reset-password")]
+        public async Task ResetPasswordAsync(ResetPasswordRequestDto input)
+        {
+            await _identityService.ResetPasswordAsync(input);
+        }
     }
 }

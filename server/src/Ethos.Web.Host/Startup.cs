@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ethos.Application;
+using Ethos.Application.Identity;
 using Ethos.Application.Seed;
 using Ethos.Domain.Identity;
 using Ethos.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Ethos.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +44,7 @@ namespace Ethos.Web.Host
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
+            services.Configure<EmailConfig>(_configuration.GetSection(nameof(EmailConfig)));
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -53,6 +56,7 @@ namespace Ethos.Web.Host
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                 })
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication(options =>

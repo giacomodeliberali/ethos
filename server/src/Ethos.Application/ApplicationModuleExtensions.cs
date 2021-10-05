@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Ethos.Application.Email;
 using Ethos.Application.Identity;
+using Ethos.Application.Schedule;
 using Ethos.Application.Seed;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,8 @@ namespace Ethos.Application
         {
             serviceCollection.AddScoped<IIdentityService, IdentityService>();
             serviceCollection.AddTransient<IEmailSender, EmailSender>();
+            serviceCollection.AddTransient<ICurrentUser, CurrentUser>();
+            serviceCollection.AddTransient<IScheduleApplicationService, ScheduleApplicationService>();
 
             serviceCollection.AddDataSeedContributors();
         }

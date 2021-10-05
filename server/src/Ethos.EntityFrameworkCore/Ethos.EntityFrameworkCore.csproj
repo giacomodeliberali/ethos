@@ -21,4 +21,8 @@
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Identity\Configuration" />
+    </ItemGroup>
+
 </Project>

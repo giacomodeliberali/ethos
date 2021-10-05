@@ -89,7 +89,6 @@ namespace Ethos.Application.Identity
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "api"), // TODO @GDL from configuration?
                 new Claim(identityOptions.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
                 new Claim(identityOptions.ClaimsIdentity.UserNameClaimType, user.UserName),
             };

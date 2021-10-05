@@ -3,7 +3,7 @@ using Ethos.Domain.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ethos.EntityFrameworkCore.Configurations
+namespace Ethos.EntityFrameworkCore.Identity
 {
     public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {

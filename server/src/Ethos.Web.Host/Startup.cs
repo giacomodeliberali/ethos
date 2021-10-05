@@ -82,6 +82,9 @@ namespace Ethos.Web.Host
 
             // add application module
             services.AddApplicationModule();
+            services.AddRepositories();
+
+            services.AddHttpContextAccessor();
 
             services.AddControllers()
                 .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(IEthosWebAssemblyMarker).Assembly));

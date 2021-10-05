@@ -20,35 +20,9 @@ namespace Ethos.IntegrationTest
         }
 
         [Fact]
-        public async Task ShouldNot_HaveAnyUserWithAdminRole_WhenApplicationStarts()
+        public async Task ShouldHave_UserWithAdminRole_WhenApplicationStarts()
         {
-            var scope = Factory.Services.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var response = await userManager.GetUsersInRoleAsync(RoleConstants.Admin);
-            response.Count.ShouldBe(0);
-        }
-
-        [Fact]
-        public async Task Should_HaveAUserWithAdminRole_WhenCreated()
-        {
-            var scope = Factory.Services.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var response = await userManager.GetUsersInRoleAsync(RoleConstants.Admin);
-
-            response.Count.ShouldBe(0);
-
-            var user = new ApplicationUser
-            {
-                Email = "demo@ethos.it",
-                UserName = "demo"
-            };
-
-            await userManager.CreateAsync(user, "P2ssw0rd!");
-
-            await userManager.AddToRoleAsync(user, RoleConstants.Admin);
-
-            response = await userManager.GetUsersInRoleAsync(RoleConstants.Admin);
-
+            var response = await UserManager.GetUsersInRoleAsync(RoleConstants.Admin);
             response.Count.ShouldBe(1);
         }
     }

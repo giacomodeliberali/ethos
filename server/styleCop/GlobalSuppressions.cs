@@ -20,3 +20,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1648:InheritDocMustBeUsedWithInheritingClass", Justification = "Reviewed.")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed.")]
 [assembly: SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1515:SingleLineCommentsMustBePrecededByBlankLine", Justification = "Reviewed.")]
+[assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]

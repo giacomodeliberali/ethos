@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ethos.Domain;
 using Microsoft.AspNetCore.Hosting;

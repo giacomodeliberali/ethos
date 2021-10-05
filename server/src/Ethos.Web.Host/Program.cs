@@ -1,37 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Ethos.Application.Seed;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Ethos.Web.Host
 {
-    /// <summary>
-    /// The program.
-    /// </summary>
     public class Program
     {
-        /// <summary>
-        /// The main method.
-        /// </summary>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var hostBuilder = CreateHostBuilder(args).Build();
+
+            // seed database
+            using var scope = hostBuilder.Services.CreateScope();
+            foreach (var dataSeedContributor in scope.ServiceProvider.GetServices<IDataSeedContributor>())
+            {
+                await dataSeedContributor.SeedAsync();
+            }
+
+            await hostBuilder.RunAsync();
         }
 
         /// <summary>
         /// Creates the host builder reading environment variables.
         /// </summary>
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host
                 .CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.AddEnvironmentVariables(prefix: "Ethos_");
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .UseStartup<Startup>()
+                        .UseUrls("http://0.0.0.0:5001");
+                });
     }
 }

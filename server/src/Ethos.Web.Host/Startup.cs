@@ -115,10 +115,12 @@ namespace Ethos.Web.Host
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
             }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseMiddleware<ExceptionHandler>();
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -129,12 +131,6 @@ namespace Ethos.Web.Host
             {
                 endpoints.MapControllers();
             });
-
-            using var scope = app.ApplicationServices.CreateScope();
-            foreach (var dataSeedContributor in scope.ServiceProvider.GetServices<IDataSeedContributor>())
-            {
-                dataSeedContributor.SeedAsync().Wait();
-            }
         }
     }
 }

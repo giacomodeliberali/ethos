@@ -1,6 +1,7 @@
 using System;
 using System.Data.Common;
 using System.Linq;
+using Ethos.Application.Seed;
 using Ethos.EntityFrameworkCore;
 using Ethos.Web.Host;
 using Microsoft.AspNetCore.Hosting;
@@ -75,14 +76,10 @@ namespace Ethos.IntegrationTest.Setup
                     // Ensure the database is created.
                     db.Database.EnsureCreated();
 
-                    try
+                    // seed database
+                    foreach (var dataSeedContributor in scope.ServiceProvider.GetServices<IDataSeedContributor>())
                     {
-                        // Seed the database with test data.
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, $"An error occurred seeding the " +
-                                            "database with test messages. Error: {ex.Message}");
+                        dataSeedContributor.SeedAsync().Wait();
                     }
                 }
             });

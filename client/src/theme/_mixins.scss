@@ -1,0 +1,129 @@
+$breakpoints: (
+  "very-small": (
+    max-width: 359px,
+  ),
+  "tablet": (
+    min-width: 800px,
+  ),
+  "desktop": (
+    min-width: 1024px,
+  ),
+) !default;
+
+@mixin respond-to($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media #{inspect(map-get($breakpoints, $breakpoint))} {
+      @content;
+    }
+  }
+
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+@mixin dimensions(
+  $width: null,
+  $height: null,
+  $max-width: null,
+  $max-height: null,
+  $min-width: null,
+  $min-height: null
+) {
+  @if $width {
+    width: $width;
+  }
+  @if $height {
+    height: $height;
+  }
+  @if $max-width {
+    max-width: $max-width;
+  }
+  @if $max-height {
+    max-height: $max-height;
+  }
+  @if $min-width {
+    min-width: $min-width;
+  }
+  @if $min-height {
+    min-height: $min-height;
+  }
+}
+
+@mixin default-gradient($property, $first-color, $second-color) {
+  #{$property}: linear-gradient(45deg, $first-color 0%, $second-color 100%);
+}
+
+@mixin ion-button-style($color: "primary", $type: "fill") {
+  @if $type == "fill" {
+    @include default-gradient(
+      "--background",
+      var(--ion-color-#{$color}-tint),
+      var(--ion-color-#{$color})
+    );
+  } @else if $type == "shade"{
+    --background: white;
+  } @else {
+    --background: white;
+  }
+  @if $type != fill {
+    color: var(--ion-color-#{$color});
+  } @else {
+    color: var(--ion-color-#{$color}-contrast);
+    --border-width: 0px;
+  }
+
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: none;
+  letter-spacing: normal;
+  height: 2rem;
+  --padding-top: 0.5rem;
+  --padding-bottom: 0.5rem;
+  margin-bottom: 0;
+  --border-radius: 4px;
+  --box-shadow: none;
+}
+
+@mixin flex(
+  $position: null,
+  $align-items: null,
+  $justify-content: null,
+  $flex-direction: null
+) {
+  display: flex;
+  @if $position {
+    position: $position;
+  }
+  @if $flex-direction {
+    flex-direction: $flex-direction;
+  }
+  @if $align-items {
+    align-items: $align-items;
+  }
+  @if $justify-content {
+    justify-content: $justify-content;
+  }
+}
+
+@mixin vendor-prefixes($element, $content) {
+  -webkit-#{$element}: $content;
+  -moz-#{$element}: $content;
+  -o-#{$element}: $content;
+  -ms-#{$element}: $content;
+}
+
+@mixin remove-blur-safari() {
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+@mixin truncate($truncation-boundary) {
+  max-width: $truncation-boundary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

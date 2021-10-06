@@ -1,0 +1,1 @@
+import { NswagBaseClass } from '../nswag/nswag-base-class'

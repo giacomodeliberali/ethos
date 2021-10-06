@@ -11,7 +11,7 @@
 
 /* Core CSS required for Ionic components to work properly */
 @import "~@ionic/angular/css/core.css";
-
+@import "mixins";
 /* Basic CSS for apps built with Ionic */
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
@@ -24,3 +24,80 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+@font-face {
+    font-family: "JosefinSans";
+    src: local("JosefinSans"), url(./assets/fonts/JosefinSans-Regular.ttf) format("truetype");
+}
+
+
+html{
+    font-family: 'JosefinSans', sans-serif;
+    font-size: 16px;
+}
+
+:root{
+    --ion-font-family: 'JosefinSans';
+}
+
+ion-modal {
+    &.bottom {
+        align-items: flex-end;
+        --border-radius: 4px 4px 0px 0px !important;
+    }
+    --height: auto !important;
+    --border-radius: 4px !important;
+    .modal-wrapper {
+        max-height: 100% !important;
+        overflow: auto !important;
+        .ion-page {
+        position: relative;
+        display: block;
+        contain: content;
+        }
+    }
+}
+
+:root{
+    --ionic-toast-color: var(--ion-color-tertiary);
+    .ionic-toast{
+        // @include default-gradient(
+        //     "--background",
+        //     var(--ion-color-primary),
+        //     var(--ion-color-primary-tint)
+        // ); 
+        --background: transparent;
+        --color: var(--ion-color-primary-contrast);
+        --border-radius: 0.25rem;
+        &::part(header){
+            font-weight: bold;
+            padding-bottom: 0.25rem;
+            padding-left: 0.25rem;
+        }
+        &::part(container){
+            border-radius: 4px;
+            &:before{
+                position: absolute;
+                content: "";
+                width: 0.5rem;
+                height: 100%;
+                border-radius: 0.25rem 0 0 0.25rem;
+                background-color: var(--ionic-toast-color);
+            }
+            &:after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                box-shadow: inset 0 0 2000px rgba(255, 255, 255, .3);
+                filter: blur(20px);
+            }
+        }
+        &::part(message){
+            display: flex;
+            align-items: center;
+        }
+    }
+}

@@ -1,0 +1,11 @@
+:host {
+    font-size: 2rem;
+    padding: var(--space-3) var(--current-space-3) 0 var(--current-space-3);
+    div[modal-default-content] {
+      --buttons-padding: var(--space-2) 0 var(--space-3) 0;
+    }
+    h3 {
+      margin-bottom: var(--space-1);
+    }
+  }
+  

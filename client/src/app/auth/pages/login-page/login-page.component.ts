@@ -7,6 +7,7 @@ import { MediaService } from "@core/services/media.service";
 import { UserService } from "@core/services/user.service";
 import { ModalController } from "@ionic/angular";
 import { LoadingService } from "@shared/services/loading.service";
+import { ToastService } from "@shared/services/toast.service";
 import { loginToRegister } from "../../animations/login-page.animations";
 import { ForgotPasswordModalComponent } from "../../components/forgot-password-modal/forgot-password-modal.component";
 
@@ -38,7 +39,8 @@ export class LoginPageComponent extends BaseDirective{
     private accountsSvc: AccountsService, 
     private userSvc: UserService,
     private loadingSvc: LoadingService,
-    private router: Router) {
+    private router: Router,
+    private toastSvc: ToastService) {
     super();
   }
 
@@ -78,8 +80,14 @@ export class LoginPageComponent extends BaseDirective{
         next: response => {
           this.userSvc.setAuthentication(response.user, response.accessToken)
           this.router.navigate([response.user.roles[0]]);
+          this.toastSvc.addSuccessToast({
+            header: 'Benvenuto!',
+            message: (response.user.roles[0] === 'user') ? 'Inizia a prenotare i tuoi corsi.' : 'Inizia a gestire corsi e prenotazioni.'
+          })
         },
-        error: error => console.log(error)
+        error: error => this.toastSvc.addErrorToast({
+          message: 'Password o nome utente sbagliati.'
+        })
       })
     }
   }
@@ -89,8 +97,16 @@ export class LoginPageComponent extends BaseDirective{
       const registerValue: RegisterRequestDto = this.registerForm.value;
       this.loadingSvc.startLoading(this, 'REGISTER', this.accountsSvc.registerUser(registerValue), {message: 'Sto creando il tuo profilo'})
       .subscribe({
-        next: response => this.currentForm = 'login',
-        error: error => console.log(error)
+        next: response => {
+          this.toastSvc.addSuccessToast({
+            header: 'Utente creato',
+            message: 'L\'utente è stato creato con successo.'
+          })
+          this.currentForm = 'login'
+        },
+        error: error => this.toastSvc.addErrorToast({
+          message: 'Errore durante la creazione dell\'utente.'
+        })
       })
     }
   }

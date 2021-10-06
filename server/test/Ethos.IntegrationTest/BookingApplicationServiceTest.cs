@@ -4,7 +4,6 @@ using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
 using Ethos.IntegrationTest.Setup;
-using Ethos.Web.Controllers;
 using Ethos.Web.Host;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,14 +16,12 @@ namespace Ethos.IntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;
-        private readonly ISchedulesController _schedulesController;
 
         public BookingApplicationServiceTest(CustomWebApplicationFactory<Startup> factory)
             : base(factory)
         {
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
             _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
-            _schedulesController = Scope.ServiceProvider.GetRequiredService<ISchedulesController>();
         }
 
         [Fact]
@@ -36,7 +33,7 @@ namespace Ethos.IntegrationTest
             Guid scheduleId;
             using (Scope.WithUser("admin"))
             {
-                scheduleId = await _schedulesController.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",

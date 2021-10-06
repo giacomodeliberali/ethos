@@ -28,7 +28,7 @@ namespace Ethos.Application.Email
 
             using var client = new SmtpClient();
 
-            await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.SmtpServerPort, false);
+            await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.SmtpServerPort, true);
 
             await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
 

@@ -235,3 +235,7 @@ _Pvt_Extensions
 /NDependOut
 /CleanArchitecture.ndproj
 /.mfractor
+
+
+# appsettings.Development.json
+appsettings.Development.json

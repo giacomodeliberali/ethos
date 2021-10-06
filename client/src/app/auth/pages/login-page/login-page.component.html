@@ -41,11 +41,11 @@
             <div class="login" *ngIf="currentForm === 'login'" [formGroup]="loginForm">
               <div class="input-container">
                 <app-input 
-                  formControlName="email" 
-                  type="email" 
-                  placeholder="email" 
+                  formControlName="userNameOrEmail" 
+                  type="text" 
+                  placeholder="email o username" 
                   name="email" 
-                  icon="mail-outline"></app-input>
+                  icon="person-circle-outline"></app-input>
               </div>
               <div class="input-container">
                 <app-input 
@@ -70,12 +70,22 @@
               </div>
               <div class="input-container">
                 <app-input 
-                  formControlName="name" 
-                  [isValid]="registerForm.get('name').valid || !this.registerForm.get('name').touched" 
+                  formControlName="userName" 
+                  [isValid]="registerForm.get('userName').valid || !this.registerForm.get('userName').touched" 
                   errorMessage="Il campo è obbligatorio"
                   type="text" 
-                  placeholder="nome" 
-                  name="name" 
+                  placeholder="username" 
+                  name="username" 
+                  icon="barbell-outline"></app-input>
+              </div>
+              <div class="input-container">
+                <app-input 
+                  formControlName="fullName" 
+                  [isValid]="registerForm.get('fullName').valid || !this.registerForm.get('fullName').touched" 
+                  errorMessage="Il campo è obbligatorio"
+                  type="text" 
+                  placeholder="nome completo" 
+                  name="fullName" 
                   icon="person-circle-outline"></app-input>
               </div>
               <div class="input-container">
@@ -90,7 +100,7 @@
               </div>
             </div>
           </div>
-          <ion-fab-button color="tertiary">
+          <ion-fab-button color="tertiary" (click)="submitForm()">
             <ion-icon name="arrow-forward-outline"></ion-icon>
           </ion-fab-button>
         </ion-card-content>

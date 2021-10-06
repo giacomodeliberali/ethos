@@ -9,6 +9,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
+    "nswag": "npx nswag run ./src/app/core/nswag/nswag.json",
     "e2e": "ng e2e"
   },
   "private": true,

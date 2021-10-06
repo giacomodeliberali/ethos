@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { InputComponent } from "./components/input/input.component";
 import { LoadingToastComponent } from "./components/loading-toast/loading-toast.component";
+import { LoadingComponent } from "./components/loading-toast/loading.component";
 import { LogoutModalComponent } from "./components/logout-modal/logout-modal.component";
 import { ModalDefaultContentComponent } from "./components/modal-default-content/modal-default-content.component";
 import { UnsavedChangesComponent } from "./components/unsaved-changes/unsaved-changes.component";
@@ -15,7 +16,8 @@ import { UnsavedChangesComponent } from "./components/unsaved-changes/unsaved-ch
     LoadingToastComponent,
     LogoutModalComponent,
     ModalDefaultContentComponent,
-    UnsavedChangesComponent
+    UnsavedChangesComponent,
+    LoadingComponent
   ],
   imports: [
     CommonModule,

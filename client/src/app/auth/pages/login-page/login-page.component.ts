@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { BaseDirective } from "@core/directives";
+import { AccountsService, LoginRequestDto, RegisterRequestDto } from "@core/services/ethos.generated.service";
 import { MediaService } from "@core/services/media.service";
+import { UserService } from "@core/services/user.service";
 import { ModalController } from "@ionic/angular";
+import { LoadingService } from "@shared/services/loading.service";
 import { loginToRegister } from "../../animations/login-page.animations";
 import { ForgotPasswordModalComponent } from "../../components/forgot-password-modal/forgot-password-modal.component";
 
@@ -11,22 +16,30 @@ import { ForgotPasswordModalComponent } from "../../components/forgot-password-m
   styleUrls: ['./login-page.component.scss'],
   animations: [loginToRegister]
 })
-export class LoginPageComponent {
+export class LoginPageComponent extends BaseDirective{
 
   currentForm: "login" | "register" = "login";
 
   loginForm = new FormGroup({
-    email: new FormControl(''),
+    userNameOrEmail: new FormControl(''),
     password: new FormControl('')
   })
 
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    name: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{6,}$')])
+    userName: new FormControl('', [Validators.required]),
+    fullName: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{6,}$/)])
   })
 
-  constructor(private modalCtrl: ModalController, private mediaSvc: MediaService) {
+  constructor(
+    private modalCtrl: ModalController, 
+    private mediaSvc: MediaService, 
+    private accountsSvc: AccountsService, 
+    private userSvc: UserService,
+    private loadingSvc: LoadingService,
+    private router: Router) {
+    super();
   }
 
   changeForm(event: CustomEvent){
@@ -45,6 +58,40 @@ export class LoginPageComponent {
     const { data } = await modal.onWillDismiss();
     if(data?.email){
       // Call reset password service
+    }
+  }
+
+  submitForm(){
+    if(this.currentForm === 'login')
+      this.login();
+    else
+      this.register();
+  }
+
+  private login(){
+    if(this.loginForm.valid){
+      const loginValue: LoginRequestDto = this.loginForm.value;
+      this.loadingSvc.startLoading(this, 'LOGIN', this.accountsSvc.authenticate(loginValue), {
+        message: "Sto eseguendo il login"
+      })
+      .subscribe({
+        next: response => {
+          this.userSvc.setAuthentication(response.user, response.accessToken)
+          this.router.navigate([response.user.roles[0]]);
+        },
+        error: error => console.log(error)
+      })
+    }
+  }
+
+  private register(){
+    if(this.registerForm.valid){
+      const registerValue: RegisterRequestDto = this.registerForm.value;
+      this.loadingSvc.startLoading(this, 'REGISTER', this.accountsSvc.registerUser(registerValue), {message: 'Sto creando il tuo profilo'})
+      .subscribe({
+        next: response => this.currentForm = 'login',
+        error: error => console.log(error)
+      })
     }
   }
 }

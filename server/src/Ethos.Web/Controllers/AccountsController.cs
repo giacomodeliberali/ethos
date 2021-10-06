@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
 using Ethos.Shared;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ethos.Web.Controllers

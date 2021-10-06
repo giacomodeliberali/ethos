@@ -16,7 +16,7 @@ namespace Ethos.EntityFrameworkCore.Configurations
             builder.Property(s => s.RecurringExpression).HasMaxLength(32);
             builder.Property(s => s.Name).HasMaxLength(255).IsRequired();
             builder.Property(s => s.Description).HasMaxLength(2048).IsRequired();
-            builder.Property(s => s.Duration).IsRequired();
+            builder.Property(s => s.DurationInMinutes).IsRequired();
         }
     }
 }

@@ -8,10 +8,10 @@ namespace Ethos.Application.Contracts.Identity
     public class LoginRequestDto
     {
         /// <summary>
-        /// The user name (not email).
+        /// The user name or email.
         /// </summary>
         [Required]
-        public string UserName { get; set; }
+        public string UserNameOrEmail { get; set; }
 
         /// <summary>
         /// The user password.

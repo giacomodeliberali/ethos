@@ -1,13 +1,20 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ethos.Application;
+using Ethos.Application.Contracts;
 using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
+using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Ethos.Web.Host
 {
@@ -38,6 +46,7 @@ namespace Ethos.Web.Host
         /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
+            // register strongly typed configuration
             services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
             services.Configure<EmailConfig>(_configuration.GetSection(nameof(EmailConfig)));
 
@@ -46,55 +55,24 @@ namespace Ethos.Web.Host
                 options.UseSqlServer(_configuration.GetConnectionString("Default"));
             });
 
-            services
-                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                })
-                .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = "JwtBearer";
-                    options.DefaultChallengeScheme = "JwtBearer";
-                })
-                .AddJwtBearer("JwtBearer", options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtConfig:Secret"])),
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidIssuer = _configuration["JwtConfig:TokenIssuer"],
-                        ValidAudience = _configuration["JwtConfig:ValidAudience"],
-                        ValidateLifetime = true,
-                    };
-                });
+            services.AddEthosIdentity(_configuration);
 
             // add application module
             services.AddApplicationModule();
             services.AddRepositories();
             services.AddQueries();
 
-            services.AddHttpContextAccessor();
+            // add controllers
+            services.AddEthosControllers();
 
-            services.AddControllers()
-                .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(IEthosWebAssemblyMarker).Assembly));
+            services.AddEthosSwagger();
 
-            services.AddSwaggerGen(c =>
+            services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Ethos",
-                    Version = "v1",
-                });
-                var path = Path.Combine(Path.GetDirectoryName(AppContext.BaseDirectory));
-                foreach (var filePath in Directory.GetFiles(path, "*.xml"))
-                {
-                    c.IncludeXmlComments(filePath);
-                }
-            });
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
         }
 
         /// <summary>
@@ -110,10 +88,11 @@ namespace Ethos.Web.Host
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
+
+                app.UseCors("DevCorsPolicy");
             }
 
-            app.UseHttpsRedirection();
-
+            // app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandler>();
 
             app.UseRouting();

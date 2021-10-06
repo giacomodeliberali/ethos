@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Cronos;
+using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.Query;
+using Ethos.Query.Services;
 
 namespace Ethos.Application.Services
 {
@@ -51,7 +53,7 @@ namespace Ethos.Application.Services
             else
             {
                 Guard.Against.Null(input.StartDate, nameof(input.StartDate));
-                Guard.Against.Null(input.Duration, nameof(input.Duration));
+                Guard.Against.NegativeOrZero(input.DurationInMinutes, nameof(input.DurationInMinutes));
                 Guard.Against.Null(input.RecurringCronExpression, nameof(input.RecurringCronExpression));
 
                 schedule = Schedule.Factory.CreateRecurring(
@@ -60,7 +62,7 @@ namespace Ethos.Application.Services
                     input.Description,
                     input.StartDate.Value,
                     input.EndDate,
-                    input.Duration.Value,
+                    input.DurationInMinutes,
                     input.RecurringCronExpression);
             }
 
@@ -81,7 +83,7 @@ namespace Ethos.Application.Services
                 .UpdateDateTime(
                     input.StartDate!.Value,
                     input.EndDate,
-                    input.Duration,
+                    input.DurationInMinutes,
                     input.RecurringCronExpression);
 
             await _scheduleRepository.UpdateAsync(schedule);
@@ -110,10 +112,18 @@ namespace Ethos.Application.Services
                 {
                     result.Add(new GeneratedScheduleDto()
                     {
+                        ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
                         StartDate = schedule.StartDate,
-                        EndDate = schedule.StartDate.Add(schedule.Duration),
+                        EndDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes)),
+                        Organizer = new UserDto()
+                        {
+                            Id = schedule.OrganizerId,
+                            FullName = schedule.OrganizerFullName,
+                            Email = schedule.OrganizerEmail,
+                            UserName = schedule.OrganizerUserName,
+                        },
                     });
                     continue;
                 }
@@ -131,10 +141,18 @@ namespace Ethos.Application.Services
                 {
                     result.Add(new GeneratedScheduleDto()
                     {
+                        ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
                         StartDate = nextExecution,
-                        EndDate = schedule.StartDate.Add(schedule.Duration),
+                        EndDate = nextExecution.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes)),
+                        Organizer = new UserDto()
+                        {
+                            Id = schedule.OrganizerId,
+                            FullName = schedule.OrganizerFullName,
+                            Email = schedule.OrganizerEmail,
+                            UserName = schedule.OrganizerUserName,
+                        },
                     });
                 }
             }

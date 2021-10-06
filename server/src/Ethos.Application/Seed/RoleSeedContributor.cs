@@ -7,7 +7,7 @@ using Ethos.Shared;
 namespace Ethos.Application.Seed
 {
     /// <summary>
-    /// Seed the default roles.
+    /// Seed the default roles and the admin user.
     /// </summary>
     public class RoleSeedContributor : IDataSeedContributor
     {
@@ -29,9 +29,9 @@ namespace Ethos.Application.Seed
             }
 
             // seed default
-            if (await _identityService.GetRoleAsync(RoleConstants.Default) == null)
+            if (await _identityService.GetRoleAsync(RoleConstants.User) == null)
             {
-                await _identityService.CreateRoleAsync(RoleConstants.Default);
+                await _identityService.CreateRoleAsync(RoleConstants.User);
             }
 
             // seed default admin, change password in UI
@@ -43,7 +43,6 @@ namespace Ethos.Application.Seed
                 {
                     Email = "admin@ethos.it",
                     Password = "P2ssw0rd!",
-                    ConfirmPassword = "P2ssw0rd!",
                     FullName = "Amministratore",
                     UserName = "admin",
                 }, RoleConstants.Admin);

@@ -12,7 +12,7 @@ namespace Ethos.EntityFrameworkCore.Entities
 
         public string Description { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public int DurationInMinutes { get; set; }
 
         public DateTime StartDate { get; set; }
 

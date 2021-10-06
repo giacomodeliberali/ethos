@@ -8,6 +8,7 @@ using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Query;
+using Ethos.Query.Services;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -85,7 +86,7 @@ namespace Ethos.IntegrationTest
                 Description = "Recurring schedule every weekday at 9am",
                 StartDate = firstOctober,
                 EndDate = lastOctober,
-                Duration = TimeSpan.FromHours(2),
+                DurationInMinutes = 120,
                 RecurringCronExpression = "0 09 * * MON-FRI" // every week day at 9am
 
             });

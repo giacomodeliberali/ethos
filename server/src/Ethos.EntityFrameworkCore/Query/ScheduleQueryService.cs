@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ethos.Domain.Entities;
 using Ethos.Query;
 using Ethos.Query.Projections;
+using Ethos.Query.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ethos.EntityFrameworkCore.Query
@@ -32,10 +33,12 @@ namespace Ethos.EntityFrameworkCore.Query
                 Description = item.Schedule.Description,
                 StartDate = item.Schedule.StartDate,
                 EndDate = item.Schedule.EndDate,
-                Duration = item.Schedule.Duration,
+                DurationInMinutes = item.Schedule.DurationInMinutes,
                 RecurringExpression = item.Schedule.RecurringExpression,
                 OrganizerId = item.User.Id,
                 OrganizerFullName = item.User.FullName,
+                OrganizerEmail = item.User.Email,
+                OrganizerUserName = item.User.UserName,
             });
         }
     }

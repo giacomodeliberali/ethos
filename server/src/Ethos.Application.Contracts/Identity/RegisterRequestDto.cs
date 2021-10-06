@@ -33,12 +33,5 @@ namespace Ethos.Application.Contracts.Identity
         /// </summary>
         [Required]
         public string Password { get; set; }
-
-        /// <summary>
-        /// The confirmation password that must match the "Password" field.
-        /// </summary>
-        [Required]
-        [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; }
     }
 }

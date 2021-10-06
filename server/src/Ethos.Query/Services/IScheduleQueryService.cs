@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 
-namespace Ethos.Query
+namespace Ethos.Query.Services
 {
     public interface IScheduleQueryService
     {

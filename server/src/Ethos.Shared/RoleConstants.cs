@@ -8,7 +8,7 @@ namespace Ethos.Shared
         /// <summary>
         /// The default role.
         /// </summary>
-        public const string Default = "default";
+        public const string User = "user";
 
         /// <summary>
         /// The admin role.

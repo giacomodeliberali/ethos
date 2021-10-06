@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Domain.Entities;
+using Ethos.Domain.Exceptions;
 using Ethos.Query.Services;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -60,7 +61,7 @@ namespace Ethos.Application.Identity
             if (!result.Succeeded)
             {
                 var errors = string.Join(",", result.Errors.Select(e => e.Description));
-                throw new Exception(errors);
+                throw new BusinessException(errors);
             }
 
             await _userManager.AddToRoleAsync(user, roleName);
@@ -69,18 +70,24 @@ namespace Ethos.Application.Identity
         /// <inheritdoc />
         public async Task<LoginResponseDto> AuthenticateAsync(LoginRequestDto input)
         {
+            var user = await _userManager.FindByNameAsync(input.UserNameOrEmail) ??
+                       await _userManager.FindByEmailAsync(input.UserNameOrEmail);
+
+            if (user == null)
+            {
+                throw new AuthenticationException("Invalid credentials!");
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
-                input.UserName,
+                user,
                 input.Password,
-                false,
-                false);
+                isPersistent: false,
+                lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
-                return null;
+                throw new AuthenticationException("Invalid credentials!");
             }
-
-            var user = await _userManager.FindByNameAsync(input.UserName);
 
             var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -93,6 +100,9 @@ namespace Ethos.Application.Identity
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
+
+            // the first role will be used to navigate in the UI to the main page for that role
+            userRoles = userRoles.OrderBy(r => r).ToList();
 
             claims.AddRange(userClaims);
 
@@ -129,10 +139,11 @@ namespace Ethos.Application.Identity
                 AccessToken = tokenString,
                 User = new UserDto()
                 {
-                    Id = user.Id.ToString(),
+                    Id = user.Id,
                     Email = user.Email,
                     FullName = user.FullName,
                     UserName = user.UserName,
+                    Roles = userRoles,
                 },
             };
         }
@@ -183,7 +194,7 @@ namespace Ethos.Application.Identity
             if (!result.Succeeded)
             {
                 var errors = string.Join(",", result.Errors.Select(e => e.Description));
-                throw new Exception(errors);
+                throw new BusinessException(errors);
             }
         }
 
@@ -194,10 +205,11 @@ namespace Ethos.Application.Identity
 
             return users.Select(u => new UserDto()
             {
-                Id = u.Id.ToString(),
+                Id = u.Id,
                 Email = u.Email,
                 FullName = u.FullName,
                 UserName = u.UserName,
+                Roles = u.Roles,
             });
         }
     }

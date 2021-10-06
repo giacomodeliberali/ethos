@@ -32,7 +32,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 RecurringExpression = schedule.RecurringCronExpressionString,
                 Name = schedule.Name,
                 Description = schedule.Description,
-                Duration = schedule.Duration,
+                DurationInMinutes = schedule.DurationInMinutes,
             };
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
@@ -57,7 +57,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 scheduleData.StartDate,
                 scheduleData.EndDate,
                 scheduleData.RecurringExpression,
-                scheduleData.Duration,
+                scheduleData.DurationInMinutes,
                 scheduleData.Name,
                 scheduleData.Description);
         }
@@ -69,7 +69,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleData.Description = schedule.Description;
             scheduleData.StartDate = schedule.StartDate;
             scheduleData.EndDate = schedule.EndDate;
-            scheduleData.Duration = schedule.Duration;
+            scheduleData.DurationInMinutes = schedule.DurationInMinutes;
             scheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
         }
     }

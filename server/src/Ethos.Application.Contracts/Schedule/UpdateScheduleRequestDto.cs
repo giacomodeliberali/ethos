@@ -19,7 +19,7 @@ namespace Ethos.Application.Contracts.Schedule
 
         public DateTime? EndDate { get; set; }
 
-        public TimeSpan? Duration { get; set; }
+        public int DurationInMinutes { get; set; }
 
         public string RecurringCronExpression { get; set; }
     }

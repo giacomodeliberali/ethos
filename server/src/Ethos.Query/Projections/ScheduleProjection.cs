@@ -14,11 +14,15 @@ namespace Ethos.Query.Projections
 
         public string OrganizerFullName { get; set; }
 
+        public string OrganizerEmail { get; set; }
+
+        public string OrganizerUserName { get; set; }
+
         public DateTime  StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public int DurationInMinutes { get; set; }
 
         public string RecurringExpression { get; set; }
     }

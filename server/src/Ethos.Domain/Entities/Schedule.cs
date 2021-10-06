@@ -41,7 +41,7 @@ namespace Ethos.Domain.Entities
         /// <summary>
         /// The duration of the schedule when it is defined as recurring (or calculated if single).
         /// </summary>
-        public TimeSpan Duration { get; private set; }
+        public int DurationInMinutes { get; private set; }
 
         /// <summary>
         /// The underlying CRON expression expressed as a string.
@@ -79,7 +79,7 @@ namespace Ethos.Domain.Entities
             return this;
         }
 
-        public Schedule UpdateDateTime(DateTime startDate, DateTime? endDate, TimeSpan? duration, string recurringExpression)
+        public Schedule UpdateDateTime(DateTime startDate, DateTime? endDate, int? durationInMinutes, string recurringExpression)
         {
             if (!string.IsNullOrEmpty(recurringExpression))
             {
@@ -93,11 +93,11 @@ namespace Ethos.Domain.Entities
                     throw new BusinessException($"Invalid CRON expression '{recurringExpression}'", ex);
                 }
 
-                Guard.Against.Null(duration, nameof(duration));
+                Guard.Against.Null(durationInMinutes, nameof(durationInMinutes));
 
                 StartDate = startDate;
                 EndDate = endDate;
-                Duration = duration.Value;
+                DurationInMinutes = durationInMinutes.Value;
                 RecurringCronExpressionString = recurringExpression;
             }
             else
@@ -107,7 +107,7 @@ namespace Ethos.Domain.Entities
 
                 StartDate = startDate;
                 EndDate = endDate;
-                Duration = endDate.Value - startDate;
+                DurationInMinutes = (endDate.Value - startDate).Minutes;
                 RecurringCronExpressionString = null;
             }
 
@@ -122,12 +122,13 @@ namespace Ethos.Domain.Entities
                 string description,
                 DateTime startDate,
                 DateTime? endDate,
-                TimeSpan duration,
+                int duration,
                 string recurringExpression)
             {
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
+                Guard.Against.NegativeOrZero(duration, nameof(duration));
 
                 return new Schedule()
                 {
@@ -136,7 +137,7 @@ namespace Ethos.Domain.Entities
                     Description = description,
                     StartDate = startDate,
                     EndDate = endDate,
-                    Duration = duration,
+                    DurationInMinutes = duration,
                     RecurringCronExpressionString = recurringExpression,
                 };
             }
@@ -159,7 +160,7 @@ namespace Ethos.Domain.Entities
                     Description = description,
                     StartDate = startDate,
                     EndDate = endDate,
-                    Duration = endDate - startDate,
+                    DurationInMinutes = (endDate - startDate).Minutes,
                 };
             }
 
@@ -168,7 +169,7 @@ namespace Ethos.Domain.Entities
                 DateTime startDate,
                 DateTime? endDate,
                 string recurringExpression,
-                TimeSpan duration,
+                int duration,
                 string name,
                 string description)
             {
@@ -178,7 +179,7 @@ namespace Ethos.Domain.Entities
                     StartDate = startDate,
                     EndDate = endDate,
                     RecurringCronExpressionString = recurringExpression,
-                    Duration = duration,
+                    DurationInMinutes = duration,
                     Name = name,
                     Description = description,
                 };

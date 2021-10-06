@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Ethos.Application.Contracts;
 using Ethos.Domain;
 using Ethos.Domain.Exceptions;
 using Microsoft.AspNetCore.Hosting;
@@ -44,31 +45,41 @@ namespace Ethos.Web.Host
         private static Task HandleExceptionAsync(HttpContext context, IWebHostEnvironment env, Exception exception)
         {
             string result;
-            var code = HttpStatusCode.InternalServerError;
 
             if (env.IsDevelopment())
             {
-                var errorMessage = new
+                var errorMessage = new ExceptionDto()
                 {
-                    error = exception.Message,
-                    stack = exception.StackTrace,
-                    innerException = exception.InnerException,
+                    Message = exception.Message,
+                    StackTrace = exception.StackTrace,
+                    InnerException = exception.InnerException != null ? new ExceptionDto()
+                    {
+                        Message = exception.InnerException.Message,
+                        StackTrace = exception.InnerException.StackTrace,
+                    }
+                        : null,
                 };
 
-                result = JsonSerializer.Serialize(errorMessage);
+                result = JsonSerializer.Serialize(errorMessage, new JsonSerializerOptions()
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                });
             }
             else
             {
-                var errorMessage = new
+                var errorMessage = new ExceptionDto
                 {
-                    error = exception.Message,
+                    Message = exception.Message,
                 };
 
-                result = JsonSerializer.Serialize(errorMessage);
+                result = JsonSerializer.Serialize(errorMessage, new JsonSerializerOptions()
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                });
             }
 
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)code;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return context.Response.WriteAsync(result);
         }
     }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
+using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
 using Ethos.Shared;
@@ -40,7 +42,7 @@ namespace Ethos.Web.Controllers
         [HttpPost("register")]
         public async Task RegisterUserAsync(RegisterRequestDto input)
         {
-            await _identityService.CreateUserAsync(input, RoleConstants.Default);
+            await _identityService.CreateUserAsync(input, RoleConstants.User);
         }
 
         /// <summary>

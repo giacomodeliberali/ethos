@@ -49,7 +49,7 @@ namespace Ethos.Domain.UnitTest
                 description: "Recurring schedule with no end",
                 startDate,
                 endDate: null,
-                duration: TimeSpan.FromHours(1),
+                duration: 60,
                 recurringExpression: "@weekly");
 
             sut.ShouldNotBeNull();

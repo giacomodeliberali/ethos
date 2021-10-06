@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Domain.Entities;
-using Ethos.Query;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,11 @@ namespace Ethos.EntityFrameworkCore.Query
                 join user in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals user.Id
                 where schedule.StartDate >= startDate
                 where schedule.EndDate <= endDate
-                select new { Schedule = schedule, User = user }).ToListAsync();
+                select new
+                {
+                    Schedule = schedule,
+                    User = user,
+                }).ToListAsync();
 
             return schedules.Select(item => new ScheduleProjection()
             {

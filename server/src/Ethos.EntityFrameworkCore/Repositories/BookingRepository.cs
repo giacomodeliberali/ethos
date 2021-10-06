@@ -47,6 +47,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var user = await _userManager.FindByIdAsync(bookingData.UserId.ToString());
 
             return Booking.Factory.CreateFromSnapshot(
+                bookingData.Id,
                 schedule,
                 user,
                 bookingData.StartDate,

@@ -107,7 +107,7 @@ namespace Ethos.Domain.Entities
 
                 StartDate = startDate;
                 EndDate = endDate;
-                DurationInMinutes = (endDate.Value - startDate).Minutes;
+                DurationInMinutes = (int)(endDate.Value - startDate).TotalMinutes;
                 RecurringCronExpressionString = null;
             }
 
@@ -160,11 +160,12 @@ namespace Ethos.Domain.Entities
                     Description = description,
                     StartDate = startDate,
                     EndDate = endDate,
-                    DurationInMinutes = (endDate - startDate).Minutes,
+                    DurationInMinutes = (int)(endDate - startDate).TotalMinutes,
                 };
             }
 
             public static Schedule FromSnapshot(
+                Guid id,
                 ApplicationUser organizer,
                 DateTime startDate,
                 DateTime? endDate,
@@ -175,6 +176,7 @@ namespace Ethos.Domain.Entities
             {
                 return new Schedule()
                 {
+                    Id = id,
                     Organizer = organizer,
                     StartDate = startDate,
                     EndDate = endDate,

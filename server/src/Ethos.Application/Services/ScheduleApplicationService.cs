@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Cronos;
@@ -18,17 +19,20 @@ namespace Ethos.Application.Services
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleQueryService _scheduleQueryService;
+        private readonly IBookingQueryService _bookingQueryService;
 
         public ScheduleApplicationService(
             IUnitOfWork unitOfWork,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
-            IScheduleQueryService scheduleQueryService)
+            IScheduleQueryService scheduleQueryService,
+            IBookingQueryService bookingQueryService)
         : base(unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
             _scheduleQueryService = scheduleQueryService;
+            _bookingQueryService = bookingQueryService;
         }
 
         /// <inheritdoc />
@@ -110,13 +114,17 @@ namespace Ethos.Application.Services
             {
                 if (string.IsNullOrEmpty(schedule.RecurringExpression))
                 {
+                    var startDate = schedule.StartDate;
+                    var endDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
+                    var bookings = await _bookingQueryService.GetAllInScheduleInRange(schedule.Id, startDate, endDate);
+
                     result.Add(new GeneratedScheduleDto()
                     {
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
-                        StartDate = schedule.StartDate,
-                        EndDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes)),
+                        StartDate = startDate,
+                        EndDate = endDate,
                         Organizer = new UserDto()
                         {
                             Id = schedule.OrganizerId,
@@ -124,6 +132,11 @@ namespace Ethos.Application.Services
                             Email = schedule.OrganizerEmail,
                             UserName = schedule.OrganizerUserName,
                         },
+                        Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
+                        {
+                            Id = b.Id,
+                            UserFullName = b.UserFullName,
+                        }),
                     });
                     continue;
                 }
@@ -139,13 +152,18 @@ namespace Ethos.Application.Services
 
                 foreach (var nextExecution in nextExecutions)
                 {
+                    var startDate = nextExecution;
+                    var endDate = nextExecution.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
+
+                    var bookings = await _bookingQueryService.GetAllInScheduleInRange(schedule.Id, startDate, endDate);
+
                     result.Add(new GeneratedScheduleDto()
                     {
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
-                        StartDate = nextExecution,
-                        EndDate = nextExecution.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes)),
+                        StartDate = startDate,
+                        EndDate = endDate,
                         Organizer = new UserDto()
                         {
                             Id = schedule.OrganizerId,
@@ -153,6 +171,11 @@ namespace Ethos.Application.Services
                             Email = schedule.OrganizerEmail,
                             UserName = schedule.OrganizerUserName,
                         },
+                        Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
+                        {
+                            Id = b.Id,
+                            UserFullName = b.UserFullName,
+                        }),
                     });
                 }
             }

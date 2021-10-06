@@ -53,6 +53,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var organizer = await _userManager.FindByIdAsync(scheduleData.OrganizerId.ToString());
 
             return Schedule.Factory.FromSnapshot(
+                scheduleData.Id,
                 organizer,
                 scheduleData.StartDate,
                 scheduleData.EndDate,

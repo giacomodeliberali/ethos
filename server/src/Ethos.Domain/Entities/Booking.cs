@@ -35,6 +35,7 @@ namespace Ethos.Domain.Entities
             }
 
             public static Booking CreateFromSnapshot(
+                Guid id,
                 Schedule schedule,
                 ApplicationUser user,
                 DateTime startDate,
@@ -42,6 +43,7 @@ namespace Ethos.Domain.Entities
             {
                 return new Booking()
                 {
+                    Id = id,
                     User = user,
                     StartDate = startDate,
                     EndDate = endDate,

@@ -22,6 +22,7 @@ namespace Ethos.EntityFrameworkCore
         {
             serviceCollection.AddTransient<IUserQueryService, UserQueryService>();
             serviceCollection.AddTransient<IScheduleQueryService, ScheduleQueryService>();
+            serviceCollection.AddTransient<IBookingQueryService, BookingQueryService>();
         }
     }
 }

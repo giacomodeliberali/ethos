@@ -11,16 +11,18 @@ using Ethos.Query;
 
 namespace Ethos.Application.Services
 {
-    public class ScheduleApplicationService : IScheduleApplicationService
+    public class ScheduleApplicationService : BaseApplicationService, IScheduleApplicationService
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleQueryService _scheduleQueryService;
 
         public ScheduleApplicationService(
+            IUnitOfWork unitOfWork,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IScheduleQueryService scheduleQueryService)
+        : base(unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
@@ -61,7 +63,11 @@ namespace Ethos.Application.Services
                     input.RecurringCronExpression);
             }
 
-            return await _scheduleRepository.CreateAsync(schedule);
+            var scheduleId = await _scheduleRepository.CreateAsync(schedule);
+
+            await UnitOfWork.SaveChangesAsync();
+
+            return scheduleId;
         }
 
         /// <inheritdoc />

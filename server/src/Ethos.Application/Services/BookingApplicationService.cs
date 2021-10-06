@@ -6,16 +6,18 @@ using Ethos.Domain.Repositories;
 
 namespace Ethos.Application.Services
 {
-    public class BookingApplicationService : IBookingApplicationService
+    public class BookingApplicationService : BaseApplicationService, IBookingApplicationService
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
 
         public BookingApplicationService(
+            IUnitOfWork unitOfWork,
             IBookingRepository bookingRepository,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser)
+        : base(unitOfWork)
         {
             _bookingRepository = bookingRepository;
             _scheduleRepository = scheduleRepository;
@@ -34,7 +36,11 @@ namespace Ethos.Application.Services
                 input.StartDate,
                 input.EndDate);
 
-            return await _bookingRepository.CreateAsync(booking);
+            var bookingId = await _bookingRepository.CreateAsync(booking);
+
+            await UnitOfWork.SaveChangesAsync();
+
+            return bookingId;
         }
     }
 }

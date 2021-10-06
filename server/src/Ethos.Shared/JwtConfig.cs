@@ -6,11 +6,6 @@ namespace Ethos.Shared
     public class JwtConfig
     {
         /// <summary>
-        /// The section name in the appSettings.json.
-        /// </summary>
-        public const string Key = nameof(JwtConfig);
-
-        /// <summary>
         /// The JWT secret used to sign the token.
         /// </summary>
         public string Secret { get; set; }

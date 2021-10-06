@@ -33,7 +33,8 @@ namespace Ethos.IntegrationTest
 
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
             var queryService = Scope.ServiceProvider.GetRequiredService<IScheduleQueryService>();
-            _scheduleApplicationService = new ScheduleApplicationService(_scheduleRepository, currentUser, queryService);
+            var unitOfWork = Scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            _scheduleApplicationService = new ScheduleApplicationService(unitOfWork, _scheduleRepository, currentUser, queryService);
         }
 
         [Fact]
@@ -97,6 +98,8 @@ namespace Ethos.IntegrationTest
         [Fact]
         public async Task ShouldCreateASchedule_WithTheGivenGuid()
         {
+            var unitOfWork = Scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
             var admin = await UserManager.FindByNameAsync("admin");
 
             var schedule = Schedule.Factory.CreateNonRecurring(
@@ -108,7 +111,10 @@ namespace Ethos.IntegrationTest
 
             var guid = await _scheduleRepository.CreateAsync(schedule);
 
+            await unitOfWork.SaveChangesAsync();
+
             var created = await _scheduleRepository.GetByIdAsync(guid);
+
             created.Organizer.Id.ShouldBe(admin.Id);
 
             await _scheduleRepository.CreateAsync(schedule);

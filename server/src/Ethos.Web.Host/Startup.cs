@@ -1,20 +1,12 @@
 using System;
 using System.IO;
-using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Ethos.Application;
-using Ethos.Application.Identity;
-using Ethos.Application.Seed;
 using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
@@ -119,10 +111,8 @@ namespace Ethos.Web.Host
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
             }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
+
+            app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionHandler>();
 

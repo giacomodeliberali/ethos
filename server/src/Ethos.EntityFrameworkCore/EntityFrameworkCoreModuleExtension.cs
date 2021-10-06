@@ -13,6 +13,7 @@ namespace Ethos.EntityFrameworkCore
     {
         public static void AddRepositories(this IServiceCollection serviceCollection)
         {
+            serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
             serviceCollection.AddTransient<IScheduleRepository, ScheduleRepository>();
             serviceCollection.AddTransient<IBookingRepository, BookingRepository>();
         }

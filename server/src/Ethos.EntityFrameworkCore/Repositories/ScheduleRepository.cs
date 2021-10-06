@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Cronos;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.EntityFrameworkCore.Entities;
@@ -22,9 +21,9 @@ namespace Ethos.EntityFrameworkCore.Repositories
             _userManager = userManager;
         }
 
-        public async Task<Guid> CreateAsync(Domain.Entities.Schedule schedule)
+        public async Task<Guid> CreateAsync(Schedule schedule)
         {
-            var scheduleData = new ScheduleData()
+            var scheduleData = new ScheduleData
             {
                 Id = schedule.Id,
                 OrganizerId = schedule.Organizer.Id,
@@ -38,23 +37,21 @@ namespace Ethos.EntityFrameworkCore.Repositories
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
 
-            await _applicationDbContext.SaveChangesAsync();
-
             return scheduleData.Id;
         }
 
-        public Task DeleteAsync(Domain.Entities.Schedule schedule)
+        public Task DeleteAsync(Schedule schedule)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Domain.Entities.Schedule> GetByIdAsync(Guid id)
+        public async Task<Schedule> GetByIdAsync(Guid id)
         {
             var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == id);
 
             var organizer = await _userManager.FindByIdAsync(scheduleData.OrganizerId.ToString());
 
-            return Domain.Entities.Schedule.Factory.FromSnapshot(
+            return Schedule.Factory.FromSnapshot(
                 organizer,
                 scheduleData.StartDate,
                 scheduleData.EndDate,

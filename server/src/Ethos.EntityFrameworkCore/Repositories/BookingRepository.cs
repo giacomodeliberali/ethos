@@ -10,19 +10,15 @@ namespace Ethos.EntityFrameworkCore.Repositories
     public class BookingRepository : IBookingRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingRepository(
-            ApplicationDbContext applicationDbContext,
-            UserManager<ApplicationUser> userManager)
+        public BookingRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
-            _userManager = userManager;
         }
 
-        public async Task<Guid> CreateAsync(Domain.Entities.Booking booking)
+        public async Task<Guid> CreateAsync(Booking booking)
         {
-            var bookingData = new BookingData()
+            var bookingData = new BookingData
             {
                 Id = booking.Id,
                 ScheduleId = booking.Schedule.Id,
@@ -32,8 +28,6 @@ namespace Ethos.EntityFrameworkCore.Repositories
             };
 
             await _applicationDbContext.Bookings.AddAsync(bookingData);
-
-            await _applicationDbContext.SaveChangesAsync();
 
             return bookingData.Id;
         }

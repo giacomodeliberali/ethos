@@ -9,6 +9,7 @@ using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Query;
 using Ethos.Query.Services;
+using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -21,16 +22,15 @@ namespace Ethos.IntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IScheduleRepository _scheduleRepository;
-        private static Guid _userId;
+        private static ApplicationUser _admin;
 
         public ScheduleApplicationServiceTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
             // TODO proper setup
-            var admin = UserManager.FindByNameAsync("admin").Result;
-            _userId = admin.Id;
+            _admin = UserManager.FindByNameAsync(RoleConstants.Admin).Result;
 
             var currentUser = Substitute.For<ICurrentUser>();
-            currentUser.GetCurrentUser().Returns(admin);
+            currentUser.GetCurrentUser().Returns(_admin);
 
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
             var queryService = Scope.ServiceProvider.GetRequiredService<IScheduleQueryService>();
@@ -53,7 +53,7 @@ namespace Ethos.IntegrationTest
 
             var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
-            schedule.Organizer.Id.ShouldBe(_userId);
+            schedule.Organizer.Id.ShouldBe(_admin.Id);
         }
 
         [Fact]
@@ -105,18 +105,18 @@ namespace Ethos.IntegrationTest
 
             var schedule = Schedule.Factory.CreateNonRecurring(
                 admin,
-           "Name",
-       "Description",
-        DateTime.Now,
-                DateTime.Now.AddHours(2));
+                name: "Name",
+                description: "Description",
+                startDate: DateTime.Now,
+                endDate: DateTime.Now.AddHours(2));
 
             var guid = await _scheduleRepository.CreateAsync(schedule);
 
             await unitOfWork.SaveChangesAsync();
 
-            var created = await _scheduleRepository.GetByIdAsync(guid);
+            var createdSchedule = await _scheduleRepository.GetByIdAsync(guid);
 
-            created.Organizer.Id.ShouldBe(admin.Id);
+            createdSchedule.Organizer.Id.ShouldBe(admin.Id);
 
             await _scheduleRepository.CreateAsync(schedule);
         }

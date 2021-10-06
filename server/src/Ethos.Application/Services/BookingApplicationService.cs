@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Identity;
+using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 
 namespace Ethos.Application.Services
@@ -30,7 +31,7 @@ namespace Ethos.Application.Services
 
             var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
 
-            var booking = new Domain.Entities.Booking(
+            var booking = Booking.Factory.Create(
                 schedule,
                 currentUser,
                 input.StartDate,

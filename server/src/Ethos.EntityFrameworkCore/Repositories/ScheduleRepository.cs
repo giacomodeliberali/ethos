@@ -40,9 +40,10 @@ namespace Ethos.EntityFrameworkCore.Repositories
             return scheduleData.Id;
         }
 
-        public Task DeleteAsync(Schedule schedule)
+        public async Task DeleteAsync(Schedule schedule)
         {
-            throw new NotImplementedException();
+            var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == schedule.Id);
+            _applicationDbContext.Schedules.Remove(scheduleData);
         }
 
         public async Task<Schedule> GetByIdAsync(Guid id)

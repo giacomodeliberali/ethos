@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Application.Contracts\Ethos.Application.Contracts.csproj" />
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />
+      <ProjectReference Include="..\Ethos.Query\Ethos.Query.csproj" />
       <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
     </ItemGroup>
 
@@ -16,6 +17,8 @@
         <PackageReference Include="Ardalis.GuardClauses" Version="3.2.0" />
         <PackageReference Include="MailKit" Version="2.15.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
     </ItemGroup>
 
 </Project>

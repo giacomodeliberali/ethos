@@ -7,6 +7,7 @@ using Ethos.Application.Services;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
+using Ethos.Query;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -31,7 +32,8 @@ namespace Ethos.IntegrationTest
             currentUser.GetCurrentUser().Returns(admin);
 
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
-            _scheduleApplicationService = new ScheduleApplicationService(_scheduleRepository, currentUser, ApplicationDbContext);
+            var queryService = Scope.ServiceProvider.GetRequiredService<IScheduleQueryService>();
+            _scheduleApplicationService = new ScheduleApplicationService(_scheduleRepository, currentUser, queryService);
         }
 
         [Fact]

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Cronos;
@@ -8,8 +7,7 @@ using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
-using Ethos.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using Ethos.Query;
 
 namespace Ethos.Application.Services
 {
@@ -17,16 +15,16 @@ namespace Ethos.Application.Services
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IScheduleQueryService _scheduleQueryService;
 
         public ScheduleApplicationService(
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
-            ApplicationDbContext applicationDbContext)
+            IScheduleQueryService scheduleQueryService)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
-            _applicationDbContext = applicationDbContext;
+            _scheduleQueryService = scheduleQueryService;
         }
 
         public async Task<Guid> CreateAsync(CreateScheduleRequestDto input)
@@ -69,11 +67,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime from, DateTime to)
         {
-            // TODO move query to separate project
-            var schedules = await _applicationDbContext.Schedules
-                .AsQueryable()
-                .Where(s => s.StartDate >= from && s.EndDate <= to)
-                .ToListAsync();
+            var schedules = await _scheduleQueryService.GetInRangeAsync(from, to);
 
             var result = new List<GeneratedScheduleDto>();
 

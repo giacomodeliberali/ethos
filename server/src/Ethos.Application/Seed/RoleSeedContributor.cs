@@ -2,9 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
-using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ethos.Application.Seed
 {
@@ -14,17 +12,11 @@ namespace Ethos.Application.Seed
     public class RoleSeedContributor : IDataSeedContributor
     {
         private readonly IIdentityService _identityService;
-        private readonly ApplicationDbContext _applicationDbContext;
 
-        /// <summary>
-        /// Creates a new instance.
-        /// </summary>
         public RoleSeedContributor(
-            IIdentityService identityService,
-            ApplicationDbContext applicationDbContext)
+            IIdentityService identityService)
         {
             _identityService = identityService;
-            _applicationDbContext = applicationDbContext;
         }
 
         /// <inheritdoc />

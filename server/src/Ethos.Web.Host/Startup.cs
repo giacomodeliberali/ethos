@@ -83,6 +83,7 @@ namespace Ethos.Web.Host
             // add application module
             services.AddApplicationModule();
             services.AddRepositories();
+            services.AddQueries();
 
             services.AddHttpContextAccessor();
 

@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Domain.Entities;
-using Ethos.EntityFrameworkCore;
+using Ethos.Query.Services;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,7 +23,7 @@ namespace Ethos.Application.Identity
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IUserQueryService _userQueryService;
         private readonly JwtConfig _jwtConfig;
 
         /// <summary>
@@ -36,13 +35,13 @@ namespace Ethos.Application.Identity
             SignInManager<ApplicationUser> signInManager,
             IOptions<JwtConfig> jwtConfigOptions,
             IEmailSender emailSender,
-            ApplicationDbContext applicationDbContext)
+            IUserQueryService userQueryService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _applicationDbContext = applicationDbContext;
+            _userQueryService = userQueryService;
             _jwtConfig = jwtConfigOptions.Value;
         }
 
@@ -191,7 +190,7 @@ namespace Ethos.Application.Identity
         /// <inheritdoc />
         public async Task<IEnumerable<UserDto>> GetUsersAsync()
         {
-            var users = await _applicationDbContext.Users.ToListAsync();
+            var users = await _userQueryService.GetAllAsync();
 
             return users.Select(u => new UserDto()
             {

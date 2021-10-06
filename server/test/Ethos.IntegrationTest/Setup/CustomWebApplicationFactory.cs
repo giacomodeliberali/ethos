@@ -29,8 +29,7 @@ namespace Ethos.IntegrationTest.Setup
             var connection = CreateInMemoryDatabase();
             builder.ConfigureServices(services =>
             {
-                var descriptor =
-                    services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
 
                 if (descriptor != null)
                 {
@@ -55,33 +54,9 @@ namespace Ethos.IntegrationTest.Setup
                 // database for testing.
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    options.UseSqlite(connection);
+                    options.UseSqlite(CreateInMemoryDatabase());
                     options.UseInternalServiceProvider(provider);
                 });
-
-                // Build the service provider.
-                var serviceProvider = services.BuildServiceProvider();
-
-                // Create a scope to obtain a reference to the database
-                // context (ApplicationDbContext).
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-                    var loggerFactory = scopedServices.GetRequiredService<ILoggerFactory>();
-
-                    var logger = scopedServices
-                        .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
-
-                    // Ensure the database is created.
-                    db.Database.EnsureCreated();
-
-                    // seed database
-                    foreach (var dataSeedContributor in scope.ServiceProvider.GetServices<IDataSeedContributor>())
-                    {
-                        dataSeedContributor.SeedAsync().Wait();
-                    }
-                }
             });
         }
     }

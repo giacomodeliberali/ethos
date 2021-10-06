@@ -1,4 +1,5 @@
 using System.Net.Http;
+using Ethos.Application.Seed;
 using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Web.Host;
@@ -22,7 +23,15 @@ namespace Ethos.IntegrationTest.Setup
             Client = Factory.CreateClient();
             Scope = factory.Services.CreateScope();
             UserManager = Scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
             ApplicationDbContext = Scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            ApplicationDbContext.Database.EnsureCreated();
+
+            // seed database
+            foreach (var dataSeedContributor in Scope.ServiceProvider.GetServices<IDataSeedContributor>())
+            {
+                dataSeedContributor.SeedAsync().Wait();
+            }
         }
     }
 }

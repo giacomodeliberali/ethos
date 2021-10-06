@@ -2,6 +2,7 @@ using System;
 using Ardalis.GuardClauses;
 using Cronos;
 using Ethos.Domain.Common;
+using Ethos.Domain.Exceptions;
 
 namespace Ethos.Domain.Entities
 {
@@ -67,6 +68,50 @@ namespace Ethos.Domain.Entities
 
         private Schedule()
         {
+        }
+
+        public Schedule UpdateNameAndDescription(string name, string description)
+        {
+            Guard.Against.NullOrEmpty(name, nameof(name));
+            Guard.Against.NullOrEmpty(description, nameof(description));
+            Name = name;
+            Description = description;
+            return this;
+        }
+
+        public Schedule UpdateDateTime(DateTime startDate, DateTime? endDate, TimeSpan? duration, string recurringExpression)
+        {
+            if (!string.IsNullOrEmpty(recurringExpression))
+            {
+                // recurring
+                try
+                {
+                    CronExpression.Parse(recurringExpression);
+                }
+                catch (Exception ex)
+                {
+                    throw new BusinessException($"Invalid CRON expression '{recurringExpression}'", ex);
+                }
+
+                Guard.Against.Null(duration, nameof(duration));
+
+                StartDate = startDate;
+                EndDate = endDate;
+                Duration = duration.Value;
+                RecurringCronExpressionString = recurringExpression;
+            }
+            else
+            {
+                // non recurring
+                Guard.Against.Null(endDate, nameof(endDate));
+
+                StartDate = startDate;
+                EndDate = endDate;
+                Duration = endDate.Value - startDate;
+                RecurringCronExpressionString = null;
+            }
+
+            return this;
         }
 
         public static class Factory

@@ -12,5 +12,7 @@ namespace Ethos.Domain.Repositories
         Task DeleteAsync(Schedule schedule);
 
         Task<Schedule> GetByIdAsync(Guid id);
+
+        Task UpdateAsync(Schedule schedule);
     }
 }

@@ -8,12 +8,22 @@ namespace Ethos.Application.Services
     public interface IScheduleApplicationService
     {
         /// <summary>
-        /// Creates a new Schedule for the currently logged in organizer.
+        /// Create a new Schedule for the currently logged in organizer.
         /// </summary>
         Task<Guid> CreateAsync(CreateScheduleRequestDto input);
 
         /// <summary>
-        /// Generates in memory all the schedules that are in the given interval.
+        /// Update an existing schedule.
+        /// </summary>
+        Task UpdateAsync(UpdateScheduleRequestDto input);
+
+        /// <summary>
+        /// Delete an existing schedule.
+        /// </summary>
+        Task DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Generate (in memory) all the schedules that are in the given interval.
         /// </summary>
         Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime from, DateTime to);
     }

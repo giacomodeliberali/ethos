@@ -6,7 +6,7 @@ namespace Ethos.Application.Services
     {
         protected IUnitOfWork UnitOfWork { get; }
 
-        public BaseApplicationService(IUnitOfWork unitOfWork)
+        protected BaseApplicationService(IUnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
         }

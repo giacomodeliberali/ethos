@@ -61,5 +61,16 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 scheduleData.Name,
                 scheduleData.Description);
         }
+
+        public async Task UpdateAsync(Schedule schedule)
+        {
+            var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == schedule.Id);
+            scheduleData.Name = schedule.Name;
+            scheduleData.Description = schedule.Description;
+            scheduleData.StartDate = schedule.StartDate;
+            scheduleData.EndDate = schedule.EndDate;
+            scheduleData.Duration = schedule.Duration;
+            scheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
+        }
     }
 }

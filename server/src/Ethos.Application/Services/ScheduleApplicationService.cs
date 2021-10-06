@@ -29,6 +29,7 @@ namespace Ethos.Application.Services
             _scheduleQueryService = scheduleQueryService;
         }
 
+        /// <inheritdoc />
         public async Task<Guid> CreateAsync(CreateScheduleRequestDto input)
         {
             var currentUser = await _currentUser.GetCurrentUser();
@@ -68,6 +69,32 @@ namespace Ethos.Application.Services
             await UnitOfWork.SaveChangesAsync();
 
             return scheduleId;
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateAsync(UpdateScheduleRequestDto input)
+        {
+            var schedule = await _scheduleRepository.GetByIdAsync(input.Id);
+
+            schedule
+                .UpdateNameAndDescription(input.Name, input.Description)
+                .UpdateDateTime(
+                    input.StartDate!.Value,
+                    input.EndDate,
+                    input.Duration,
+                    input.RecurringCronExpression);
+
+            await _scheduleRepository.UpdateAsync(schedule);
+
+            await UnitOfWork.SaveChangesAsync();
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(Guid id)
+        {
+            var schedule = await _scheduleRepository.GetByIdAsync(id);
+            await _scheduleRepository.DeleteAsync(schedule);
+            await UnitOfWork.SaveChangesAsync();
         }
 
         /// <inheritdoc />

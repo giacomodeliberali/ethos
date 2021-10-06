@@ -1,28 +1,13 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Ethos.Application;
-using Ethos.Application.Contracts;
-using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Ethos.Web.Host
 {
@@ -73,6 +58,11 @@ namespace Ethos.Web.Host
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "./www";
+            });
         }
 
         /// <summary>
@@ -103,6 +93,12 @@ namespace Ethos.Web.Host
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpaStaticFiles();
+            app.UseSpa(spaBuilder =>
+            {
+                // use default options
             });
         }
     }

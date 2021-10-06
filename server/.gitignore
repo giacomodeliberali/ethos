@@ -239,3 +239,6 @@ _Pvt_Extensions
 
 # appsettings.Development.json
 appsettings.Development.json
+
+# built server spa files
+**/www/**

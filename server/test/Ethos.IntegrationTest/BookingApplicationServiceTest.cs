@@ -1,19 +1,13 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
-using Ethos.Application.Identity;
 using Ethos.Application.Services;
-using Ethos.Domain.Entities;
-using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
-using Ethos.Query.Services;
-using Ethos.Shared;
+using Ethos.Web.Controllers;
 using Ethos.Web.Host;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -23,36 +17,14 @@ namespace Ethos.IntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;
-        private readonly IScheduleRepository _scheduleRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private static ApplicationUser _admin;
+        private readonly ISchedulesController _schedulesController;
 
-        public BookingApplicationServiceTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
+        public BookingApplicationServiceTest(CustomWebApplicationFactory<Startup> factory)
+            : base(factory)
         {
-            // TODO proper setup
-            _admin = UserManager.FindByNameAsync(RoleConstants.Admin).Result;
-
-            var currentUser = Substitute.For<ICurrentUser>();
-            currentUser.GetCurrentUser().Returns(_admin);
-
-            _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
-            var bookingRepository = Scope.ServiceProvider.GetRequiredService<IBookingRepository>();
-            var scheduleQueryService = Scope.ServiceProvider.GetRequiredService<IScheduleQueryService>();
-            var bookingQueryService = Scope.ServiceProvider.GetRequiredService<IBookingQueryService>();
-            _unitOfWork = Scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-            _scheduleApplicationService = new ScheduleApplicationService(
-                _unitOfWork,
-                _scheduleRepository,
-                currentUser,
-                scheduleQueryService,
-                bookingQueryService);
-
-            _bookingApplicationService = new BookingApplicationService(
-                _unitOfWork,
-                bookingRepository,
-                _scheduleRepository,
-                currentUser);
+            _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
+            _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
+            _schedulesController = Scope.ServiceProvider.GetRequiredService<ISchedulesController>();
         }
 
         [Fact]
@@ -61,24 +33,30 @@ namespace Ethos.IntegrationTest
             var startDate = DateTime.Now;
             var endDate = startDate.AddHours(2);
 
-            var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            Guid scheduleId;
+            using (Scope.WithUser("admin"))
             {
-                Name = "Test schedule",
-                Description = "Description",
-                StartDate = startDate,
-                EndDate = endDate,
-            });
+                scheduleId = await _schedulesController.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = startDate,
+                    EndDate = endDate,
+                });
+            }
 
-            var bookingId = await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
+            var userDemo = await Scope.WithNewUser("demo");
+            await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
             {
                 ScheduleId = scheduleId,
                 StartDate = startDate,
                 EndDate = endDate,
             });
 
-            var bookings = await ApplicationDbContext.Bookings.CountAsync();
+            var booking = await ApplicationDbContext.Bookings.SingleAsync();
 
-            bookings.ShouldBeGreaterThan(0);
+            booking.UserId.ShouldBe(userDemo.User.Id);
+            booking.ScheduleId.ShouldBe(scheduleId);
         }
     }
 }

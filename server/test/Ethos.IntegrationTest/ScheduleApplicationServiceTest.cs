@@ -20,43 +20,21 @@ namespace Ethos.IntegrationTest
 {
     public class ScheduleApplicationServiceTest : BaseTest
     {
+        private readonly IScheduleRepository _scheduleRepository;
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;
-        private readonly IScheduleRepository _scheduleRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private static ApplicationUser _admin;
 
         public ScheduleApplicationServiceTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
-            // TODO proper setup
-            _admin = UserManager.FindByNameAsync(RoleConstants.Admin).Result;
-
-            var currentUser = Substitute.For<ICurrentUser>();
-            currentUser.GetCurrentUser().Returns(_admin);
-
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
-            var bookingRepository = Scope.ServiceProvider.GetRequiredService<IBookingRepository>();
-            var scheduleQueryService = Scope.ServiceProvider.GetRequiredService<IScheduleQueryService>();
-            var bookingQueryService = Scope.ServiceProvider.GetRequiredService<IBookingQueryService>();
-            _unitOfWork = Scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-            _scheduleApplicationService = new ScheduleApplicationService(
-                _unitOfWork,
-                _scheduleRepository,
-                currentUser,
-                scheduleQueryService,
-                bookingQueryService);
-
-            _bookingApplicationService = new BookingApplicationService(
-                _unitOfWork,
-                bookingRepository,
-                _scheduleRepository,
-                currentUser);
+            _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
+            _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
         }
 
         [Fact]
-        public async Task ShouldCreateABooking()
+        public async Task ShouldCreateSchedule_WithCurrentLoggedUser()
         {
+            var admin = await Scope.WithUser("admin");
             var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
             {
                 Name = "Test schedule",
@@ -65,11 +43,9 @@ namespace Ethos.IntegrationTest
                 EndDate = DateTime.Now.AddMonths(1),
             });
 
-            scheduleId.ShouldNotBe(Guid.Empty);
-
             var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
-            schedule.Organizer.Id.ShouldBe(_admin.Id);
+            schedule.Organizer.Id.ShouldBe(admin.User.Id);
         }
 
         [Fact]
@@ -77,13 +53,16 @@ namespace Ethos.IntegrationTest
         {
             var now = DateTime.Now;
 
-            var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            using (Scope.WithUser("admin"))
             {
-                Name = "Test schedule",
-                Description = "Description",
-                StartDate = now,
-                EndDate = now.AddMonths(1),
-            });
+                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = now,
+                    EndDate = now.AddMonths(1),
+                });
+            }
 
             var schedules = await _scheduleApplicationService.GetSchedules(now, now.AddMonths(1));
 
@@ -96,18 +75,21 @@ namespace Ethos.IntegrationTest
             var firstOctober = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
             var lastOctober = DateTime.Parse("2021-10-31T23:00:00").ToUniversalTime();
 
-            var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            using (Scope.WithUser("admin"))
             {
-                Name = "Test recurring schedule",
-                Description = "Recurring schedule every weekday at 9am",
-                StartDate = firstOctober,
-                EndDate = lastOctober,
-                DurationInMinutes = 120,
-                RecurringCronExpression = "0 09 * * MON-FRI" // every week day at 9am
+                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test recurring schedule",
+                    Description = "Recurring schedule every weekday at 9am",
+                    StartDate = firstOctober,
+                    EndDate = lastOctober,
+                    DurationInMinutes = 120,
+                    RecurringCronExpression = "0 09 * * MON-FRI" // every week day at 9am
+                });
+            }
 
-            });
-
-            var generatedSchedules = (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
+            var generatedSchedules =
+                (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
 
             generatedSchedules.Count().ShouldBe(21);
         }
@@ -118,25 +100,33 @@ namespace Ethos.IntegrationTest
             var startDate = DateTime.Now;
             var endDate = startDate.AddHours(2);
 
-            var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            Guid scheduleId;
+            using (Scope.WithUser("admin"))
             {
-                Name = "Test schedule",
-                Description = "Description",
-                StartDate = startDate,
-                EndDate = endDate,
-            });
+                scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = startDate,
+                    EndDate = endDate,
+                });
+            }
 
-            var bookingId = await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
+            using (await Scope.WithNewUser("userDemo", fullName: "User Demo"))
             {
-                ScheduleId = scheduleId,
-                StartDate = startDate,
-                EndDate = endDate,
-            });
+                await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
+                {
+                    ScheduleId = scheduleId,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                });
+            }
 
             var generatedSchedules = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).ToList();
 
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
+            generatedSchedules.Single().Bookings.Single().UserFullName.ShouldBe("User Demo");
         }
     }
 }

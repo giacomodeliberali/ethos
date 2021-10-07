@@ -22,7 +22,7 @@ namespace Ethos.EntityFrameworkCore.Query
                 await (from schedule in ApplicationDbContext.Schedules.AsNoTracking()
                 join user in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals user.Id
                 where schedule.StartDate <= startDate
-                where !schedule.EndDate.HasValue || schedule.EndDate > endDate
+                where !schedule.EndDate.HasValue || schedule.EndDate >= endDate
                 select new
                 {
                     Schedule = schedule,

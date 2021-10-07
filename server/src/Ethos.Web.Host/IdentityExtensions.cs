@@ -31,7 +31,7 @@ namespace Ethos.Web.Host
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtConfig:Secret"])),
-                        ValidateIssuer = true,
+                        ValidateIssuer = false, // // TODO verify
                         ValidateAudience = false, // TODO verify
                         ValidIssuer = configuration["JwtConfig:TokenIssuer"],
                         ValidAudience = configuration["JwtConfig:ValidAudience"],

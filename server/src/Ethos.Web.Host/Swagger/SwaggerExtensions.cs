@@ -12,6 +12,16 @@ namespace Ethos.Web.Host.Swagger
         {
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type =>
+                {
+                    if (type.IsNested)
+                    {
+                        return $"{type.DeclaringType!.Name}_{type.Name}";
+                    }
+
+                    return type.Name;
+                });
+
                 c.SwaggerGeneratorOptions.DocumentFilters.Add(new TypeScriptDocumentProcessor());
                 c.SwaggerGeneratorOptions.DocumentFilters.Add(new SortSchemasDocumentProcessor());
                 c.CustomOperationIds(apiDesc =>

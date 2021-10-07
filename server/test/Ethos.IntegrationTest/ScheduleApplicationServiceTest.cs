@@ -35,13 +35,13 @@ namespace Ethos.IntegrationTest
         public async Task ShouldCreateSchedule_WithCurrentLoggedUser()
         {
             var admin = await Scope.WithUser("admin");
-            var scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(1),
-            });
+            })).Id;
 
             var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
@@ -103,13 +103,13 @@ namespace Ethos.IntegrationTest
             Guid scheduleId;
             using (Scope.WithUser("admin"))
             {
-                scheduleId = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = startDate,
                     EndDate = endDate,
-                });
+                })).Id;
             }
 
             using (await Scope.WithNewUser("userDemo", fullName: "User Demo"))

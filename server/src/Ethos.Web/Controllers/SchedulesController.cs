@@ -28,7 +28,7 @@ namespace Ethos.Web.Controllers
         /// Create a new schedule to the current user.
         /// </summary>
         [HttpPost]
-        public async Task<Guid> CreateAsync(CreateScheduleRequestDto input)
+        public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
         {
             return await _scheduleApplicationService.CreateAsync(input);
         }

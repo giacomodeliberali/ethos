@@ -1,9 +1,8 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
-using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ethos.Web.Controllers
@@ -27,9 +26,27 @@ namespace Ethos.Web.Controllers
         /// Create a new booking for the current user.
         /// </summary>
         [HttpPost]
-        public async Task<Guid> CreateAsync(CreateBookingRequestDto input)
+        public async Task<CreateBookingReplyDto> CreateAsync(CreateBookingRequestDto input)
         {
             return await _bookingApplicationService.CreateAsync(input);
+        }
+
+        /// <summary>
+        /// Delete an existing booking.
+        /// </summary>
+        [HttpDelete]
+        public async Task DeleteAsync([Required] Guid id)
+        {
+            await _bookingApplicationService.DeleteAsync(id);
+        }
+
+        /// <summary>
+        /// Return the requested booking or null.
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<BookingDto> GetByIdAsync([Required] Guid id)
+        {
+            return await _bookingApplicationService.GetByIdAsync(id);
         }
     }
 }

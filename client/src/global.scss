@@ -40,6 +40,10 @@ html{
     --ion-font-family: 'JosefinSans';
 }
 
+ion-content{
+    --background: radial-gradient(circle at bottom right, var(--ion-color-primary-tint), var(--ion-color-primary));
+}
+
 ion-modal {
     &.bottom {
         align-items: flex-end;

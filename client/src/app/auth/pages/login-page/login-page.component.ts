@@ -34,8 +34,7 @@ export class LoginPageComponent extends BaseDirective{
   })
 
   constructor(
-    private modalCtrl: ModalController, 
-    private mediaSvc: MediaService, 
+    private modalCtrl: ModalController,
     private accountsSvc: AccountsService, 
     private userSvc: UserService,
     private loadingSvc: LoadingService,
@@ -52,14 +51,14 @@ export class LoginPageComponent extends BaseDirective{
     event.stopPropagation();
     const modal = await this.modalCtrl.create({
       component: ForgotPasswordModalComponent,
-      cssClass: this.mediaSvc.isSmartphone ? 'bottom' : '',
+      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
       mode: "ios"
     });
     await modal.present();
     const { data } = await modal.onWillDismiss();
     if(data?.email){
-      // Call reset password service
+      this.sendForgotPasswordEmail(data.email);
     }
   }
 
@@ -109,5 +108,20 @@ export class LoginPageComponent extends BaseDirective{
         })
       })
     }
+  }
+
+  private sendForgotPasswordEmail(email: string){
+    this.loadingSvc.startLoading(this, 'REGISTER', this.accountsSvc.sendPasswordResetLink(email), {message: 'Sto provando ad inviare la mail.'})
+      .subscribe({
+        next: response => {
+          this.toastSvc.addSuccessToast({
+            header: 'Mail inviata',
+            message: 'La mail è stata inviata con successo all\'indirizzo indicato. Se non la vedi controlla la posta indesiderata.'
+          })
+        },
+        error: error => this.toastSvc.addErrorToast({
+          message: 'Errore durante l\'invio della mail.'
+        })
+      })
   }
 }

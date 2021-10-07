@@ -6,7 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Domain.Entities;
@@ -189,7 +191,8 @@ namespace Ethos.Application.Identity
                 message = await reader.ReadToEndAsync();
             }
 
-            var spaLink = $"{_appSettings.BaseUrl}/auth/reset-password?email={user.Email}&resetToken={resetToken}";
+            var encodedToken = HttpUtility.UrlEncode(resetToken);
+            var spaLink = $"{_appSettings.BaseUrl}/auth/reset-password?email={user.Email}&resetToken={encodedToken}";
 
             message = message.Replace("{{resetLink}}", spaLink);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using AutoMapper;
 using Cronos;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Contracts.Schedule;
@@ -20,23 +21,26 @@ namespace Ethos.Application.Services
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleQueryService _scheduleQueryService;
         private readonly IBookingQueryService _bookingQueryService;
+        private readonly IMapper _mapper;
 
         public ScheduleApplicationService(
             IUnitOfWork unitOfWork,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IScheduleQueryService scheduleQueryService,
-            IBookingQueryService bookingQueryService)
+            IBookingQueryService bookingQueryService,
+            IMapper mapper)
         : base(unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
             _scheduleQueryService = scheduleQueryService;
             _bookingQueryService = bookingQueryService;
+            _mapper = mapper;
         }
 
         /// <inheritdoc />
-        public async Task<Guid> CreateAsync(CreateScheduleRequestDto input)
+        public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
         {
             var currentUser = await _currentUser.GetCurrentUser();
 
@@ -74,7 +78,10 @@ namespace Ethos.Application.Services
 
             await UnitOfWork.SaveChangesAsync();
 
-            return scheduleId;
+            return new CreateScheduleReplyDto()
+            {
+                Id = scheduleId,
+            };
         }
 
         /// <inheritdoc />

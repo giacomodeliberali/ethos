@@ -28,12 +28,11 @@ namespace Ethos.Web.Host
                 })
                 .AddJwtBearer("JwtBearer", options =>
                 {
-                    var identityOptions = new IdentityOptions();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtConfig:Secret"])),
                         ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateAudience = false, // TODO verify
                         ValidIssuer = configuration["JwtConfig:TokenIssuer"],
                         ValidAudience = configuration["JwtConfig:ValidAudience"],
                         ValidateLifetime = true,

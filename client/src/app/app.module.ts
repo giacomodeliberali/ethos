@@ -8,6 +8,7 @@ import { CoreModule } from "@core/core.module";
 import { TokenInterceptor } from "@core/interceptors/token.interceptor";
 import { API_BASE_URL } from "@core/services/ethos.generated.service";
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { navAnimation } from "@shared/animations/nav.animations";
 import { SharedModule } from "@shared/shared.module";
 import { environment } from "src/environments/environment";
 import { AppRoutingModule } from './app-routing.module';
@@ -21,7 +22,9 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule, 
     BrowserAnimationsModule, 
-    IonicModule.forRoot(), 
+    IonicModule.forRoot({
+      navAnimation
+    }), 
     AppRoutingModule, 
     ReactiveFormsModule, 
     SharedModule, 

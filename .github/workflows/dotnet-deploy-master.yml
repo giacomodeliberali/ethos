@@ -23,12 +23,15 @@ jobs:
           include-prerelease: false
 
       - name: dotnet build
+        working-directory: ./server
         run: dotnet build --configuration Release
 
       - name: dotnet test
+        working-directory: ./server
         run: dotnet build --no-restore
 
       - name: dotnet publish
+        working-directory: ./server
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job

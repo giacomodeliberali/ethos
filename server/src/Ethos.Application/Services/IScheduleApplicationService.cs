@@ -10,7 +10,7 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Create a new Schedule for the currently logged in organizer.
         /// </summary>
-        Task<Guid> CreateAsync(CreateScheduleRequestDto input);
+        Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input);
 
         /// <summary>
         /// Update an existing schedule.

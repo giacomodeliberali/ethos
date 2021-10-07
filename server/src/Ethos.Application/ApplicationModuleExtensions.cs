@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
+using Ethos.Application.Contracts.Booking;
+using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Application.Identity;
 using Ethos.Application.Seed;
 using Ethos.Application.Services;
+using Ethos.Domain.Entities;
 using Ethos.Query.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,6 +29,8 @@ namespace Ethos.Application
             serviceCollection.AddTransient<IScheduleApplicationService, ScheduleApplicationService>();
             serviceCollection.AddTransient<IBookingApplicationService, BookingApplicationService>();
 
+            serviceCollection.AddEthosAutoMapper();
+
             serviceCollection.AddDataSeedContributors();
         }
 
@@ -42,6 +47,17 @@ namespace Ethos.Application
             {
                 serviceCollection.AddTransient(dataSeedContributorInterface, type);
             }
+        }
+
+        private static void AddEthosAutoMapper(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddAutoMapper(options =>
+            {
+                options.CreateMap<Booking, BookingDto>();
+                options.CreateMap<Schedule, BookingDto.ScheduleDto>();
+                options.CreateMap<ApplicationUser, BookingDto.UserDto>();
+                options.CreateMap<ApplicationUser, UserDto>();
+            });
         }
     }
 }

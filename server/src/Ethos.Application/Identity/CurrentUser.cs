@@ -21,6 +21,12 @@ namespace Ethos.Application.Identity
 
         public async Task<ApplicationUser> GetCurrentUser()
         {
+            var currentUserId = GetCurrentUserId();
+            return await _userManager.FindByIdAsync(currentUserId.ToString());
+        }
+
+        public Guid GetCurrentUserId()
+        {
             var claimsPrincipal = _httpContextAccessor.HttpContext.User;
 
             var claim = claimsPrincipal.FindFirst(c =>
@@ -33,7 +39,7 @@ namespace Ethos.Application.Identity
                 throw new Exception("Not authorized!");
             }
 
-            return await _userManager.FindByIdAsync(claim.Value);
+            return Guid.Parse(claim.Value);
         }
     }
 }

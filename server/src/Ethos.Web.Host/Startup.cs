@@ -82,7 +82,7 @@ namespace Ethos.Web.Host
                 app.UseCors("DevCorsPolicy");
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandler>();
 
             app.UseRouting();

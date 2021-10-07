@@ -31,13 +31,11 @@ namespace Ethos.Web.Host
                 .CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.AddEnvironmentVariables(prefix: "Ethos_");
+                    config.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder
-                        .UseStartup<Startup>()
-                        .UseUrls("http://0.0.0.0:5001");
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }

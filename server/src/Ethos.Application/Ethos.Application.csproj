@@ -21,4 +21,9 @@
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Email\Templates\reset-password.html" />
+      <EmbeddedResource Include="Email\Templates\reset-password.html" />
+    </ItemGroup>
+
 </Project>

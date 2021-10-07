@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +28,7 @@ namespace Ethos.Application.Identity
         private readonly IEmailSender _emailSender;
         private readonly IUserQueryService _userQueryService;
         private readonly JwtConfig _jwtConfig;
+        private readonly AppSettings _appSettings;
 
         /// <summary>
         /// Creates a new IdentityService.
@@ -36,7 +39,8 @@ namespace Ethos.Application.Identity
             SignInManager<ApplicationUser> signInManager,
             IOptions<JwtConfig> jwtConfigOptions,
             IEmailSender emailSender,
-            IUserQueryService userQueryService)
+            IUserQueryService userQueryService,
+            IOptions<AppSettings> appSettingOptions)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -44,6 +48,7 @@ namespace Ethos.Application.Identity
             _emailSender = emailSender;
             _userQueryService = userQueryService;
             _jwtConfig = jwtConfigOptions.Value;
+            _appSettings = appSettingOptions.Value;
         }
 
         /// <inheritdoc />
@@ -174,9 +179,24 @@ namespace Ethos.Application.Identity
                 return;
             }
 
-            var resetLink = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            await _emailSender.SendEmail(user.Email, "Reset Link", $"Reset the password using the link '{resetLink}'");
+            string message;
+            var resourceName = "Ethos.Application.Email.Templates.reset-password.html";
+            await using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(stream!))
+            {
+                message = await reader.ReadToEndAsync();
+            }
+
+            var spaLink = $"{_appSettings.BaseUrl}/auth/reset-password?email={user.Email}&resetToken={resetToken}";
+
+            message = message.Replace("{{resetLink}}", spaLink);
+
+            await _emailSender.SendEmail(
+                recipient: user.Email,
+                subject: "Ethos Training - Reset password",
+                message);
         }
 
         /// <inheritdoc />

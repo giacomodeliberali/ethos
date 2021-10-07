@@ -3,6 +3,7 @@ using Ethos.Shared;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using MimeKit.Text;
 
 namespace Ethos.Application.Email
 {
@@ -21,7 +22,7 @@ namespace Ethos.Application.Email
             message.From.Add(new MailboxAddress(_emailConfig.Name, _emailConfig.UserName));
             message.To.Add(new MailboxAddress(string.Empty, recipient));
             message.Subject = subject;
-            message.Body = new TextPart("plain")
+            message.Body = new TextPart(TextFormat.Html)
             {
                 Text = text,
             };

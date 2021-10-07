@@ -3,6 +3,7 @@ using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +35,7 @@ namespace Ethos.Web.Host
             // register strongly typed configuration
             services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
             services.Configure<EmailConfig>(_configuration.GetSection(nameof(EmailConfig)));
+            services.Configure<AppSettings>(_configuration.GetSection(nameof(AppSettings)));
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -52,7 +54,7 @@ namespace Ethos.Web.Host
 
             services.AddEthosSwagger();
 
-            services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
+            services.AddCors(o => o.AddPolicy("AllowCorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
                     .AllowAnyMethod()
@@ -78,9 +80,9 @@ namespace Ethos.Web.Host
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
-
-                app.UseCors("DevCorsPolicy");
             }
+
+            app.UseCors("AllowCorsPolicy");
 
             app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandler>();

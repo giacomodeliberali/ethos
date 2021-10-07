@@ -16,6 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # client
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: npm ci     
+        working-directory: ./client
+        run: npm install
+
+      - name: build client     
+        working-directory: ./client
+        run: npm run build
+
+      # server
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:

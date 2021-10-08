@@ -56,7 +56,10 @@ jobs:
       # database
       - name: Generate migrations
         working-directory: ./server/src/Ethos.EntityFrameworkCore
-        run: dotnet ef --startup-project ../Ethos.Web.Host migrations script --idempotent -o "migrate.sql"  
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          dotnet ef --startup-project ../Ethos.Web.Host migrations script --idempotent -o "migrate.sql"  
 
       # upload migrate.sql as 'migration-script'
       - name: Upload SQL migration script

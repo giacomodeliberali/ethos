@@ -59,7 +59,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef
           dotnet tool restore
-          dotnet ef --startup-project ../Ethos.Web.Host migrations script --idempotent -o "migrate.sql"  
+          dotnet ef --no-build --startup-project ../Ethos.Web.Host migrations script --idempotent --output "migrate.sql"  
 
       # upload migrate.sql as 'migration-script'
       - name: Upload SQL migration script

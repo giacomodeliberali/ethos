@@ -2,10 +2,12 @@ using System;
 using System.Linq;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Identity;
+using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Email;
 using Ethos.Application.Identity;
 using Ethos.Application.Seed;
 using Ethos.Application.Services;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,9 @@ namespace Ethos.Application
             serviceCollection.AddTransient<ICurrentUser, CurrentUser>();
             serviceCollection.AddTransient<IScheduleApplicationService, ScheduleApplicationService>();
             serviceCollection.AddTransient<IBookingApplicationService, BookingApplicationService>();
+
+            // add guid generator
+            serviceCollection.AddSingleton<IGuidGenerator, SequentialGuidGenerator>();
 
             serviceCollection.AddEthosAutoMapper();
 
@@ -57,6 +62,7 @@ namespace Ethos.Application
                 options.CreateMap<Schedule, BookingDto.ScheduleDto>();
                 options.CreateMap<ApplicationUser, BookingDto.UserDto>();
                 options.CreateMap<ApplicationUser, UserDto>();
+                options.CreateMap<ApplicationUser, GeneratedScheduleDto.UserDto>();
             });
         }
     }

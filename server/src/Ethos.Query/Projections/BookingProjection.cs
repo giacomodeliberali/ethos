@@ -10,6 +10,10 @@ namespace Ethos.Query.Projections
 
         public string UserFullName { get; set; }
 
+        public string UserEmail { get; set; }
+
+        public string UserName { get; set; }
+
         public Guid ScheduleId { get; set; }
 
         public DateTime StartDate { get; set; }

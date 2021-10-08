@@ -41,5 +41,11 @@ namespace Ethos.Application.Identity
 
             return Guid.Parse(claim.Value);
         }
+
+        public async Task<bool> IsInRole(string role)
+        {
+            var currentUser = await GetCurrentUser();
+            return await _userManager.IsInRoleAsync(currentUser, role);
+        }
     }
 }

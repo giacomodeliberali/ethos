@@ -8,10 +8,12 @@ using Cronos;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.Query;
 using Ethos.Query.Services;
+using Ethos.Shared;
 
 namespace Ethos.Application.Services
 {
@@ -25,12 +27,13 @@ namespace Ethos.Application.Services
 
         public ScheduleApplicationService(
             IUnitOfWork unitOfWork,
+            IGuidGenerator guidGenerator,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IScheduleQueryService scheduleQueryService,
             IBookingQueryService bookingQueryService,
             IMapper mapper)
-        : base(unitOfWork)
+        : base(unitOfWork, guidGenerator)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
@@ -52,9 +55,11 @@ namespace Ethos.Application.Services
                 Guard.Against.Null(input.EndDate, nameof(input.EndDate));
 
                 schedule = Schedule.Factory.CreateNonRecurring(
+                    GuidGenerator.Create(),
                     currentUser,
                     input.Name,
                     input.Description,
+                    input.ParticipantsMaxNumber,
                     input.StartDate.Value,
                     input.EndDate.Value);
             }
@@ -65,22 +70,24 @@ namespace Ethos.Application.Services
                 Guard.Against.Null(input.RecurringCronExpression, nameof(input.RecurringCronExpression));
 
                 schedule = Schedule.Factory.CreateRecurring(
+                    GuidGenerator.Create(),
                     currentUser,
                     input.Name,
                     input.Description,
+                    input.ParticipantsMaxNumber,
                     input.StartDate.Value,
                     input.EndDate,
                     input.DurationInMinutes,
                     input.RecurringCronExpression);
             }
 
-            var scheduleId = await _scheduleRepository.CreateAsync(schedule);
+            await _scheduleRepository.CreateAsync(schedule);
 
             await UnitOfWork.SaveChangesAsync();
 
             return new CreateScheduleReplyDto()
             {
-                Id = scheduleId,
+                Id = schedule.Id,
             };
         }
 
@@ -90,7 +97,7 @@ namespace Ethos.Application.Services
             var schedule = await _scheduleRepository.GetByIdAsync(input.Id);
 
             schedule
-                .UpdateNameAndDescription(input.Name, input.Description)
+                .UpdateNameAndDescription(input.Name, input.Description, input.ParticipantsMaxNumber)
                 .UpdateDateTime(
                     input.StartDate!.Value,
                     input.EndDate,
@@ -115,6 +122,8 @@ namespace Ethos.Application.Services
         {
             var schedules = await _scheduleQueryService.GetInRangeAsync(from, to);
 
+            var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
+
             var result = new List<GeneratedScheduleDto>();
 
             foreach (var schedule in schedules)
@@ -130,9 +139,10 @@ namespace Ethos.Application.Services
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
+                        ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
                         StartDate = startDate,
                         EndDate = endDate,
-                        Organizer = new UserDto()
+                        Organizer = new GeneratedScheduleDto.UserDto()
                         {
                             Id = schedule.OrganizerId,
                             FullName = schedule.OrganizerFullName,
@@ -142,7 +152,14 @@ namespace Ethos.Application.Services
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            UserFullName = b.UserFullName,
+                            User = isAdmin ? new GeneratedScheduleDto.UserDto()
+                            {
+                                Id = b.UserId,
+                                FullName = b.UserFullName,
+                                Email = b.UserEmail,
+                                UserName = b.UserName,
+                            }
+                                : null,
                         }),
                     });
                     continue;
@@ -169,9 +186,10 @@ namespace Ethos.Application.Services
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
+                        ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
                         StartDate = startDate,
                         EndDate = endDate,
-                        Organizer = new UserDto()
+                        Organizer = new GeneratedScheduleDto.UserDto()
                         {
                             Id = schedule.OrganizerId,
                             FullName = schedule.OrganizerFullName,
@@ -181,7 +199,14 @@ namespace Ethos.Application.Services
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            UserFullName = b.UserFullName,
+                            User = isAdmin ? new GeneratedScheduleDto.UserDto()
+                                {
+                                    Id = b.UserId,
+                                    FullName = b.UserFullName,
+                                    Email = b.UserEmail,
+                                    UserName = b.UserName,
+                                }
+                                : null,
                         }),
                     });
                 }

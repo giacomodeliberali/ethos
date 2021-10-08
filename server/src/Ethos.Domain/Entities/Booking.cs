@@ -20,6 +20,7 @@ namespace Ethos.Domain.Entities
         public static class Factory
         {
             public static Booking Create(
+                Guid guid,
                 Schedule schedule,
                 ApplicationUser user,
                 DateTime startDate,
@@ -27,6 +28,7 @@ namespace Ethos.Domain.Entities
             {
                 return new Booking()
                 {
+                    Id = guid,
                     User = user,
                     StartDate = startDate,
                     EndDate = endDate,

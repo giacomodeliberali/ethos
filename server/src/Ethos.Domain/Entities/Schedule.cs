@@ -66,16 +66,22 @@ namespace Ethos.Domain.Entities
             }
         }
 
+        /// <summary>
+        /// The max number of people that can participate to each schedule.
+        /// </summary>
+        public int ParticipantsMaxNumber { get; private set; }
+
         private Schedule()
         {
         }
 
-        public Schedule UpdateNameAndDescription(string name, string description)
+        public Schedule UpdateNameAndDescription(string name, string description, int participantsMaxNumber)
         {
             Guard.Against.NullOrEmpty(name, nameof(name));
             Guard.Against.NullOrEmpty(description, nameof(description));
             Name = name;
             Description = description;
+            ParticipantsMaxNumber = participantsMaxNumber;
             return this;
         }
 
@@ -117,9 +123,11 @@ namespace Ethos.Domain.Entities
         public static class Factory
         {
             public static Schedule CreateRecurring(
+                Guid guid,
                 ApplicationUser organizer,
                 string name,
                 string description,
+                int participantsMaxNumber,
                 DateTime startDate,
                 DateTime? endDate,
                 int duration,
@@ -132,9 +140,11 @@ namespace Ethos.Domain.Entities
 
                 return new Schedule()
                 {
+                    Id = guid,
                     Organizer = organizer,
                     Name = name,
                     Description = description,
+                    ParticipantsMaxNumber = participantsMaxNumber,
                     StartDate = startDate,
                     EndDate = endDate,
                     DurationInMinutes = duration,
@@ -143,9 +153,11 @@ namespace Ethos.Domain.Entities
             }
 
             public static Schedule CreateNonRecurring(
+                Guid guid,
                 ApplicationUser organizer,
                 string name,
                 string description,
+                int participantsMaxNumber,
                 DateTime startDate,
                 DateTime endDate)
             {
@@ -155,9 +167,11 @@ namespace Ethos.Domain.Entities
 
                 return new Schedule()
                 {
+                    Id = guid,
                     Organizer = organizer,
                     Name = name,
                     Description = description,
+                    ParticipantsMaxNumber = participantsMaxNumber,
                     StartDate = startDate,
                     EndDate = endDate,
                     DurationInMinutes = (int)(endDate - startDate).TotalMinutes,
@@ -172,7 +186,8 @@ namespace Ethos.Domain.Entities
                 string recurringExpression,
                 int duration,
                 string name,
-                string description)
+                string description,
+                int participantsMaxNumber)
             {
                 return new Schedule()
                 {
@@ -184,6 +199,7 @@ namespace Ethos.Domain.Entities
                     DurationInMinutes = duration,
                     Name = name,
                     Description = description,
+                    ParticipantsMaxNumber = participantsMaxNumber,
                 };
             }
         }

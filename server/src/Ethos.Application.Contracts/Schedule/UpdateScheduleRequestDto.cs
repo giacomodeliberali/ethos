@@ -19,8 +19,11 @@ namespace Ethos.Application.Contracts.Schedule
 
         public DateTime? EndDate { get; set; }
 
-        public int DurationInMinutes { get; set; }
+        public int? DurationInMinutes { get; set; }
 
         public string RecurringCronExpression { get; set; }
+
+        [Required]
+        public int ParticipantsMaxNumber { get; set; }
     }
 }

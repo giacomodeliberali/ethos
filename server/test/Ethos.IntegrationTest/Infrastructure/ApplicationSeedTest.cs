@@ -6,11 +6,11 @@ using Ethos.Web.Host;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest
+namespace Ethos.IntegrationTest.Infrastructure
 {
-    public class UserManagerTest : BaseTest
+    public class ApplicationSeedTest : BaseIntegrationTest
     {
-        public UserManagerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
+        public ApplicationSeedTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
         }
 

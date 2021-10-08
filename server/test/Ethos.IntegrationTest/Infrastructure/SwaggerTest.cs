@@ -1,16 +1,13 @@
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Ethos.IntegrationTest.Setup;
-using Ethos.Shared;
 using Ethos.Web.Host;
-using Microsoft.AspNetCore.Http;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest
+namespace Ethos.IntegrationTest.Infrastructure
 {
-    public class SwaggerTest : BaseTest
+    public class SwaggerTest : BaseIntegrationTest
     {
         public SwaggerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {

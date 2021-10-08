@@ -3,22 +3,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
-using Ethos.Application.Identity;
 using Ethos.Application.Services;
-using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
-using Ethos.Query.Services;
-using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest
+namespace Ethos.IntegrationTest.ApplicationServices
 {
-    public class ScheduleApplicationServiceTest : BaseTest
+    public class ScheduleApplicationServiceTest : BaseIntegrationTest
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IScheduleApplicationService _scheduleApplicationService;
@@ -112,21 +107,20 @@ namespace Ethos.IntegrationTest
                 })).Id;
             }
 
-            using (await Scope.WithNewUser("userDemo", fullName: "User Demo"))
+            await Scope.WithNewUser("userDemo", fullName: "User Demo");
+
+            await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
             {
-                await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
-                {
-                    ScheduleId = scheduleId,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                });
-            }
+                ScheduleId = scheduleId,
+                StartDate = startDate,
+                EndDate = endDate,
+            });
 
             var generatedSchedules = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).ToList();
 
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
-            generatedSchedules.Single().Bookings.Single().UserFullName.ShouldBe("User Demo");
+            generatedSchedules.Single().Bookings.Single().User.ShouldBeNull();
         }
     }
 }

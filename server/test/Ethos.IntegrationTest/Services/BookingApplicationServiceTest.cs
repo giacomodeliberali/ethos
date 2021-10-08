@@ -10,9 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest
+namespace Ethos.IntegrationTest.ApplicationServices
 {
-    public class BookingApplicationServiceTest : BaseTest
+    public class BookingApplicationServiceTest : BaseIntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;

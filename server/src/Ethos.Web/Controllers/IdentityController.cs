@@ -11,13 +11,13 @@ namespace Ethos.Web.Controllers
     /// <summary>
     ///     Manages all the operations on identity, such as user creation, authentication and role management.
     /// </summary>
-    [Route("api/accounts")]
+    [Route("api/identity")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
-        public AccountsController(IIdentityService identityService)
+        public IdentityController(IIdentityService identityService)
         {
             _identityService = identityService;
         }
@@ -62,13 +62,13 @@ namespace Ethos.Web.Controllers
         }
 
         /// <summary>
-        ///     Return the list of all registered users.
+        ///     Return the list af all users with athe 'Admin' role.
         /// </summary>
-        [Authorize(Roles = RoleConstants.Admin)]
+        [Authorize]
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAdminsAsync()
         {
-            return await _identityService.GetUsersAsync();
+            return await _identityService.GetAllAdminsAsync();
         }
     }
 }

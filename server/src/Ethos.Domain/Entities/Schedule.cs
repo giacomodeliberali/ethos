@@ -120,6 +120,13 @@ namespace Ethos.Domain.Entities
             return this;
         }
 
+        public Schedule UpdateOrganizer(ApplicationUser organizer)
+        {
+            Guard.Against.Null(organizer, nameof(organizer));
+            Organizer = organizer;
+            return this;
+        }
+
         public static class Factory
         {
             public static Schedule CreateRecurring(

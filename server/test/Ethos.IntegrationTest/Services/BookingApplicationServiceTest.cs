@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest.ApplicationServices
+namespace Ethos.IntegrationTest.Services
 {
     public class BookingApplicationServiceTest : BaseIntegrationTest
     {
@@ -31,7 +31,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
             var endDate = startDate.AddHours(2);
 
             Guid scheduleId;
-            using (Scope.WithUser("admin"))
+            using (var admin = await Scope.WithUser("admin"))
             {
                 scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
@@ -39,6 +39,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
                     Description = "Description",
                     StartDate = startDate,
                     EndDate = endDate,
+                    OrganizerId = admin.User.Id,
                 })).Id;
             }
 

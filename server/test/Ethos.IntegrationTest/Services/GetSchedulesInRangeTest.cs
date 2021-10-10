@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest.ApplicationServices
+namespace Ethos.IntegrationTest.Services
 {
     public class GetSchedulesInRangeTest : BaseIntegrationTest
     {
@@ -32,7 +32,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
             var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
 
             CreateScheduleReplyDto reply;
-            using (await Scope.WithUser("admin"))
+            using (var admin = await Scope.WithUser("admin"))
             {
                 reply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
@@ -41,6 +41,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
                     StartDate = startDate,
                     EndDate = endDate,
                     DurationInMinutes = 120,
+                    OrganizerId = admin.User.Id,
                 });
             }
 
@@ -67,7 +68,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
             var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
 
             CreateScheduleReplyDto reply;
-            using (await Scope.WithUser("admin"))
+            using (var admin = await Scope.WithUser("admin"))
             {
                 reply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
@@ -76,6 +77,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
                     StartDate = startDate,
                     EndDate = endDate,
                     DurationInMinutes = 120,
+                    OrganizerId = admin.User.Id,
                 });
             }
 

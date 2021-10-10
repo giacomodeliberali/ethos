@@ -44,6 +44,6 @@ namespace Ethos.Application.Identity
         /// <summary>
         /// Return the list of all registered users.
         /// </summary>
-        Task<IEnumerable<UserDto>> GetUsersAsync();
+        Task<IEnumerable<UserDto>> GetAllAdminsAsync();
     }
 }

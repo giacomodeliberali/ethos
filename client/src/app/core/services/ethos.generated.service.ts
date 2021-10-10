@@ -18,130 +18,6 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
     providedIn: 'root'
 })
-export class AccountsService extends NswagBaseClass {
-    private http: HttpClient;
-    private baseUrl: string;
-
-    constructor(@Inject(HttpClient) configuration: HttpClient, @Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        super(configuration);
-        this.http = http;
-        this.baseUrl = baseUrl;
-    }
-
-    /**
-     * Try to authenticate the given user.
-     * @param body The user to authenticate.
-     * @return Success
-     */
-    authenticate(body: LoginRequestDto): Observable<LoginResponseDto> {
-        let url_ = this.baseUrl + "/api/accounts/authenticate";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.processRequest("post", url_, options_, false);
-    }
-
-    /**
-     * Create a new user in the system with the default role.
-     * @param body The user to create.
-     * @return Success
-     */
-    registerUser(body: RegisterRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/accounts/register";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
-
-        return this.processRequest("post", url_, options_, false);
-    }
-
-    /**
-     * Send the password reset link.
-     * @return Success
-     */
-    sendPasswordResetLink(email: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/accounts/send-password-reset-link?";
-        if (email === undefined || email === null)
-            throw new Error("The parameter 'email' must be defined and cannot be null.");
-        else
-            url_ += "email=" + encodeURIComponent("" + email) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.processRequest("post", url_, options_, false);
-    }
-
-    /**
-     * Reset the password using the reset link.
-     * @return Success
-     */
-    resetPassword(body: ResetPasswordRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/accounts/reset-password";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
-
-        return this.processRequest("post", url_, options_, false);
-    }
-
-    /**
-     * Return the list of all registered users.
-     * @return Success
-     */
-    getAllUsers(): Observable<UserDto[]> {
-        let url_ = this.baseUrl + "/api/accounts";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.processRequest("get", url_, options_, false);
-    }
-}
-
-@Injectable({
-    providedIn: 'root'
-})
 export class BookingsService extends NswagBaseClass {
     private http: HttpClient;
     private baseUrl: string;
@@ -206,6 +82,130 @@ export class BookingsService extends NswagBaseClass {
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.processRequest("get", url_, options_, false);
+    }
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class IdentityService extends NswagBaseClass {
+    private http: HttpClient;
+    private baseUrl: string;
+
+    constructor(@Inject(HttpClient) configuration: HttpClient, @Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        super(configuration);
+        this.http = http;
+        this.baseUrl = baseUrl;
+    }
+
+    /**
+     * Try to authenticate the given user.
+     * @param body The user to authenticate.
+     * @return Success
+     */
+    authenticate(body: LoginRequestDto): Observable<LoginResponseDto> {
+        let url_ = this.baseUrl + "/api/identity/authenticate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.processRequest("post", url_, options_, false);
+    }
+
+    /**
+     * Create a new user in the system with the default role.
+     * @param body The user to create.
+     * @return Success
+     */
+    registerUser(body: RegisterRequestDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/identity/register";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.processRequest("post", url_, options_, false);
+    }
+
+    /**
+     * Send the password reset link.
+     * @return Success
+     */
+    sendPasswordResetLink(email: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/identity/send-password-reset-link?";
+        if (email === undefined || email === null)
+            throw new Error("The parameter 'email' must be defined and cannot be null.");
+        else
+            url_ += "email=" + encodeURIComponent("" + email) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.processRequest("post", url_, options_, false);
+    }
+
+    /**
+     * Reset the password using the reset link.
+     * @return Success
+     */
+    resetPassword(body: ResetPasswordRequestDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/identity/reset-password";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.processRequest("post", url_, options_, false);
+    }
+
+    /**
+     * Return the list af all users with athe 'Admin' role.
+     * @return Success
+     */
+    getAllAdmins(): Observable<UserDto[]> {
+        let url_ = this.baseUrl + "/api/identity";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -366,15 +366,25 @@ export interface CreateScheduleRequestDto {
     name: string;
     description: string;
     startDate: string;
+    /** If no value is specified it must contain a RecurringCronExpression. */
     endDate?: string | null;
+    /** If not recurring this must be EndDate - StartDate.
+If recurring it represent the duration of the schedule. */
     durationInMinutes?: number;
+    /** A CRON expression to indicate this schedule is recurring. */
     recurringCronExpression?: string | null;
+    /** Defaults to zero if no limit is required. */
     participantsMaxNumber: number;
+    /** The id of the organizer of this schedule. */
+    organizerId: string;
 }
 
+/** Every exception will be serialized to the client wrapped in this class. */
 export interface ExceptionDto {
     message: string;
+    /** Visible only during development. */
     stackTrace?: string | null;
+    /** Optional inner exception. */
     innerException?: ExceptionDto | null;
 }
 
@@ -386,7 +396,7 @@ export interface GeneratedScheduleDto {
     name: string;
     description: string;
     bookings: GeneratedScheduleDto_BookingDto[];
-    participantsMaxNumber?: number | null;
+    participantsMaxNumber: number;
 }
 
 export interface GeneratedScheduleDto_BookingDto {
@@ -441,9 +451,12 @@ export interface UpdateScheduleRequestDto {
     description: string;
     startDate: string;
     endDate?: string | null;
-    durationInMinutes?: number | null;
+    /** If not recurring this must be EndDate - StartDate.
+If recurring it represent the duration of the schedule. */
+    durationInMinutes: number;
     recurringCronExpression?: string | null;
     participantsMaxNumber: number;
+    organizerId: string;
 }
 
 export interface UserDto {

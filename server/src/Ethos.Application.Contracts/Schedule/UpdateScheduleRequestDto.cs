@@ -30,5 +30,8 @@ namespace Ethos.Application.Contracts.Schedule
 
         [Required]
         public int ParticipantsMaxNumber { get; set; }
+
+        [Required]
+        public Guid OrganizerId { get; set; }
     }
 }

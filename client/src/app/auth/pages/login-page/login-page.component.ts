@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BaseDirective } from "@core/directives";
-import { AccountsService, LoginRequestDto, RegisterRequestDto } from "@core/services/ethos.generated.service";
+import { IdentityService, LoginRequestDto, RegisterRequestDto } from "@core/services/ethos.generated.service";
 import { MediaService } from "@core/services/media.service";
 import { UserService } from "@core/services/user.service";
 import { ModalController } from "@ionic/angular";
@@ -35,7 +35,7 @@ export class LoginPageComponent extends BaseDirective{
 
   constructor(
     private modalCtrl: ModalController,
-    private accountsSvc: AccountsService, 
+    private identityService: IdentityService, 
     private userSvc: UserService,
     private loadingSvc: LoadingService,
     private router: Router,
@@ -72,7 +72,7 @@ export class LoginPageComponent extends BaseDirective{
   private login(){
     if(this.loginForm.valid){
       const loginValue: LoginRequestDto = this.loginForm.value;
-      this.loadingSvc.startLoading(this, 'LOGIN', this.accountsSvc.authenticate(loginValue), {
+      this.loadingSvc.startLoading(this, 'LOGIN', this.identityService.authenticate(loginValue), {
         message: "Sto eseguendo il login"
       })
       .subscribe({
@@ -94,7 +94,7 @@ export class LoginPageComponent extends BaseDirective{
   private register(){
     if(this.registerForm.valid){
       const registerValue: RegisterRequestDto = this.registerForm.value;
-      this.loadingSvc.startLoading(this, 'REGISTER', this.accountsSvc.registerUser(registerValue), {message: 'Sto creando il tuo profilo'})
+      this.loadingSvc.startLoading(this, 'REGISTER', this.identityService.registerUser(registerValue), {message: 'Sto creando il tuo profilo'})
       .subscribe({
         next: response => {
           this.toastSvc.addSuccessToast({
@@ -111,7 +111,7 @@ export class LoginPageComponent extends BaseDirective{
   }
 
   private sendForgotPasswordEmail(email: string){
-    this.loadingSvc.startLoading(this, 'REGISTER', this.accountsSvc.sendPasswordResetLink(email), {message: 'Sto provando ad inviare la mail.'})
+    this.loadingSvc.startLoading(this, 'REGISTER', this.identityService.sendPasswordResetLink(email), {message: 'Sto provando ad inviare la mail.'})
       .subscribe({
         next: response => {
           this.toastSvc.addSuccessToast({

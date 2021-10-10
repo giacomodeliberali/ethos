@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
+using AutoMapper;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
 using Ethos.Domain.Entities;
@@ -29,6 +30,7 @@ namespace Ethos.Application.Identity
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IUserQueryService _userQueryService;
+        private readonly IMapper _mapper;
         private readonly JwtConfig _jwtConfig;
         private readonly AppSettings _appSettings;
 
@@ -42,13 +44,15 @@ namespace Ethos.Application.Identity
             IOptions<JwtConfig> jwtConfigOptions,
             IEmailSender emailSender,
             IUserQueryService userQueryService,
-            IOptions<AppSettings> appSettingOptions)
+            IOptions<AppSettings> appSettingOptions,
+            IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _userQueryService = userQueryService;
+            _mapper = mapper;
             _jwtConfig = jwtConfigOptions.Value;
             _appSettings = appSettingOptions.Value;
         }
@@ -222,18 +226,10 @@ namespace Ethos.Application.Identity
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<UserDto>> GetUsersAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAdminsAsync()
         {
-            var users = await _userQueryService.GetAllAsync();
-
-            return users.Select(u => new UserDto()
-            {
-                Id = u.Id,
-                Email = u.Email,
-                FullName = u.FullName,
-                UserName = u.UserName,
-                Roles = u.Roles,
-            });
+            var users = await _userQueryService.GetAllAdminsAsync();
+            return users.Select(u => _mapper.Map<UserDto>(u));
         }
     }
 }

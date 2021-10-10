@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BaseDirective } from "@core/directives";
-import { AccountsService } from "@core/services/ethos.generated.service";
+import { IdentityService } from "@core/services/ethos.generated.service";
 import { LoadingService } from "@shared/services/loading.service";
 import { ToastService } from "@shared/services/toast.service";
 import { Observable } from "rxjs";
@@ -24,7 +24,7 @@ export class ResetPasswordPageComponent extends BaseDirective {
   constructor(
     private router: Router, 
     private route: ActivatedRoute,
-    private accountsSvc: AccountsService,
+    private identityService: IdentityService,
     private loadingSvc: LoadingService,
     private toastSvc: ToastService) { 
       super();
@@ -44,7 +44,7 @@ export class ResetPasswordPageComponent extends BaseDirective {
             throw new Error();
           return [email, token]
         }),
-        switchMap(_ => this.loadingSvc.startLoading(this, 'RESET_PASSWORD', this.accountsSvc.resetPassword({
+        switchMap(_ => this.loadingSvc.startLoading(this, 'RESET_PASSWORD', this.identityService.resetPassword({
           email: this.email,
           resetToken: this.resetToken,
           newPassword: this.newPasswordForm.get('password').value

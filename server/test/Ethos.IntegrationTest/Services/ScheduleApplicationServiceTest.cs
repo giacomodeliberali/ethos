@@ -4,14 +4,16 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
+using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
+using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest.ApplicationServices
+namespace Ethos.IntegrationTest.Services
 {
     public class ScheduleApplicationServiceTest : BaseIntegrationTest
     {
@@ -36,6 +38,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
                 Description = "Description",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(1),
+                OrganizerId = admin.User.Id,
             })).Id;
 
             var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
@@ -48,16 +51,16 @@ namespace Ethos.IntegrationTest.ApplicationServices
         {
             var now = DateTime.Now;
 
-            using (Scope.WithUser("admin"))
+            var admin = await Scope.WithUser("admin");
+
+            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
             {
-                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
-                {
-                    Name = "Test schedule",
-                    Description = "Description",
-                    StartDate = now,
-                    EndDate = now.AddMonths(1),
-                });
-            }
+                Name = "Test schedule",
+                Description = "Description",
+                StartDate = now,
+                EndDate = now.AddMonths(1),
+                OrganizerId = admin.User.Id,
+            });
 
             var schedules = await _scheduleApplicationService.GetSchedules(now, now.AddMonths(1));
 
@@ -70,18 +73,19 @@ namespace Ethos.IntegrationTest.ApplicationServices
             var firstOctober = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
             var lastOctober = DateTime.Parse("2021-10-31T23:00:00").ToUniversalTime();
 
-            using (Scope.WithUser("admin"))
+            using var admin = await Scope.WithUser("admin");
+
+            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
             {
-                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
-                {
-                    Name = "Test recurring schedule",
-                    Description = "Recurring schedule every weekday at 9am",
-                    StartDate = firstOctober,
-                    EndDate = lastOctober,
-                    DurationInMinutes = 120,
-                    RecurringCronExpression = "0 09 * * MON-FRI" // every week day at 9am
-                });
-            }
+                Name = "Test recurring schedule",
+                Description = "Recurring schedule every weekday at 9am",
+                StartDate = firstOctober,
+                EndDate = lastOctober,
+                DurationInMinutes = 120,
+                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
+                OrganizerId = admin.User.Id,
+            });
+
 
             var generatedSchedules =
                 (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
@@ -96,7 +100,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
             var endDate = startDate.AddHours(2);
 
             Guid scheduleId;
-            using (Scope.WithUser("admin"))
+            using (var admin = await Scope.WithUser("admin"))
             {
                 scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
                 {
@@ -104,6 +108,7 @@ namespace Ethos.IntegrationTest.ApplicationServices
                     Description = "Description",
                     StartDate = startDate,
                     EndDate = endDate,
+                    OrganizerId = admin.User.Id,
                 })).Id;
             }
 
@@ -121,6 +126,54 @@ namespace Ethos.IntegrationTest.ApplicationServices
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
             generatedSchedules.Single().Bookings.Single().User.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task ShouldThrowError_WhenOrganizerIsNotAdmin()
+        {
+            var admin = await Scope.WithUser("admin");
+            var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
+
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddMonths(1),
+                    OrganizerId = demoUser.Id,
+                });
+            });
+        }
+
+        [Fact]
+        public async Task ShouldThrowError_WhenOrganizerIsNotAdmin_DuringUpdate()
+        {
+            var admin = await Scope.WithUser("admin");
+            var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
+
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Test schedule",
+                Description = "Description",
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddMonths(1),
+                OrganizerId = admin.User.Id,
+            });
+
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
+                {
+                    Id = scheduleReplyDto.Id,
+                    Name = "Test schedule up",
+                    Description = "Description up",
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddMonths(1),
+                    OrganizerId = demoUser.Id,
+                });
+            });
         }
     }
 }

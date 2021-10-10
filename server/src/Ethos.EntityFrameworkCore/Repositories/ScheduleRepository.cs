@@ -75,6 +75,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleData.DurationInMinutes = schedule.DurationInMinutes;
             scheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
             scheduleData.ParticipantsMaxNumber = schedule.ParticipantsMaxNumber;
+            scheduleData.OrganizerId = schedule.Organizer.Id;
         }
     }
 }

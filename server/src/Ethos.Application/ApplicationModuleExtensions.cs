@@ -9,6 +9,7 @@ using Ethos.Application.Seed;
 using Ethos.Application.Services;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
+using Ethos.Query.Projections;
 using Ethos.Query.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -63,6 +64,7 @@ namespace Ethos.Application
                 options.CreateMap<ApplicationUser, BookingDto.UserDto>();
                 options.CreateMap<ApplicationUser, UserDto>();
                 options.CreateMap<ApplicationUser, GeneratedScheduleDto.UserDto>();
+                options.CreateMap<UserProjection, UserDto>();
             });
         }
     }

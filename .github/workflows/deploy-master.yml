@@ -18,9 +18,14 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      
       - name: npm ci     
         working-directory: ./client
         run: npm ci
+      
+      - name: npm run lint  
+        working-directory: ./client
+        run: npm run lint
 
       - name: build client     
         working-directory: ./client

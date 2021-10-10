@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,14 +23,14 @@ export class InputComponent implements ControlValueAccessor, OnChanges{
   @Input()
   name: string;
   @Input()
-  isValid: boolean = true;
+  isValid = true;
   @Input()
-  errorMessage: string = "Il campo non è valido";
-  @HostBinding('class.input-focused') isFocused: boolean = false;
-  @HostBinding('class.error') _isNotValid: boolean = false;
+  errorMessage = 'Il campo non è valido';
+  @HostBinding('class.input-focused') isFocused = false;
+  @HostBinding('class.error') _isNotValid = false;
 
-  showPassword: boolean = false;
- 
+  showPassword = false;
+
   private _value: string;
   @Input()
   set value(val: string){
@@ -78,7 +78,9 @@ export class InputComponent implements ControlValueAccessor, OnChanges{
   }
 
   changeFocus(focus: boolean){
-    focus || this.onTouched(); 
+    if(!focus){
+      this.onTouched();
+    };
     this.isFocused = focus;
   }
 

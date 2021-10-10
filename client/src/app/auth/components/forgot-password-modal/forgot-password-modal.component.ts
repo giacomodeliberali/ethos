@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ModalController } from "@ionic/angular";
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-forgot-password-modal',
@@ -11,7 +11,7 @@ export class ForgotPasswordModalComponent {
 
   forgotPasswordForm: FormGroup = new FormGroup({
     email: new FormControl('', [ Validators.required, Validators.email])
-  })
+  });
 
   constructor(private modalCtrl: ModalController) { }
 

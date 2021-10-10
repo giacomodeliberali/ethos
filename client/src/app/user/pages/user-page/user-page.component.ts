@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { MediaService } from "@core/services/media.service";
-import { IonSlides } from "@ionic/angular";
+import { MediaService } from '@core/services/media.service';
+import { IonSlides } from '@ionic/angular';
 
 @Component({
   selector: 'app-user-page',
@@ -9,7 +9,10 @@ import { IonSlides } from "@ionic/angular";
 })
 export class UserPageComponent {
 
-  slides = ['Uno', 'Due', 'Tre', 'Quattro', 'Cinque', 'Sei', 'Sette', 'Otto']
+
+  @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
+
+  slides = ['Uno', 'Due', 'Tre', 'Quattro', 'Cinque', 'Sei', 'Sette', 'Otto'];
 
   slideOpts = {
     // Default parameters
@@ -24,9 +27,7 @@ export class UserPageComponent {
         slidesPerView: 5
       }
     }
-  }
-
-  @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
+  };
 
 
 

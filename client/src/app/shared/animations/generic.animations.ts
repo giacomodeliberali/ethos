@@ -14,7 +14,7 @@ export const enterFromRightAnimation = trigger('enterFromRightAnimation', [
             transform: 'translateX(100%)'
         }))
     ]),
-])
+]);
 
 export const enterFromTopAnimation = trigger('enterFromTopAnimation', [
     transition(':enter', [
@@ -30,4 +30,4 @@ export const enterFromTopAnimation = trigger('enterFromTopAnimation', [
             transform: 'translateY(-100%)'
         }))
     ]),
-])
+]);

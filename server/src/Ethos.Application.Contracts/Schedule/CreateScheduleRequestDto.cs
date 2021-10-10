@@ -17,12 +17,25 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public DateTime? StartDate { get; set; }
 
+        /// <summary>
+        /// If no value is specified it must contain a RecurringCronExpression.
+        /// </summary>
         public DateTime? EndDate { get; set; }
 
+        /// <summary>
+        /// If not recurring this must be EndDate - StartDate.
+        /// If recurring it represent the duration of the schedule.
+        /// </summary>
         public int DurationInMinutes { get; set; }
 
+        /// <summary>
+        /// A CRON expression to indicate this schedule is recurring.
+        /// </summary>
         public string RecurringCronExpression { get; set; }
 
+        /// <summary>
+        /// Defaults to zero if no limit is required.
+        /// </summary>
         [Required]
         public int ParticipantsMaxNumber { get; set; }
     }

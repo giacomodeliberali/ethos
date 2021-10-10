@@ -27,7 +27,8 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public IEnumerable<BookingDto> Bookings { get; set; }
 
-        public int? ParticipantsMaxNumber { get; set; }
+        [Required]
+        public int ParticipantsMaxNumber { get; set; }
 
         public class BookingDto
         {

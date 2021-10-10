@@ -10,7 +10,7 @@ namespace Ethos.Query.Projections
 
         public string Description { get; set; }
 
-        public int? ParticipantsMaxNumber { get; set; }
+        public int ParticipantsMaxNumber { get; set; }
 
         public Guid OrganizerId { get; set; }
 

@@ -28,7 +28,7 @@ namespace Ethos.Web.Controllers
         /// Create a new schedule to the current user.
         /// </summary>
         [HttpPost]
-        public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
+        public async Task<CreateScheduleReplyDto> CreateScheduleAsync([Required] CreateScheduleRequestDto input)
         {
             return await _scheduleApplicationService.CreateAsync(input);
         }
@@ -37,7 +37,7 @@ namespace Ethos.Web.Controllers
         /// Generate (in memory) all the schedules that are in the given interval.
         /// </summary>
         [HttpGet]
-        public async Task<IEnumerable<GeneratedScheduleDto>> GetAllInRange([Required] DateTime? startDate, [Required] DateTime? endDate)
+        public async Task<IEnumerable<GeneratedScheduleDto>> GetAllSchedulesInRange([Required] DateTime? startDate, [Required] DateTime? endDate)
         {
             return await _scheduleApplicationService.GetSchedules(startDate!.Value, endDate!.Value);
         }
@@ -46,7 +46,7 @@ namespace Ethos.Web.Controllers
         /// Update an existing schedule.
         /// </summary>
         [HttpPut]
-        public async Task UpdateAsync(UpdateScheduleRequestDto input)
+        public async Task UpdateScheduleAsync([Required] UpdateScheduleRequestDto input)
         {
             await _scheduleApplicationService.UpdateAsync(input);
         }
@@ -55,7 +55,7 @@ namespace Ethos.Web.Controllers
         /// Delete an existing schedule.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteScheduleAsync(Guid id)
         {
             await _scheduleApplicationService.DeleteAsync(id);
         }

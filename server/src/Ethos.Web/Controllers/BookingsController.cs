@@ -26,7 +26,7 @@ namespace Ethos.Web.Controllers
         /// Create a new booking for the current user.
         /// </summary>
         [HttpPost]
-        public async Task<CreateBookingReplyDto> CreateAsync(CreateBookingRequestDto input)
+        public async Task<CreateBookingReplyDto> CreateBookingAsync([Required] CreateBookingRequestDto input)
         {
             return await _bookingApplicationService.CreateAsync(input);
         }
@@ -35,7 +35,7 @@ namespace Ethos.Web.Controllers
         /// Delete an existing booking.
         /// </summary>
         [HttpDelete]
-        public async Task DeleteAsync([Required] Guid id)
+        public async Task DeleteBookingAsync([Required] Guid id)
         {
             await _bookingApplicationService.DeleteAsync(id);
         }
@@ -44,7 +44,7 @@ namespace Ethos.Web.Controllers
         /// Return the requested booking or null.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<BookingDto> GetByIdAsync([Required] Guid id)
+        public async Task<BookingDto> GetBookingByIdAsync([Required] Guid id)
         {
             return await _bookingApplicationService.GetByIdAsync(id);
         }

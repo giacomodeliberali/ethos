@@ -19,7 +19,12 @@ namespace Ethos.Application.Contracts.Schedule
 
         public DateTime? EndDate { get; set; }
 
-        public int? DurationInMinutes { get; set; }
+        /// <summary>
+        /// If not recurring this must be EndDate - StartDate.
+        /// If recurring it represent the duration of the schedule.
+        /// </summary>
+        [Required]
+        public int DurationInMinutes { get; set; }
 
         public string RecurringCronExpression { get; set; }
 

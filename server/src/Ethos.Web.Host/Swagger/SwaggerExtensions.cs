@@ -12,6 +12,7 @@ namespace Ethos.Web.Host.Swagger
         {
             services.AddSwaggerGen(c =>
             {
+                c.UseAllOfToExtendReferenceSchemas(); // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1915
                 c.CustomSchemaIds(type =>
                 {
                     if (type.IsNested)

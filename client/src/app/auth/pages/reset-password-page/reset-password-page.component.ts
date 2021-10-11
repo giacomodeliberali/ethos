@@ -39,7 +39,6 @@ export class ResetPasswordPageComponent extends BaseDirective {
         subscriber.complete();
       }).pipe(
         map(([email, token]) => {
-          console.log(email, token, this.email, this.resetToken)
           if(!email || !token)
             throw new Error();
           return [email, token]

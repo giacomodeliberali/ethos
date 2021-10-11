@@ -1,6 +1,6 @@
 {
     "runtime": "Default",
-    "defaultVariables": "Url=http://192.168.1.127:5001/swagger/v1/swagger.json,Output=../services/ethos.generated.service.ts",
+    "defaultVariables": "Url=https://ethostraining.azurewebsites.net/swagger/v1/swagger.json,Output=../services/ethos.generated.service.ts",
     "documentGenerator": {
       "fromDocument": {
         "url": "$(Url)",

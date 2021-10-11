@@ -4,7 +4,7 @@
       <div class="logo-container"><img src="../../../../assets/images/ethos.svg"></div>
     </div>
     <div class="slider-container">
-      <ion-slides [options]="slideOpts" #slideWithNav>
+      <ion-slides (ionSlideWillChange)="slideChange($event)" [options]="slideOpts" #test>
         <ion-slide *ngFor="let s of slides">
             <ion-card>
               <ion-card-title>{{s}}</ion-card-title>

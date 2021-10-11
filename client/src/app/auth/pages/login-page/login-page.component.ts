@@ -77,7 +77,7 @@ export class LoginPageComponent extends BaseDirective{
       })
       .subscribe({
         next: response => {
-          this.userSvc.setAuthentication(response.user, response.accessToken)
+          this.userSvc.setAuthentication(response.user, response.accessToken);
           this.router.navigate([response.user.roles[0]]);
           this.toastSvc.addSuccessToast({
             header: 'Benvenuto!',

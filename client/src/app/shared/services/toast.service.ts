@@ -42,7 +42,6 @@ export class ToastService {
       warning: '<ion-icon name="alert-circle-outline" color="warning" style="font-size: 1.5rem"></ion-icon>',
       success: '<ion-icon name="checkmark-circle-outline" color="success" style="font-size: 1.5rem"></ion-icon>'
     }
-    console.log(options.message);
     document.documentElement.style.setProperty('--ionic-toast-color', `var(--ion-color-${color})`)
     if(stack || this.toastQueue.length <= 0){
       this.toastQueue.push({

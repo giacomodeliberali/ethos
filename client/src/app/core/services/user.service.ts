@@ -18,8 +18,8 @@ export class UserService {
     localStorage.setItem('token', token);
   }
 
-  getToken(){
-    localStorage.getItem('token');
+  getToken(): string{
+    return localStorage.getItem('token');
   }
 
   setUser(user: UserDto){

@@ -157,7 +157,7 @@ export class BookingsService extends NswagBaseClass {
      * @param body (optional) 
      * @return Success
      */
-    create(body: CreateBookingRequestDto | undefined): Observable<string> {
+    create(body: CreateBookingRequestDto | undefined): Observable<CreateBookingReplyDto> {
         let url_ = this.baseUrl + "/api/bookings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -174,6 +174,50 @@ export class BookingsService extends NswagBaseClass {
         };
 
         return this.processRequest("post", url_, options_, false);
+    }
+
+    /**
+     * Delete an existing booking.
+     * @return Success
+     */
+    delete(id: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/bookings?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.processRequest("delete", url_, options_, false);
+    }
+
+    /**
+     * Return the requested booking or null.
+     * @return Success
+     */
+    getById(id: string): Observable<BookingDto> {
+        let url_ = this.baseUrl + "/api/bookings/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.processRequest("get", url_, options_, false);
     }
 }
 
@@ -195,7 +239,7 @@ export class SchedulesService extends NswagBaseClass {
      * @param body (optional) 
      * @return Success
      */
-    create2(body: CreateScheduleRequestDto | undefined): Observable<string> {
+    create2(body: CreateScheduleRequestDto | undefined): Observable<CreateScheduleReplyDto> {
         let url_ = this.baseUrl + "/api/schedules";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -216,19 +260,17 @@ export class SchedulesService extends NswagBaseClass {
 
     /**
      * Generate (in memory) all the schedules that are in the given interval.
-     * @param startDate (optional) 
-     * @param endDate (optional) 
      * @return Success
      */
-    getAllInRange(startDate: string | undefined, endDate: string | undefined): Observable<GeneratedScheduleDto[]> {
+    getAllInRange(startDate: string, endDate: string): Observable<GeneratedScheduleDto[]> {
         let url_ = this.baseUrl + "/api/schedules?";
-        if (startDate === null)
-            throw new Error("The parameter 'startDate' cannot be null.");
-        else if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "startDate=" + encodeURIComponent("" + startDate) + "&";
-        if (endDate === null)
-            throw new Error("The parameter 'endDate' cannot be null.");
-        else if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "endDate=" + encodeURIComponent("" + endDate) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -270,7 +312,7 @@ export class SchedulesService extends NswagBaseClass {
      * Delete an existing schedule.
      * @return Success
      */
-    delete(id: string): Observable<void> {
+    delete2(id: string): Observable<void> {
         let url_ = this.baseUrl + "/api/schedules/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -288,20 +330,77 @@ export class SchedulesService extends NswagBaseClass {
     }
 }
 
+export interface BookingDto {
+    id?: string;
+    schedule?: BookingDto_ScheduleDto;
+    startDate?: string;
+    endDate?: string;
+    user?: BookingDto_UserDto;
+}
+
+export interface BookingDto_ScheduleDto {
+    id?: string;
+    name?: string | null;
+    description?: string | null;
+    organizerFullName?: string | null;
+    durationInMinutes?: number;
+}
+
+export interface BookingDto_UserDto {
+    id?: string;
+    fullName?: string | null;
+}
+
+export interface CreateBookingReplyDto {
+    id: string;
+}
+
+export interface CreateBookingRequestDto {
+    scheduleId: string;
+    startDate: string;
+    endDate: string;
+}
+
+export interface CreateScheduleReplyDto {
+    id: string;
+}
+
+export interface CreateScheduleRequestDto {
+    name: string;
+    description: string;
+    startDate: string;
+    endDate?: string | null;
+    durationInMinutes?: number;
+    recurringCronExpression?: string | null;
+}
+
+export interface ExceptionDto {
+    message: string;
+    stackTrace?: string | null;
+    innerException?: ExceptionDto;
+}
+
+export interface GeneratedScheduleDto {
+    scheduleId: string;
+    organizer: UserDto;
+    startDate: string;
+    endDate: string;
+    name: string;
+    description: string;
+    bookings: GeneratedScheduleDto_BookingDto[];
+}
+
+export interface GeneratedScheduleDto_BookingDto {
+    id: string;
+    userFullName: string;
+}
+
 /** The login request dto. */
 export interface LoginRequestDto {
     /** The user name or email. */
     userNameOrEmail: string;
     /** The user password. */
     password: string;
-}
-
-export interface UserDto {
-    email: string;
-    id: string;
-    userName: string;
-    fullName: string;
-    roles: string[];
 }
 
 /** The response for the login. */
@@ -329,30 +428,6 @@ export interface ResetPasswordRequestDto {
     resetToken: string;
 }
 
-export interface CreateBookingRequestDto {
-    scheduleId?: string;
-    startDate?: string;
-    endDate?: string;
-}
-
-export interface CreateScheduleRequestDto {
-    name?: string | null;
-    description?: string | null;
-    startDate?: string | null;
-    endDate?: string | null;
-    durationInMinutes?: number;
-    recurringCronExpression?: string | null;
-}
-
-export interface GeneratedScheduleDto {
-    scheduleId?: string;
-    organizer?: UserDto;
-    startDate?: string;
-    endDate?: string;
-    name?: string | null;
-    description?: string | null;
-}
-
 export interface UpdateScheduleRequestDto {
     id: string;
     name: string;
@@ -361,6 +436,14 @@ export interface UpdateScheduleRequestDto {
     endDate?: string | null;
     durationInMinutes?: number;
     recurringCronExpression?: string | null;
+}
+
+export interface UserDto {
+    email: string;
+    id: string;
+    userName: string;
+    fullName: string;
+    roles: string[];
 }
 
 export class ApiException extends Error {

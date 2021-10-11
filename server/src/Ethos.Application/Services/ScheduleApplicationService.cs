@@ -146,7 +146,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime from, DateTime to)
         {
-            var schedules = await _scheduleQueryService.GetInRangeAsync(from, to);
+            var schedules = await _scheduleQueryService.GetOverlappingSchedulesAsync(from, to);
 
             var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
 
@@ -194,8 +194,8 @@ namespace Ethos.Application.Services
                 var cronExpression = CronExpression.Parse(schedule.RecurringExpression);
 
                 var nextExecutions = cronExpression.GetOccurrences(
-                    fromUtc: from,
-                    toUtc: to,
+                    fromUtc: schedule.StartDate >= from ? schedule.StartDate.ToUniversalTime() : from,
+                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= to ? schedule.EndDate.Value.ToUniversalTime() : to.ToUniversalTime(),
                     zone: TimeZoneInfo.Local,
                     fromInclusive: true,
                     toInclusive: true);

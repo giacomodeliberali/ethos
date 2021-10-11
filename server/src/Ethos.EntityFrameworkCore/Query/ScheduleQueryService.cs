@@ -16,13 +16,14 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<IEnumerable<ScheduleProjection>> GetInRangeAsync(DateTime startDate, DateTime endDate)
+        /// <inheritdoc />
+        public async Task<List<ScheduleProjection>> GetOverlappingSchedulesAsync(DateTime startDate, DateTime endDate)
         {
             var schedules =
                 await (from schedule in ApplicationDbContext.Schedules.AsNoTracking()
                 join user in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals user.Id
-                where schedule.StartDate <= startDate
-                where !schedule.EndDate.HasValue || schedule.EndDate >= endDate
+                where schedule.StartDate <= endDate
+                where (schedule.EndDate ?? DateTime.MaxValue) >= startDate
                 select new
                 {
                     Schedule = schedule,
@@ -43,7 +44,7 @@ namespace Ethos.EntityFrameworkCore.Query
                 OrganizerFullName = item.User.FullName,
                 OrganizerEmail = item.User.Email,
                 OrganizerUserName = item.User.UserName,
-            });
+            }).ToList();
         }
     }
 }

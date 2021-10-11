@@ -94,6 +94,32 @@ namespace Ethos.IntegrationTest.Services
         }
 
         [Fact]
+        public async Task ShouldGenerateInmemorySchedules_WhenSchedulesAreRecurring_NoEndDate()
+        {
+            var firstOctober = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
+            var lastOctober = DateTime.Parse("2021-10-31T23:00:00").ToUniversalTime();
+
+            using var admin = await Scope.WithUser("admin");
+
+            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Test recurring schedule",
+                Description = "Recurring schedule every weekday at 9am",
+                StartDate = firstOctober,
+                EndDate = null,
+                DurationInMinutes = 120,
+                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
+                OrganizerId = admin.User.Id,
+            });
+
+
+            var generatedSchedules =
+                await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober);
+
+            generatedSchedules.Count().ShouldBe(21);
+        }
+
+        [Fact]
         public async Task ShouldCreateABooking_ForTheGivenNonRecurringSchedule()
         {
             var startDate = DateTime.Now;

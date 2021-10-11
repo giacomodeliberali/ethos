@@ -7,6 +7,6 @@ namespace Ethos.Query.Services
 {
     public interface IBookingQueryService
     {
-        Task<IEnumerable<BookingProjection>> GetAllInScheduleInRange(Guid scheduleId, DateTime startDate, DateTime endDate);
+        Task<List<BookingProjection>> GetAllInScheduleInRange(Guid scheduleId, DateTime startDate, DateTime endDate);
     }
 }

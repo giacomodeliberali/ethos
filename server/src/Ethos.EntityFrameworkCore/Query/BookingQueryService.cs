@@ -15,7 +15,7 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<IEnumerable<BookingProjection>> GetAllInScheduleInRange(Guid scheduleId, DateTime startDate, DateTime endDate)
+        public async Task<List<BookingProjection>> GetAllInScheduleInRange(Guid scheduleId, DateTime startDate, DateTime endDate)
         {
             var bookings = await (
                     from booking in ApplicationDbContext.Bookings.AsNoTracking()
@@ -41,7 +41,7 @@ namespace Ethos.EntityFrameworkCore.Query
                     UserFullName = item.User.FullName,
                     UserEmail = item.User.Email,
                     UserName = item.User.UserName,
-                });
+                }).ToList();
         }
     }
 }

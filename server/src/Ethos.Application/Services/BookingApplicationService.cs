@@ -1,13 +1,14 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Ethos.Application.Contracts.Booking;
-using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
+using Ethos.Query.Services;
 
 namespace Ethos.Application.Services
 {
@@ -17,6 +18,7 @@ namespace Ethos.Application.Services
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IMapper _mapper;
+        private readonly IBookingQueryService _bookingQueryService;
 
         public BookingApplicationService(
             IUnitOfWork unitOfWork,
@@ -24,21 +26,56 @@ namespace Ethos.Application.Services
             IBookingRepository bookingRepository,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
-            IMapper mapper)
+            IMapper mapper,
+            IBookingQueryService bookingQueryService)
         : base(unitOfWork, guidGenerator)
         {
             _bookingRepository = bookingRepository;
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
             _mapper = mapper;
+            _bookingQueryService = bookingQueryService;
         }
 
         /// <inheritdoc />
         public async Task<CreateBookingReplyDto> CreateAsync(CreateBookingRequestDto input)
         {
-            var currentUser = await _currentUser.GetCurrentUser();
-
             var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
+
+            if (input.StartDate < schedule.StartDate || input.EndDate > schedule.EndDate)
+            {
+                throw new BusinessException("Invalid booking date/time.");
+            }
+
+            var bookingDuration = (int)(input.EndDate - input.StartDate).TotalMinutes;
+            if (schedule.DurationInMinutes != bookingDuration)
+            {
+                throw new BusinessException("Invalid booking duration.");
+            }
+
+            if (schedule.IsRecurring)
+            {
+                var nextOccurrences = schedule.RecurringCronExpression.GetOccurrences(
+                    fromUtc: input.StartDate,
+                    toUtc: input.EndDate,
+                    fromInclusive: true,
+                    toInclusive: true);
+
+                if (!nextOccurrences.Any())
+                {
+                    throw new BusinessException("Invalid booking date/time for a recurring schedule");
+                }
+            }
+
+            var currentBookings = await _bookingQueryService.GetAllInScheduleInRange(schedule.Id, input.StartDate, input.EndDate);
+
+            if (schedule.ParticipantsMaxNumber > 0 &&
+                currentBookings.Count >= schedule.ParticipantsMaxNumber)
+            {
+                throw new ParticipantsMaxNumberReached(schedule.ParticipantsMaxNumber);
+            }
+
+            var currentUser = await _currentUser.GetCurrentUser();
 
             var booking = Booking.Factory.Create(
                 GuidGenerator.Create(),
@@ -54,6 +91,7 @@ namespace Ethos.Application.Services
             return new CreateBookingReplyDto()
             {
                 Id = booking.Id,
+                CurrentParticipantsNumber = currentBookings.Count + 1,
             };
         }
 

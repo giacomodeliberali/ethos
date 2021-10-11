@@ -14,6 +14,12 @@ namespace Ethos.EntityFrameworkCore
     {
         public DbSet<ScheduleData> Schedules { get; set; }
 
+        public DbSet<SingleScheduleData> SingleSchedules { get; set; }
+
+        public DbSet<RecurringScheduleData> RecurringSchedules { get; set; }
+
+        public DbSet<ScheduleExceptionData> ScheduleExceptions { get; set; }
+
         public DbSet<BookingData> Bookings { get; set; }
 
         /// <inheritdoc />
@@ -33,7 +39,12 @@ namespace Ethos.EntityFrameworkCore
 
             // Custom tables
             builder.ApplyConfiguration(new BookingDataConfiguration());
+
             builder.ApplyConfiguration(new ScheduleDataConfiguration());
+            builder.ApplyConfiguration(new SingleScheduleDataConfiguration());
+            builder.ApplyConfiguration(new RecurringScheduleDataConfiguration());
+
+            builder.ApplyConfiguration(new ScheduleExceptionDataConfiguration());
         }
     }
 }

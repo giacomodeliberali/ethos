@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
+using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
@@ -155,7 +156,7 @@ namespace Ethos.IntegrationTest.Services
         }
 
         [Fact]
-        public async Task ShouldThrowError_WhenOrganizerIsNotAdmin()
+        public async Task ShouldThrowError_DuringCreation_WhenOrganizerIsNotAdmin()
         {
             var admin = await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
@@ -174,7 +175,7 @@ namespace Ethos.IntegrationTest.Services
         }
 
         [Fact]
-        public async Task ShouldThrowError_WhenOrganizerIsNotAdmin_DuringUpdate()
+        public async Task ShouldThrowError_DuringUpdate_WhenOrganizerIsNotAdmin()
         {
             var admin = await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
@@ -193,13 +194,236 @@ namespace Ethos.IntegrationTest.Services
                 await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
                 {
                     Id = scheduleReplyDto.Id,
-                    Name = "Test schedule up",
-                    Description = "Description up",
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddMonths(1),
-                    OrganizerId = demoUser.Id,
+                    Schedule = new UpdateScheduleRequestDto.ScheduleDto()
+                    {
+                        Name = "Test schedule up",
+                        Description = "Description up",
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.Now.AddMonths(1),
+                        OrganizerId = demoUser.Id,
+                    },
                 });
             });
+        }
+
+        [Fact]
+        public async Task ShouldUpdateDateTime_WhenDeletingFutureRecurringSchedules()
+        {
+            var firstOctober = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
+            var lastOctober = DateTime.Parse("2021-10-31T23:00:00").ToUniversalTime();
+
+            using var admin = await Scope.WithUser("admin");
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Test recurring schedule",
+                Description = "Recurring schedule every weekday at 9am",
+                StartDate = firstOctober,
+                EndDate = lastOctober,
+                DurationInMinutes = 120,
+                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
+                OrganizerId = admin.User.Id,
+            });
+
+
+            CreateBookingReplyDto bookingReply;
+            using (await Scope.WithNewUser("demo"))
+            {
+                bookingReply = await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
+                {
+                    ScheduleId = scheduleReplyDto.Id,
+                    StartDate = DateTime.Parse("2021-10-06T09:00:00").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-06T11:00:00").ToUniversalTime(),
+                });
+            }
+
+            await Scope.WithUser("admin");
+
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                // Non è possibile eliminare la schedulazione, sono già presenti 1 prenotazioni
+                await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+                {
+                    Id = scheduleReplyDto.Id,
+                    InstanceStartDate = DateTime.Parse("2021-10-06T07:00:00").ToUniversalTime(),
+                    InstanceEndDate = DateTime.Parse("2021-10-06T07:00:00").ToUniversalTime(),
+                    RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+                });
+            });
+
+            await _bookingApplicationService.DeleteAsync(bookingReply.Id);
+
+            await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+            {
+                Id = scheduleReplyDto.Id,
+                InstanceStartDate = DateTime.Parse("2021-10-06T07:00:00").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-06T07:00:00").ToUniversalTime(),
+                RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+            });
+
+            var result = (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
+            result.Count.ShouldBe(3);
+
+            result.First().StartDate.ShouldBe(DateTime.Parse("2021-10-01T09:00:00").ToUniversalTime());
+            result.First().EndDate.ShouldBe(DateTime.Parse("2021-10-01T11:00:00").ToUniversalTime());
+
+            result.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-05T09:00:00").ToUniversalTime());
+            result.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-05T11:00:00").ToUniversalTime());
+        }
+
+        [Fact]
+        public async Task ShouldUpdateSingleScheduleFiled_WhenUpdating()
+        {
+            using var admin = await Scope.WithUser("admin");
+
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Single schedule",
+                Description = "Schedule every weekday at 9am",
+                StartDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-01T09:00:00").ToUniversalTime(),
+                OrganizerId = admin.User.Id,
+            });
+
+            var newUser = await CreateUser("admin2", role: RoleConstants.Admin);
+
+            await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
+            {
+                Id = scheduleReplyDto.Id,
+                Schedule = new UpdateScheduleRequestDto.ScheduleDto()
+                {
+                    Name = "Name up",
+                    Description = "Description up",
+                    StartDate = DateTime.Parse("2021-10-02T10:00:00").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-02T12:00:00").ToUniversalTime(),
+                    OrganizerId = newUser.Id,
+                },
+            });
+
+            var updatedSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
+
+            var expectedSchedule = SingleSchedule.Factory.Create(
+                scheduleReplyDto.Id,
+                newUser,
+                "Name up",
+                "Description up",
+                0,
+                DateTime.Parse("2021-10-02T10:00:00").ToUniversalTime(),
+                DateTime.Parse("2021-10-02T12:00:00").ToUniversalTime());
+
+            updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
+        }
+
+        [Fact]
+        public async Task ShouldConvertSingleScheduleIntoRecurring_WhenUpdating()
+        {
+            using var admin = await Scope.WithUser("admin");
+
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Single schedule",
+                Description = "Schedule",
+                StartDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-01T09:00:00").ToUniversalTime(),
+                OrganizerId = admin.User.Id,
+            });
+
+            var originalSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
+
+            originalSchedule.ShouldBeOfType<SingleSchedule>();
+
+            var newUser = await CreateUser("admin2", role: RoleConstants.Admin);
+
+            await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
+            {
+                Id = scheduleReplyDto.Id,
+                Schedule = new UpdateScheduleRequestDto.ScheduleDto()
+                {
+                    Name = "Name up",
+                    Description = "Description up",
+                    StartDate = DateTime.Parse("2021-10-02T10:00:00").ToUniversalTime(),
+                    DurationInMinutes = 30,
+                    ParticipantsMaxNumber = 1,
+                    RecurringCronExpression = "0 09 * * MON-FRI",
+                    OrganizerId = newUser.Id,
+                },
+            });
+
+            var updatedSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
+
+            updatedSchedule.ShouldBeOfType<RecurringSchedule>();
+
+            var expectedSchedule = RecurringSchedule.Factory.Create(
+                scheduleReplyDto.Id,
+                newUser,
+                "Name up",
+                "Description up",
+                1,
+                DateTime.Parse("2021-10-02T10:00:00").ToUniversalTime(),
+                null,
+                30,
+                "0 09 * * MON-FRI");
+
+            updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
+        }
+
+        [Fact]
+        public async Task ShouldUpdateAndKeep_RecurringSchedule()
+        {
+            using var admin = await Scope.WithUser("admin");
+
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Single schedule",
+                Description = "Schedule",
+                StartDate = DateTime.Parse("2021-10-01T00:00:00").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-31T00:00:00").ToUniversalTime(),
+                DurationInMinutes = 60,
+                ParticipantsMaxNumber = 2,
+                RecurringCronExpression = "0 09 * * MON-FRI",
+                OrganizerId = admin.User.Id,
+            });
+
+            var originalSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
+
+            originalSchedule.ShouldBeOfType<RecurringSchedule>();
+
+            var newUser = await CreateUser("admin2", role: RoleConstants.Admin);
+
+            await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
+            {
+                Id = scheduleReplyDto.Id,
+                InstanceStartDate = DateTime.Parse("2021-10-15T09:00:00").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-15T11:00:00").ToUniversalTime(),
+                RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+                Schedule = new UpdateScheduleRequestDto.ScheduleDto()
+                {
+                    Name = "Name up",
+                    Description = "Description up",
+                    StartDate = DateTime.Parse("2021-10-01T00:00:00").ToUniversalTime(),
+                    EndDate = null,
+                    DurationInMinutes = 30,
+                    ParticipantsMaxNumber = 1,
+                    RecurringCronExpression = "0 09 * * MON-FRI",
+                    OrganizerId = newUser.Id,
+                },
+            });
+
+            var updatedSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
+
+            updatedSchedule.ShouldBeOfType<RecurringSchedule>();
+
+            var expectedSchedule = RecurringSchedule.Factory.Create(
+                scheduleReplyDto.Id,
+                admin.User,
+                "Single schedule",
+                "Schedule",
+                2,
+                DateTime.Parse("2021-10-01T00:00:00").ToUniversalTime(),
+                DateTime.Parse("2021-10-15T09:00:00").ToUniversalTime(),
+                60,
+                "0 09 * * MON-FRI");
+
+            updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
         }
     }
 }

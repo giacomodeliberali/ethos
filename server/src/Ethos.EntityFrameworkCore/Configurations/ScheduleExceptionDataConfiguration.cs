@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Ethos.EntityFrameworkCore.Configurations
 {
-    public class BookingDataConfiguration : IEntityTypeConfiguration<BookingData>
+    public class ScheduleExceptionDataConfiguration : IEntityTypeConfiguration<ScheduleExceptionData>
     {
         /// <inheritdoc />
-        public void Configure(EntityTypeBuilder<BookingData> builder)
+        public void Configure(EntityTypeBuilder<ScheduleExceptionData> builder)
         {
-            builder.ToTable("Bookings", schema: "Bookings");
+            builder.ToTable("Exceptions", schema: "Schedules");
             builder.Property(u => u.Id).ValueGeneratedOnAdd();
             builder.Property(s => s.ScheduleId).IsRequired();
-            builder.Property(s => s.UserId).IsRequired();
             builder.Property(s => s.StartDate).IsRequired();
             builder.Property(s => s.EndDate).IsRequired();
         }

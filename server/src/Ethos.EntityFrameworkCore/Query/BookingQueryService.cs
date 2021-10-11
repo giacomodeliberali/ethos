@@ -15,7 +15,7 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<List<BookingProjection>> GetAllInScheduleInRange(Guid scheduleId, DateTime startDate, DateTime endDate)
+        public async Task<List<BookingProjection>> GetAllBookingsInRange(Guid scheduleId, DateTime startDate, DateTime endDate)
         {
             var bookings = await (
                     from booking in ApplicationDbContext.Bookings.AsNoTracking()
@@ -31,7 +31,8 @@ namespace Ethos.EntityFrameworkCore.Query
                         User = user,
                     }).ToListAsync();
 
-            return bookings.Select(item => new BookingProjection()
+            var bookingsResult = bookings
+                .Select(item => new BookingProjection()
                 {
                     Id = item.Booking.Id,
                     StartDate = item.Booking.StartDate,
@@ -42,6 +43,10 @@ namespace Ethos.EntityFrameworkCore.Query
                     UserEmail = item.User.Email,
                     UserName = item.User.UserName,
                 }).ToList();
+
+            return bookingsResult
+                .OrderBy(b => b.StartDate)
+                .ToList();
         }
     }
 }

@@ -9,6 +9,7 @@ using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
+using Ethos.Shared;
 
 namespace Ethos.Application.Services
 {
@@ -42,20 +43,20 @@ namespace Ethos.Application.Services
         {
             var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
 
-            if (input.StartDate < schedule.StartDate || input.EndDate > schedule.EndDate)
+            if (schedule is RecurringSchedule recurringSchedule)
             {
-                throw new BusinessException("Invalid booking date/time.");
-            }
+                if (input.StartDate < recurringSchedule.StartDate || input.EndDate > recurringSchedule.EndDate)
+                {
+                    throw new BusinessException("Invalid booking date/time.");
+                }
 
-            var bookingDuration = (int)(input.EndDate - input.StartDate).TotalMinutes;
-            if (schedule.DurationInMinutes != bookingDuration)
-            {
-                throw new BusinessException("Invalid booking duration.");
-            }
+                var bookingDuration = (int)(input.EndDate - input.StartDate).TotalMinutes;
+                if (schedule.DurationInMinutes != bookingDuration)
+                {
+                    throw new BusinessException("Invalid booking duration.");
+                }
 
-            if (schedule.IsRecurring)
-            {
-                var nextOccurrences = schedule.RecurringCronExpression.GetOccurrences(
+                var nextOccurrences = recurringSchedule.RecurringCronExpression.GetOccurrences(
                     fromUtc: input.StartDate,
                     toUtc: input.EndDate,
                     fromInclusive: true,
@@ -66,8 +67,21 @@ namespace Ethos.Application.Services
                     throw new BusinessException("Invalid booking date/time for a recurring schedule");
                 }
             }
+            else if (schedule is SingleSchedule singleSchedule)
+            {
+                if (input.StartDate < singleSchedule.StartDate || input.EndDate > singleSchedule.EndDate)
+                {
+                    throw new BusinessException("Invalid booking date/time.");
+                }
 
-            var currentBookings = await _bookingQueryService.GetAllInScheduleInRange(schedule.Id, input.StartDate, input.EndDate);
+                var bookingDuration = (int)(input.EndDate - input.StartDate).TotalMinutes;
+                if (schedule.DurationInMinutes != bookingDuration)
+                {
+                    throw new BusinessException("Invalid booking duration.");
+                }
+            }
+
+            var currentBookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, input.StartDate, input.EndDate);
 
             if (schedule.ParticipantsMaxNumber > 0 &&
                 currentBookings.Count >= schedule.ParticipantsMaxNumber)
@@ -100,7 +114,8 @@ namespace Ethos.Application.Services
         {
             var booking = await _bookingRepository.GetByIdAsync(id);
 
-            if (booking.User.Id != _currentUser.GetCurrentUserId())
+            if (booking.User.Id != _currentUser.GetCurrentUserId() &&
+                !await _currentUser.IsInRole(RoleConstants.Admin))
             {
                 throw new BusinessException("You can only delete your own bookings!");
             }

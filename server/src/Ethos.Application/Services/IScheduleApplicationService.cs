@@ -20,7 +20,7 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Delete an existing schedule.
         /// </summary>
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(DeleteScheduleRequestDto input);
 
         /// <summary>
         /// Generate (in memory) all the schedules that are in the given interval.

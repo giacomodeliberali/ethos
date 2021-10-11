@@ -11,6 +11,7 @@ using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ethos.Application
@@ -38,6 +39,9 @@ namespace Ethos.Application
             serviceCollection.AddEthosAutoMapper();
 
             serviceCollection.AddDataSeedContributors();
+
+            // add MediatoR
+            serviceCollection.AddMediatR(typeof(IApplicationModuleAssemblyMarker));
         }
 
         private static void AddDataSeedContributors(this IServiceCollection serviceCollection)

@@ -8,8 +8,13 @@ namespace Ethos.Query.Services
     public interface IScheduleQueryService
     {
         /// <summary>
-        /// Return all the schedules that overlaps with the provided interval.
+        /// Return all the recurring schedules that overlaps with the provided interval.
         /// </summary>
-        Task<List<ScheduleProjection>> GetOverlappingSchedulesAsync(DateTime startDate, DateTime endDate);
+        Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// Return all the single schedules that overlaps with the provided interval.
+        /// </summary>
+        Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(DateTime startDate, DateTime endDate);
     }
 }

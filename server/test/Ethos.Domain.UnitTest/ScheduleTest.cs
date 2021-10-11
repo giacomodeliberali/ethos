@@ -19,7 +19,7 @@ namespace Ethos.Domain.UnitTest
             var endDate = startDate.AddMonths(1);
 
             var id = GuidGenerator.Create();
-            var sut = Schedule.Factory.CreateNonRecurring(
+            var sut = SingleSchedule.Factory.Create(
                 id,
                 user,
                 name: "Schedule",
@@ -48,7 +48,7 @@ namespace Ethos.Domain.UnitTest
 
             var startDate = DateTime.Now;
 
-            var sut = Schedule.Factory.CreateRecurring(
+            var sut = RecurringSchedule.Factory.Create(
                 GuidGenerator.Create(),
                 user,
                 name: "Schedule recurring",
@@ -81,12 +81,12 @@ namespace Ethos.Domain.UnitTest
             var startDate = DateTime.Now;
             var endDate = startDate.AddMonths(2);
 
-            var sut = Schedule.Factory.FromSnapshot(
+            var sut = RecurringSchedule.Factory.FromSnapshot(
                     guid,
                     user,
                     startDate,
                     endDate,
-                    recurringExpression: null,
+                    recurringExpression: "0 09 * * MON-FRI",
                     duration: 60,
                     name: "name",
                     description: "description",
@@ -99,8 +99,8 @@ namespace Ethos.Domain.UnitTest
             sut.Name.ShouldBe("name");
             sut.Description.ShouldBe("description");
             sut.ParticipantsMaxNumber.ShouldBe(10);
-            sut.RecurringCronExpression.ShouldBeNull();
-            sut.RecurringCronExpressionString.ShouldBeNull();
+            sut.RecurringCronExpression.ShouldNotBeNull();
+            sut.RecurringCronExpressionString.ShouldBe("0 09 * * MON-FRI");
         }
     }
 }

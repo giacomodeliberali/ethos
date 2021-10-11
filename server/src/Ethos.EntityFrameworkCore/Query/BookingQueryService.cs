@@ -39,6 +39,8 @@ namespace Ethos.EntityFrameworkCore.Query
                     ScheduleId = item.Booking.ScheduleId,
                     UserId = item.Booking.UserId,
                     UserFullName = item.User.FullName,
+                    UserEmail = item.User.Email,
+                    UserName = item.User.UserName,
                 });
         }
     }

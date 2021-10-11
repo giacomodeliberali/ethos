@@ -34,6 +34,7 @@ namespace Ethos.EntityFrameworkCore.Query
                 Id = item.Schedule.Id,
                 Name = item.Schedule.Name,
                 Description = item.Schedule.Description,
+                ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
                 StartDate = item.Schedule.StartDate,
                 EndDate = item.Schedule.EndDate,
                 DurationInMinutes = item.Schedule.DurationInMinutes,

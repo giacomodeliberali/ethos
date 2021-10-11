@@ -4,6 +4,7 @@ using System.Linq;
 using Ethos.Application.Identity;
 using Ethos.Application.Seed;
 using Ethos.Domain.Entities;
+using Ethos.Domain.Exceptions;
 using Ethos.EntityFrameworkCore;
 using Ethos.Web.Host;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace Ethos.IntegrationTest.Setup
 {
@@ -40,7 +42,9 @@ namespace Ethos.IntegrationTest.Setup
                 // remove authentication from HttpContext
                 services.RemoveAll<ICurrentUser>();
                 var icu = Substitute.For<ICurrentUser>();
-                icu.GetCurrentUser().Returns((ApplicationUser) null);
+                icu.GetCurrentUser().Throws(new BusinessException("User not logged in."));
+                icu.GetCurrentUserId().Throws(new BusinessException("User not logged in."));
+                icu.IsInRole(Arg.Any<string>()).Throws(new BusinessException("User not logged in."));
 
                 services.AddTransient((_) => icu);
 

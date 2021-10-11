@@ -4,6 +4,7 @@ using AutoMapper;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
@@ -19,11 +20,12 @@ namespace Ethos.Application.Services
 
         public BookingApplicationService(
             IUnitOfWork unitOfWork,
+            IGuidGenerator guidGenerator,
             IBookingRepository bookingRepository,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IMapper mapper)
-        : base(unitOfWork)
+        : base(unitOfWork, guidGenerator)
         {
             _bookingRepository = bookingRepository;
             _scheduleRepository = scheduleRepository;
@@ -39,18 +41,19 @@ namespace Ethos.Application.Services
             var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
 
             var booking = Booking.Factory.Create(
+                GuidGenerator.Create(),
                 schedule,
                 currentUser,
                 input.StartDate,
                 input.EndDate);
 
-            var bookingId = await _bookingRepository.CreateAsync(booking);
+            await _bookingRepository.CreateAsync(booking);
 
             await UnitOfWork.SaveChangesAsync();
 
             return new CreateBookingReplyDto()
             {
-                Id = bookingId,
+                Id = booking.Id,
             };
         }
 

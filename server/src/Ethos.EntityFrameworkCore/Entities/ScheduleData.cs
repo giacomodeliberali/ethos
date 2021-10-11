@@ -19,5 +19,7 @@ namespace Ethos.EntityFrameworkCore.Entities
         public DateTime? EndDate { get; set; }
 
         public string RecurringExpression { get; set; }
+
+        public int ParticipantsMaxNumber { get; set; }
     }
 }

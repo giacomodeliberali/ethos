@@ -10,10 +10,10 @@ export class UnsavedChangesComponent {
 
   constructor(private modalCtrl: ModalController) { }
 
-  dismiss(result: "success" | "cancel"){
+  dismiss(result: 'success' | 'cancel'){
     this.modalCtrl.dismiss({
-      close: (result === "success")
-    })
+      close: (result === 'success')
+    });
   }
 
 }

@@ -1,3 +1,4 @@
+using Ethos.Domain.Common;
 using Ethos.Domain.Repositories;
 
 namespace Ethos.Application.Services
@@ -6,9 +7,14 @@ namespace Ethos.Application.Services
     {
         protected IUnitOfWork UnitOfWork { get; }
 
-        protected BaseApplicationService(IUnitOfWork unitOfWork)
+        protected IGuidGenerator GuidGenerator { get; }
+
+        protected BaseApplicationService(
+            IUnitOfWork unitOfWork,
+            IGuidGenerator guidGenerator)
         {
             UnitOfWork = unitOfWork;
+            GuidGenerator = guidGenerator;
         }
     }
 }

@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />
       <ProjectReference Include="..\Ethos.Query\Ethos.Query.csproj" />
+      <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
     </ItemGroup>
 
 </Project>

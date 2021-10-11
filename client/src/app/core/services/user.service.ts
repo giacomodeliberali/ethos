@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs";
-import { UserDto } from "./ethos.generated.service";
+import { Observable } from 'rxjs';
+import { UserDto } from './ethos.generated.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ export class UserService {
 
   constructor() { }
 
-  setAuthentication(user: UserDto, token:string){
+  setAuthentication(user: UserDto, token: string){
     this.setUser(user);
     this.setToken(token);
   }
@@ -34,6 +34,6 @@ export class UserService {
     return new Observable(subscriber => {
       subscriber.next(this.getToken());
       subscriber.complete();
-    })
+    });
   }
 }

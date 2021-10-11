@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Ethos.Application.Contracts.Identity;
 
 namespace Ethos.Application.Contracts.Schedule
 {
@@ -28,13 +27,33 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public IEnumerable<BookingDto> Bookings { get; set; }
 
+        [Required]
+        public int ParticipantsMaxNumber { get; set; }
+
         public class BookingDto
         {
             [Required]
             public Guid Id { get; set; }
 
+            /// <summary>
+            /// Populated only if the caller is admin.
+            /// </summary>
+            public UserDto User { get; set; }
+        }
+
+        public class UserDto
+        {
             [Required]
-            public string UserFullName { get; set; }
+            public Guid Id { get; set; }
+
+            [Required]
+            public string Email { get; set; }
+
+            [Required]
+            public string UserName { get; set; }
+
+            [Required]
+            public string FullName { get; set; }
         }
     }
 }

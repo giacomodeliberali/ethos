@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using AutoMapper;
 using Cronos;
-using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
+using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
-using Ethos.Query;
 using Ethos.Query.Services;
+using Ethos.Shared;
+using Microsoft.AspNetCore.Identity;
 
 namespace Ethos.Application.Services
 {
@@ -21,28 +23,42 @@ namespace Ethos.Application.Services
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleQueryService _scheduleQueryService;
         private readonly IBookingQueryService _bookingQueryService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
         public ScheduleApplicationService(
             IUnitOfWork unitOfWork,
+            IGuidGenerator guidGenerator,
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IScheduleQueryService scheduleQueryService,
             IBookingQueryService bookingQueryService,
+            UserManager<ApplicationUser> userManager,
             IMapper mapper)
-        : base(unitOfWork)
+        : base(unitOfWork, guidGenerator)
         {
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
             _scheduleQueryService = scheduleQueryService;
             _bookingQueryService = bookingQueryService;
+            _userManager = userManager;
             _mapper = mapper;
         }
 
         /// <inheritdoc />
         public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
         {
-            var currentUser = await _currentUser.GetCurrentUser();
+            var organizer = await _userManager.FindByIdAsync(input.OrganizerId.ToString());
+
+            if (organizer == null)
+            {
+                throw new BusinessException("Invalid organizer id");
+            }
+
+            if (!await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
+            {
+                throw new BusinessException("The organizer is not an admin");
+            }
 
             Schedule schedule;
 
@@ -52,9 +68,11 @@ namespace Ethos.Application.Services
                 Guard.Against.Null(input.EndDate, nameof(input.EndDate));
 
                 schedule = Schedule.Factory.CreateNonRecurring(
-                    currentUser,
+                    GuidGenerator.Create(),
+                    organizer,
                     input.Name,
                     input.Description,
+                    input.ParticipantsMaxNumber,
                     input.StartDate.Value,
                     input.EndDate.Value);
             }
@@ -65,22 +83,24 @@ namespace Ethos.Application.Services
                 Guard.Against.Null(input.RecurringCronExpression, nameof(input.RecurringCronExpression));
 
                 schedule = Schedule.Factory.CreateRecurring(
-                    currentUser,
+                    GuidGenerator.Create(),
+                    organizer,
                     input.Name,
                     input.Description,
+                    input.ParticipantsMaxNumber,
                     input.StartDate.Value,
                     input.EndDate,
                     input.DurationInMinutes,
                     input.RecurringCronExpression);
             }
 
-            var scheduleId = await _scheduleRepository.CreateAsync(schedule);
+            await _scheduleRepository.CreateAsync(schedule);
 
             await UnitOfWork.SaveChangesAsync();
 
             return new CreateScheduleReplyDto()
             {
-                Id = scheduleId,
+                Id = schedule.Id,
             };
         }
 
@@ -89,8 +109,21 @@ namespace Ethos.Application.Services
         {
             var schedule = await _scheduleRepository.GetByIdAsync(input.Id);
 
+            var organizer = await _userManager.FindByIdAsync(input.OrganizerId.ToString());
+
+            if (organizer == null)
+            {
+                throw new BusinessException("Invalid organizer id");
+            }
+
+            if (!await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
+            {
+                throw new BusinessException("The organizer is not an admin");
+            }
+
             schedule
-                .UpdateNameAndDescription(input.Name, input.Description)
+                .UpdateOrganizer(organizer)
+                .UpdateNameAndDescription(input.Name, input.Description, input.ParticipantsMaxNumber)
                 .UpdateDateTime(
                     input.StartDate!.Value,
                     input.EndDate,
@@ -115,6 +148,8 @@ namespace Ethos.Application.Services
         {
             var schedules = await _scheduleQueryService.GetInRangeAsync(from, to);
 
+            var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
+
             var result = new List<GeneratedScheduleDto>();
 
             foreach (var schedule in schedules)
@@ -130,9 +165,10 @@ namespace Ethos.Application.Services
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
+                        ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
                         StartDate = startDate,
                         EndDate = endDate,
-                        Organizer = new UserDto()
+                        Organizer = new GeneratedScheduleDto.UserDto()
                         {
                             Id = schedule.OrganizerId,
                             FullName = schedule.OrganizerFullName,
@@ -142,7 +178,14 @@ namespace Ethos.Application.Services
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            UserFullName = b.UserFullName,
+                            User = isAdmin ? new GeneratedScheduleDto.UserDto()
+                            {
+                                Id = b.UserId,
+                                FullName = b.UserFullName,
+                                Email = b.UserEmail,
+                                UserName = b.UserName,
+                            }
+                                : null,
                         }),
                     });
                     continue;
@@ -169,9 +212,10 @@ namespace Ethos.Application.Services
                         ScheduleId = schedule.Id,
                         Name = schedule.Name,
                         Description = schedule.Description,
+                        ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
                         StartDate = startDate,
                         EndDate = endDate,
-                        Organizer = new UserDto()
+                        Organizer = new GeneratedScheduleDto.UserDto()
                         {
                             Id = schedule.OrganizerId,
                             FullName = schedule.OrganizerFullName,
@@ -181,7 +225,14 @@ namespace Ethos.Application.Services
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            UserFullName = b.UserFullName,
+                            User = isAdmin ? new GeneratedScheduleDto.UserDto()
+                                {
+                                    Id = b.UserId,
+                                    FullName = b.UserFullName,
+                                    Email = b.UserEmail,
+                                    UserName = b.UserName,
+                                }
+                                : null,
                         }),
                     });
                 }

@@ -242,3 +242,6 @@ appsettings.Development.json
 
 # built server spa files
 **/www/**
+
+# migration script
+migrate.sql

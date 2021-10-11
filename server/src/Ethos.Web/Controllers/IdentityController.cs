@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
@@ -10,13 +11,13 @@ namespace Ethos.Web.Controllers
     /// <summary>
     ///     Manages all the operations on identity, such as user creation, authentication and role management.
     /// </summary>
-    [Route("api/accounts")]
+    [Route("api/identity")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
-        public AccountsController(IIdentityService identityService)
+        public IdentityController(IIdentityService identityService)
         {
             _identityService = identityService;
         }
@@ -27,7 +28,7 @@ namespace Ethos.Web.Controllers
         /// <param name="input">The user to authenticate.</param>
         /// <returns>The token or null.</returns>
         [HttpPost("authenticate")]
-        public async Task<LoginResponseDto> AuthenticateAsync(LoginRequestDto input)
+        public async Task<LoginResponseDto> AuthenticateAsync([Required] LoginRequestDto input)
         {
             return await _identityService.AuthenticateAsync(input);
         }
@@ -37,7 +38,7 @@ namespace Ethos.Web.Controllers
         /// </summary>
         /// <param name="input">The user to create.</param>
         [HttpPost("register")]
-        public async Task RegisterUserAsync(RegisterRequestDto input)
+        public async Task RegisterUserAsync([Required] RegisterRequestDto input)
         {
             await _identityService.CreateUserAsync(input, RoleConstants.User);
         }
@@ -46,7 +47,7 @@ namespace Ethos.Web.Controllers
         ///     Send the password reset link.
         /// </summary>
         [HttpPost("send-password-reset-link")]
-        public async Task SendPasswordResetLinkAsync(string email)
+        public async Task SendPasswordResetLinkAsync([Required] string email)
         {
             await _identityService.SendPasswordResetLinkAsync(email);
         }
@@ -55,19 +56,19 @@ namespace Ethos.Web.Controllers
         ///     Reset the password using the reset link.
         /// </summary>
         [HttpPost("reset-password")]
-        public async Task ResetPasswordAsync(ResetPasswordRequestDto input)
+        public async Task ResetPasswordAsync([Required] ResetPasswordRequestDto input)
         {
             await _identityService.ResetPasswordAsync(input);
         }
 
         /// <summary>
-        ///     Return the list of all registered users.
+        ///     Return the list af all users with athe 'Admin' role.
         /// </summary>
-        [Authorize(Roles = RoleConstants.Admin)]
+        [Authorize]
         [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAdminsAsync()
         {
-            return await _identityService.GetUsersAsync();
+            return await _identityService.GetAllAdminsAsync();
         }
     }
 }

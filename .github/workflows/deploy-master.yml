@@ -8,29 +8,31 @@ on:
     branches:
       - master
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
+      
       # client
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-
+      
       - name: npm ci     
         working-directory: ./client
         run: npm ci
+      
+      - name: npm run lint  
+        working-directory: ./client
+        run: npm run lint
 
       - name: build client     
         working-directory: ./client
         run: npm run build
 
       # server
-      - name: Set up .NET Core
+      - name: Set up .NET 5
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
@@ -42,31 +44,67 @@ jobs:
 
       - name: dotnet test
         working-directory: ./server
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore  
 
+      # publish server and built client to /ethos
       - name: dotnet publish
         working-directory: ./server
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/ethos
 
+      # upload /ethos as 'ethos-artifact'
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: ethos-artifact
+          path: ${{env.DOTNET_ROOT}}/ethos
+
+      # database
+      - name: Generate migrations
+        working-directory: ./server/src/Ethos.EntityFrameworkCore
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          dotnet ef --no-build --startup-project ../Ethos.Web.Host migrations script --idempotent --output "migrate.sql"  
+
+      # upload migrate.sql as 'migration-script'
+      - name: Upload SQL migration script
+        uses: actions/upload-artifact@v2
+        with:
+          name: migration-script
+          path: ./server/src/Ethos.EntityFrameworkCore/migrate.sql
+
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      # download 'ethos-artifact' which contains app files to publish to Azure (./ethos)
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: .net-app
+          name: ethos-artifact
+          path: ethos
 
+      # download 'migration-script' which contains the .sql to apply migrations (./migrations/migrate.sql)
+      - name: Download migration script
+        uses: actions/download-artifact@v2
+        with:
+          name: migration-script
+          path: migrations
+
+      # update database
+      - name: Apply migrations to Azure SQL
+        uses: azure/sql-action@v1
+        with:
+          server-name: '${{ secrets.AZURE_SQL_SERVER_NAME }}'
+          connection-string: '${{ secrets.AZURE_SQL_CONNECTION_STRING }}'
+          sql-file: './migrations/migrate.sql'
+
+      # deploy web app
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -74,4 +112,4 @@ jobs:
           app-name: 'ethostraining'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9EC49F3BE7BC4464951545A513BCEAEA }}
-          package: .
+          package: ./ethos

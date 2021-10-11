@@ -31,7 +31,7 @@ export class UserPageComponent implements OnInit {
         slidesPerView: 5
       }
     }
-  }
+  };
 
   constructor(public mediaSvc: MediaService, private schedulesSvc: SchedulesService) {
     let nextWeek = new Date();
@@ -45,7 +45,6 @@ export class UserPageComponent implements OnInit {
   }
 
   async slideChange(ev){
-    console.log('SLIDE CHANGING', await this._slider.getActiveIndex());
   }
 
 }

@@ -33,6 +33,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 Name = schedule.Name,
                 Description = schedule.Description,
                 DurationInMinutes = schedule.DurationInMinutes,
+                ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
             };
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
@@ -60,7 +61,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 scheduleData.RecurringExpression,
                 scheduleData.DurationInMinutes,
                 scheduleData.Name,
-                scheduleData.Description);
+                scheduleData.Description,
+                scheduleData.ParticipantsMaxNumber);
         }
 
         public async Task UpdateAsync(Schedule schedule)
@@ -72,6 +74,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleData.EndDate = schedule.EndDate;
             scheduleData.DurationInMinutes = schedule.DurationInMinutes;
             scheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
+            scheduleData.ParticipantsMaxNumber = schedule.ParticipantsMaxNumber;
+            scheduleData.OrganizerId = schedule.Organizer.Id;
         }
     }
 }

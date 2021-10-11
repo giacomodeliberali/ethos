@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Domain.Entities;
 using Ethos.Shared;
@@ -9,16 +10,13 @@ namespace Ethos.IntegrationTest.Setup
 {
     internal static class ServiceProviderExtension
     {
-        internal static ChangeUserDisposable WithUser(this IServiceScope serviceScope, ApplicationUser user)
-        {
-            return new ChangeUserDisposable(serviceScope.ServiceProvider, user);
-        }
-
         internal static async Task<ChangeUserDisposable> WithUser(this IServiceScope serviceScope, string userName)
         {
             var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var user = await userManager.FindByNameAsync(userName);
-            return new ChangeUserDisposable(serviceScope.ServiceProvider, user);
+            var roles = await userManager.GetRolesAsync(user);
+
+            return new ChangeUserDisposable(serviceScope.ServiceProvider, user, roles);
         }
 
         internal static async Task<ChangeUserDisposable> WithNewUser(this IServiceScope serviceScope, string userName, string role = RoleConstants.User, string fullName = null, Guid? id = null)
@@ -39,7 +37,7 @@ namespace Ethos.IntegrationTest.Setup
 
             await userManager.AddToRoleAsync(user, role);
 
-            return new ChangeUserDisposable(serviceScope.ServiceProvider, user);
+            return new ChangeUserDisposable(serviceScope.ServiceProvider, user, new List<string>(){ role });
         }
     }
 }

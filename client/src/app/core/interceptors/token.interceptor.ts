@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { UserService } from "@core/services/user.service";
+import { UserService } from '@core/services/user.service';
 import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
@@ -18,7 +18,7 @@ export class TokenInterceptor implements HttpInterceptor {
             },
           });
         }
-        return next.handle(request)
+        return next.handle(request);
       }),
     );
   }

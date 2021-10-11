@@ -35,7 +35,7 @@ namespace Ethos.Application.Seed
             }
 
             // seed default admin, change password in UI
-            var users = await _identityService.GetUsersAsync();
+            var users = await _identityService.GetAllAdminsAsync();
             if (!users.Any())
             {
                 await _identityService.CreateUserAsync(
@@ -43,7 +43,7 @@ namespace Ethos.Application.Seed
                 {
                     Email = "admin@ethos.it",
                     Password = "P2ssw0rd!",
-                    FullName = "Amministratore",
+                    FullName = "Administrator",
                     UserName = "admin",
                 }, RoleConstants.Admin);
             }

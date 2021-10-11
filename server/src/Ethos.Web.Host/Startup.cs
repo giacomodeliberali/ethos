@@ -32,6 +32,9 @@ namespace Ethos.Web.Host
         /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
+            // register Application Insights
+            services.AddApplicationInsightsTelemetry();
+
             // register strongly typed configuration
             services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
             services.Configure<EmailConfig>(_configuration.GetSection(nameof(EmailConfig)));

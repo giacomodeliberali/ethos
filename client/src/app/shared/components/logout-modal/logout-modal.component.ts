@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController } from "@ionic/angular";
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-logout-modal',
@@ -13,6 +13,6 @@ export class LogoutModalComponent {
   closeModal(ev){
     this.modalCtrl.dismiss({
       logout: ev === 'success'
-    })
+    });
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using Ardalis.GuardClauses;
+using Ethos.Domain.Guards;
 
 namespace Ethos.Domain.Entities
 {
@@ -16,6 +17,8 @@ namespace Ethos.Domain.Entities
         public void UpdateDateTime(DateTime startDate, DateTime endDate)
         {
             Guard.Against.Null(endDate, nameof(endDate));
+            Guard.Against.NotUtc(startDate, nameof(startDate));
+            Guard.Against.NotUtc(endDate, nameof(endDate));
 
             StartDate = startDate;
             EndDate = endDate;
@@ -36,6 +39,8 @@ namespace Ethos.Domain.Entities
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
+                Guard.Against.NotUtc(startDate, nameof(startDate));
+                Guard.Against.NotUtc(endDate, nameof(endDate));
 
                 return new SingleSchedule()
                 {

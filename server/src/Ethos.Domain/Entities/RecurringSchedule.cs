@@ -3,6 +3,7 @@ using Ardalis.GuardClauses;
 using Cronos;
 using Ethos.Domain.Common;
 using Ethos.Domain.Exceptions;
+using Ethos.Domain.Guards;
 
 namespace Ethos.Domain.Entities
 {
@@ -34,10 +35,12 @@ namespace Ethos.Domain.Entities
         {
         }
 
-        public void UpdateDateTime(DateTime startDate, DateTime? endDate, int durationInMinutes, string recurringExpression)
+        public void UpdateDate(DateTime startDate, DateTime? endDate, int durationInMinutes, string recurringExpression)
         {
             Guard.Against.NullOrEmpty(recurringExpression, nameof(recurringExpression));
             Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
+            Guard.Against.NotUtc(startDate, nameof(startDate));
+            Guard.Against.NotUtc(endDate, nameof(endDate));
 
             try
             {
@@ -73,6 +76,8 @@ namespace Ethos.Domain.Entities
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
                 Guard.Against.NegativeOrZero(duration, nameof(duration));
+                Guard.Against.NotUtc(startDate, nameof(startDate));
+                Guard.Against.NotUtc(endDate, nameof(endDate));
 
                 return new RecurringSchedule()
                 {
@@ -81,8 +86,8 @@ namespace Ethos.Domain.Entities
                     Name = name,
                     Description = description,
                     ParticipantsMaxNumber = participantsMaxNumber,
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    StartDate = startDate.Date,                         // do not consider time for start date (00:00)
+                    EndDate = endDate?.Date.AddDays(1).AddTicks(-1),    // do not consider time for end date (23:59)
                     DurationInMinutes = duration,
                     RecurringCronExpressionString = recurringExpression,
                 };

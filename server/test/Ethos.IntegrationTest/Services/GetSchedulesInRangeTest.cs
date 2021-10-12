@@ -101,8 +101,8 @@ namespace Ethos.IntegrationTest.Services
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_WhenSchedulesAreRecurring_AndReturnOverlappingSchedules()
         {
-            var firstOctober = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
-            var lastOctober = DateTime.Parse("2021-10-31T23:00:00").ToUniversalTime();
+            var firstOctober = DateTime.Parse("2021-10-01T00:00:00Z").ToUniversalTime();
+            var lastOctober = DateTime.Parse("2021-10-31T23:59:59Z").ToUniversalTime();
 
             using var admin = await Scope.WithUser("admin");
 
@@ -119,34 +119,34 @@ namespace Ethos.IntegrationTest.Services
 
 
             var generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                    DateTime.Parse("2021-10-4T09:00:00").ToUniversalTime(),
-                    DateTime.Parse("2021-10-8T09:00:00").ToUniversalTime())).ToList();
+                    DateTime.Parse("2021-10-4T09:00:00Z").ToUniversalTime(),
+                    DateTime.Parse("2021-10-8T09:00:00Z").ToUniversalTime())).ToList();
             generatedSchedules.Count().ShouldBe(5);
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-09-1T09:00:00").ToUniversalTime(),
-                DateTime.Parse("2021-10-3T09:00:00").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-09-1T09:00:00Z").ToUniversalTime(),
+                DateTime.Parse("2021-10-3T09:00:00Z").ToUniversalTime())).ToList();
             generatedSchedules.Count().ShouldBe(1);
-            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00").ToUniversalTime());
-            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00").ToUniversalTime());
+            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
+            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
 
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-09-1T09:00:00").ToUniversalTime(),
-                DateTime.Parse("2021-10-3T09:00:00").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-09-1T09:00:00Z").ToUniversalTime(),
+                DateTime.Parse("2021-10-3T09:00:00Z").ToUniversalTime())).ToList();
             generatedSchedules.Count().ShouldBe(1);
-            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00").ToUniversalTime());
-            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00").ToUniversalTime());
+            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
+            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
 
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-10-15T09:00:00").ToUniversalTime(),
-                DateTime.Parse("2021-11-15T09:00:00").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime(),
+                DateTime.Parse("2021-11-15T09:00:00Z").ToUniversalTime())).ToList();
             generatedSchedules.Count().ShouldBe(11);
-            generatedSchedules.First().StartDate.ShouldBe(DateTime.Parse("2021-10-15T09:00:00").ToUniversalTime());
-            generatedSchedules.First().EndDate.ShouldBe(DateTime.Parse("2021-10-15T11:00:00").ToUniversalTime());
-            generatedSchedules.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-29T09:00:00").ToUniversalTime());
-            generatedSchedules.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-29T11:00:00").ToUniversalTime());
+            generatedSchedules.First().StartDate.ShouldBe(DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime());
+            generatedSchedules.First().EndDate.ShouldBe(DateTime.Parse("2021-10-15T11:00:00Z").ToUniversalTime());
+            generatedSchedules.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-29T09:00:00Z").ToUniversalTime());
+            generatedSchedules.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-29T11:00:00Z").ToUniversalTime());
         }
     }
 }

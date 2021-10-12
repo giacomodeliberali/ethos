@@ -11,6 +11,7 @@ using Ethos.Application.Identity;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
+using Ethos.Domain.Guards;
 using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using Ethos.Shared;
@@ -61,40 +62,35 @@ namespace Ethos.Application.Services
         {
             var organizer = await _userManager.FindByIdAsync(input.OrganizerId.ToString());
 
-            if (organizer == null)
+            if (organizer == null || !await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
             {
                 throw new BusinessException("Invalid organizer id");
             }
 
-            if (!await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
-            {
-                throw new BusinessException("The organizer is not an admin");
-            }
-
-            Schedule schedule;
-
+            var createdScheduleId = GuidGenerator.Create();
             if (string.IsNullOrEmpty(input.RecurringCronExpression))
             {
                 Guard.Against.Null(input.StartDate, nameof(input.StartDate));
                 Guard.Against.Null(input.EndDate, nameof(input.EndDate));
 
-                schedule = SingleSchedule.Factory.Create(
-                    GuidGenerator.Create(),
+                var schedule = SingleSchedule.Factory.Create(
+                    createdScheduleId,
                     organizer,
                     input.Name,
                     input.Description,
                     input.ParticipantsMaxNumber,
                     input.StartDate.Value,
                     input.EndDate.Value);
+
+                await _scheduleRepository.CreateAsync(schedule);
             }
             else
             {
                 Guard.Against.Null(input.StartDate, nameof(input.StartDate));
                 Guard.Against.NegativeOrZero(input.DurationInMinutes, nameof(input.DurationInMinutes));
-                Guard.Against.Null(input.RecurringCronExpression, nameof(input.RecurringCronExpression));
 
-                schedule = RecurringSchedule.Factory.Create(
-                    GuidGenerator.Create(),
+                var schedule = RecurringSchedule.Factory.Create(
+                    createdScheduleId,
                     organizer,
                     input.Name,
                     input.Description,
@@ -103,15 +99,15 @@ namespace Ethos.Application.Services
                     input.EndDate,
                     input.DurationInMinutes,
                     input.RecurringCronExpression);
-            }
 
-            await _scheduleRepository.CreateAsync(schedule);
+                await _scheduleRepository.CreateAsync(schedule);
+            }
 
             await UnitOfWork.SaveChangesAsync();
 
             return new CreateScheduleReplyDto()
             {
-                Id = schedule.Id,
+                Id = createdScheduleId,
             };
         }
 
@@ -122,16 +118,20 @@ namespace Ethos.Application.Services
 
             if (schedule is RecurringSchedule recurringSchedule)
             {
+                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceStartDate));
+                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.Null(input.RecurringScheduleOperationType, nameof(input.RecurringScheduleOperationType));
+
                 await _mediator.Send(new UpdateRecurringScheduleCommand(input, recurringSchedule));
             }
             else if (schedule is SingleSchedule singleSchedule)
             {
                 await _mediator.Send(new UpdateSingleScheduleCommand(input, singleSchedule));
             }
-            else
-            {
-                throw new ArgumentException("Invalid schedule");
-            }
+
+            await UnitOfWork.SaveChangesAsync();
         }
 
         /// <inheritdoc />
@@ -142,18 +142,20 @@ namespace Ethos.Application.Services
             if (schedule is RecurringSchedule recurringSchedule)
             {
                 Guard.Against.Null(input.RecurringScheduleOperationType, nameof(input.RecurringScheduleOperationType));
-                Guard.Against.Default(input.InstanceStartDate, nameof(input.InstanceStartDate));
-                Guard.Against.Default(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.Null(input.InstanceStartDate, nameof(input.InstanceStartDate));
+                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
+                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
 
-                await DeleteRecurringSchedule(
+                await _mediator.Send(new DeleteRecurringScheduleCommand(
                     recurringSchedule,
                     input.RecurringScheduleOperationType.Value,
-                    input.InstanceStartDate,
-                    input.InstanceEndDate);
+                    input.InstanceStartDate.Value,
+                    input.InstanceEndDate.Value));
             }
             else if (schedule is SingleSchedule singleSchedule)
             {
-                await DeleteSingleSchedule(singleSchedule);
+                await _mediator.Send(new DeleteSingleScheduleCommand(singleSchedule));
             }
 
             await UnitOfWork.SaveChangesAsync();
@@ -162,62 +164,37 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime from, DateTime to)
         {
-            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(from, to);
-
-            var singleSchedules = await _scheduleQueryService.GetOverlappingSingleSchedulesAsync(from, to);
+            var startDateStartOfDay = from.Date.ToUniversalTime();
+            var endDateEndOfDay = to.Date.AddDays(1).AddTicks(-1).ToUniversalTime();
 
             var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
 
             var result = new List<GeneratedScheduleDto>();
 
-            foreach (var schedule in singleSchedules)
-            {
-                var startDate = schedule.StartDate;
-                var endDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
-                var bookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, startDate, endDate);
+            result.AddRange(await GetSingleSchedules(startDateStartOfDay, endDateEndOfDay, isAdmin));
+            result.AddRange(await GenerateRecurringSchedules(startDateStartOfDay, endDateEndOfDay, isAdmin));
 
-                result.Add(new GeneratedScheduleDto()
-                {
-                    ScheduleId = schedule.Id,
-                    Name = schedule.Name,
-                    Description = schedule.Description,
-                    ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    IsRecurring = false,
-                    Organizer = new GeneratedScheduleDto.UserDto()
-                    {
-                        Id = schedule.Organizer.Id,
-                        FullName = schedule.Organizer.FullName,
-                        Email = schedule.Organizer.Email,
-                        UserName = schedule.Organizer.UserName,
-                    },
-                    Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
-                    {
-                        Id = b.Id,
-                        User = isAdmin
-                            ? new GeneratedScheduleDto.UserDto()
-                            {
-                                Id = b.UserId,
-                                FullName = b.UserFullName,
-                                Email = b.UserEmail,
-                                UserName = b.UserName,
-                            }
-                            : null,
-                    }),
-                });
-            }
+            return result.OrderBy(s => s.StartDate);
+        }
+
+        private async Task<List<GeneratedScheduleDto>> GenerateRecurringSchedules(
+            DateTime startDateStartOfDay,
+            DateTime endDateEndOfDay,
+            bool isAdmin)
+        {
+            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(startDateStartOfDay, endDateEndOfDay);
+
+            var result = new List<GeneratedScheduleDto>();
 
             foreach (var schedule in recurringSchedules)
             {
                 var cronExpression = CronExpression.Parse(schedule.RecurringExpression);
 
-                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, from, to);
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, startDateStartOfDay, endDateEndOfDay);
 
                 var nextExecutions = cronExpression.GetOccurrences(
-                    fromUtc: schedule.StartDate >= from ? schedule.StartDate.ToUniversalTime() : from,
-                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= to ? schedule.EndDate.Value.ToUniversalTime() : to.ToUniversalTime(),
-                    zone: TimeZoneInfo.Local,
+                    fromUtc: schedule.StartDate >= startDateStartOfDay ? schedule.StartDate.ToUniversalTime() : startDateStartOfDay,
+                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= endDateEndOfDay ? schedule.EndDate.Value.ToUniversalTime() : endDateEndOfDay,
                     fromInclusive: true,
                     toInclusive: true);
 
@@ -272,80 +249,51 @@ namespace Ethos.Application.Services
             return result;
         }
 
-        private async Task DeleteRecurringSchedule(
-            RecurringSchedule schedule,
-            RecurringScheduleOperationType operationType,
-            DateTime startDate,
-            DateTime endDate)
+        private async Task<List<GeneratedScheduleDto>> GetSingleSchedules(DateTime startDateStartOfDay, DateTime endDateEndOfDay, bool isAdmin)
         {
-            if (operationType == RecurringScheduleOperationType.Future)
-            {
-                var futureBookings = await _bookingQueryService.GetAllBookingsInRange(
-                    schedule.Id,
-                    startDate: endDate.AddMilliseconds(1),
-                    endDate: DateTime.MaxValue);
+            var singleSchedules = await _scheduleQueryService.GetOverlappingSingleSchedulesAsync(startDateStartOfDay, endDateEndOfDay);
 
-                if (futureBookings.Any())
+            var result = new List<GeneratedScheduleDto>();
+
+            foreach (var schedule in singleSchedules)
+            {
+                var startDate = schedule.StartDate;
+                var endDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
+                var bookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, startDate, endDate);
+
+                result.Add(new GeneratedScheduleDto()
                 {
-                    throw new BusinessException(
-                        $"Non è possibile eliminare la schedulazione, sono già presenti {futureBookings.Count} prenotazioni");
-                }
-
-                var lastPastOccurrenceEnd = schedule.RecurringCronExpression.GetOccurrences(
-                        fromUtc: schedule.StartDate,
-                        toUtc: startDate,
-                        toInclusive: false)
-                    .Last()
-                    .AddMinutes(schedule.DurationInMinutes);
-
-                schedule.UpdateDateTime(
-                    schedule.StartDate,
-                    lastPastOccurrenceEnd,
-                    schedule.DurationInMinutes,
-                    schedule.RecurringCronExpressionString);
-
-                await _scheduleRepository.UpdateAsync(schedule);
-            }
-            else if (operationType == RecurringScheduleOperationType.Instance)
-            {
-                // add to exception table
-                var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
-                    schedule.Id,
-                    startDate,
-                    endDate);
-
-                if (existingBookings.Any())
-                {
-                    throw new BusinessException(
-                        $"Non è possibile eliminare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
-                }
-
-                var scheduleException = ScheduleException.Factory.Create(
-                    GuidGenerator.Create(),
-                    schedule,
-                    startDate,
-                    endDate);
-
-                await _scheduleExceptionRepository.CreateAsync(scheduleException);
+                    ScheduleId = schedule.Id,
+                    Name = schedule.Name,
+                    Description = schedule.Description,
+                    ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    IsRecurring = false,
+                    Organizer = new GeneratedScheduleDto.UserDto()
+                    {
+                        Id = schedule.Organizer.Id,
+                        FullName = schedule.Organizer.FullName,
+                        Email = schedule.Organizer.Email,
+                        UserName = schedule.Organizer.UserName,
+                    },
+                    Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
+                    {
+                        Id = b.Id,
+                        User = isAdmin
+                            ? new GeneratedScheduleDto.UserDto()
+                            {
+                                Id = b.UserId,
+                                FullName = b.UserFullName,
+                                Email = b.UserEmail,
+                                UserName = b.UserName,
+                            }
+                            : null,
+                    }),
+                });
             }
 
-            await UnitOfWork.SaveChangesAsync();
-        }
-
-        private async Task DeleteSingleSchedule(SingleSchedule schedule)
-        {
-            var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
-                schedule.Id,
-                schedule.StartDate,
-                schedule.EndDate);
-
-            if (existingBookings.Any())
-            {
-                throw new BusinessException(
-                    $"Non è possibile eliminare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
-            }
-
-            await _scheduleRepository.DeleteAsync(schedule);
+            return result;
         }
     }
 }

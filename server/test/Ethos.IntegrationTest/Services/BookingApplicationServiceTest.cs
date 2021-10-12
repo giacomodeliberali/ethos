@@ -28,7 +28,7 @@ namespace Ethos.IntegrationTest.Services
         [Fact]
         public async Task ShouldCreateABooking()
         {
-            var startDate = DateTime.Now;
+            var startDate = DateTime.UtcNow;
             var endDate = startDate.AddHours(2);
 
             Guid scheduleId;
@@ -48,8 +48,8 @@ namespace Ethos.IntegrationTest.Services
             await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
             {
                 ScheduleId = scheduleId,
-                StartDate = startDate,
-                EndDate = endDate,
+                StartDate = startDate.ToUniversalTime(),
+                EndDate = endDate.ToUniversalTime(),
             });
 
             var booking = await ApplicationDbContext.Bookings.SingleAsync();
@@ -115,8 +115,8 @@ namespace Ethos.IntegrationTest.Services
         [Fact]
         public async Task ShouldThrow_WhenBookingIsNotValidDateTime_ForRecurringSchedule()
         {
-            var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
-            var endDate = DateTime.Parse("2021-10-31T00:00:00").ToUniversalTime();
+            var startDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime();
+            var endDate = DateTime.Parse("2021-10-31T00:00:00Z").ToUniversalTime();
 
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
@@ -140,8 +140,8 @@ namespace Ethos.IntegrationTest.Services
             {
                 // ok
                 ScheduleId = scheduleId,
-                StartDate = DateTime.Parse("2021-10-01T09:00:00").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-01T11:00:00").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-01T11:00:00Z").ToUniversalTime(),
             });
 
             await Should.ThrowAsync<BusinessException>(async () =>
@@ -149,8 +149,8 @@ namespace Ethos.IntegrationTest.Services
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2021-10-01T06:00:00").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-01T08:00:00").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2021-10-01T08:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
                 });
             });
 
@@ -160,8 +160,8 @@ namespace Ethos.IntegrationTest.Services
                 {
                     // a month after
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2021-11-01T09:00:00").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-11-01T11:00:00").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2021-11-01T09:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-11-01T11:00:00Z").ToUniversalTime(),
                 });
             });
 
@@ -171,8 +171,8 @@ namespace Ethos.IntegrationTest.Services
                 {
                     // duration is incorrect
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2021-10-01T09:00:00").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-01T10:00:00").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T10:00:00Z").ToUniversalTime(),
                 });
             });
 
@@ -183,8 +183,8 @@ namespace Ethos.IntegrationTest.Services
                 {
                     // interval is shifter +30min
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2021-10-01T09:30:00").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-01T10:30:00").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2021-10-01T09:30:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T10:30:00Z").ToUniversalTime(),
                 });
             });
 
@@ -194,8 +194,8 @@ namespace Ethos.IntegrationTest.Services
                 {
                     // interval is shifted +10h
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2021-10-01T19:00:00").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-01T21:00:00").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2021-10-01T19:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T21:00:00Z").ToUniversalTime(),
                 });
             });
         }

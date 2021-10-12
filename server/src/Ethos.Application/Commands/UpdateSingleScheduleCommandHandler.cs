@@ -14,16 +14,13 @@ namespace Ethos.Application.Commands
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
 
         public UpdateSingleScheduleCommandHandler(
             IScheduleRepository scheduleRepository,
-            UserManager<ApplicationUser> userManager,
-            IUnitOfWork unitOfWork)
+            UserManager<ApplicationUser> userManager)
         {
             _scheduleRepository = scheduleRepository;
             _userManager = userManager;
-            _unitOfWork = unitOfWork;
         }
 
         protected override async Task Handle(UpdateSingleScheduleCommand request, CancellationToken cancellationToken)
@@ -68,8 +65,6 @@ namespace Ethos.Application.Commands
                 request.Schedule.UpdateDateTime(request.Input.Schedule.StartDate, request.Input.Schedule.EndDate.Value);
                 await _scheduleRepository.UpdateAsync(request.Schedule);
             }
-
-            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

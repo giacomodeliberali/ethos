@@ -61,10 +61,10 @@ namespace Ethos.IntegrationTest.Repositories
 
             var originalSchedule = (await _scheduleRepository.GetByIdAsync(scheduleId)) as RecurringSchedule;
 
-            var newStartDate = DateTime.Parse("2021-10-03T07:00:00").ToUniversalTime();
-            var newEndDate = DateTime.Parse("2021-10-5T09:00:00").ToUniversalTime();
+            var newStartDate = DateTime.Parse("2021-10-03T07:00:00Z").ToUniversalTime();
+            var newEndDate = DateTime.Parse("2021-10-5T09:00:00Z").ToUniversalTime();
 
-            originalSchedule.UpdateDateTime(newStartDate, newEndDate, 60, "0 09 * * MON-FRI");
+            originalSchedule!.UpdateDate(newStartDate, newEndDate, 60, "0 09 * * MON-FRI");
             originalSchedule.UpdateParticipantsMaxNumber(3);
             originalSchedule.UpdateNameAndDescription("New name", "New description");
 
@@ -74,23 +74,22 @@ namespace Ethos.IntegrationTest.Repositories
 
             var updatedSchedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
-            var expected = RecurringSchedule.Factory.Create(
+            var expected = RecurringSchedule.Factory.FromSnapshot(
                 scheduleId,
                 organizer,
-                "New name",
-                "New description",
-                3,
                 newStartDate,
                 newEndDate,
+                "0 09 * * MON-FRI",
                 60,
-                "0 09 * * MON-FRI"
-            );
+                "New name",
+                "New description",
+                3);
 
 
             updatedSchedule.ShouldBeEquivalentTo(expected);
         }
 
-        private Schedule GenerateScheduleFor(ApplicationUser organizer)
+        private RecurringSchedule GenerateScheduleFor(ApplicationUser organizer)
         {
 
             var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();

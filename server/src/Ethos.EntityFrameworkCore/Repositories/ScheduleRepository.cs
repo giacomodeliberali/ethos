@@ -21,7 +21,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             _userManager = userManager;
         }
 
-        public async Task<Guid> CreateAsync(Schedule schedule)
+        public async Task<Guid> CreateAsync(SingleSchedule schedule)
         {
             var scheduleData = new ScheduleData()
             {
@@ -35,53 +35,60 @@ namespace Ethos.EntityFrameworkCore.Repositories
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
 
-            if (schedule is RecurringSchedule recurringSchedule)
+            var singleScheduleData = new SingleScheduleData()
             {
-                var recurringScheduleData = new RecurringScheduleData()
-                {
-                    ScheduleId = schedule.Id,
-                    StartDate = recurringSchedule.StartDate,
-                    EndDate = recurringSchedule.EndDate,
-                    RecurringExpression = recurringSchedule.RecurringCronExpressionString,
-                };
+                ScheduleId = schedule.Id,
+                StartDate = schedule.StartDate,
+                EndDate = schedule.EndDate,
+            };
 
-                await _applicationDbContext.RecurringSchedules.AddAsync(recurringScheduleData);
-            }
-            else if (schedule is SingleSchedule singleSchedule)
-            {
-                var singleScheduleData = new SingleScheduleData()
-                {
-                    ScheduleId = schedule.Id,
-                    StartDate = singleSchedule.StartDate,
-                    EndDate = singleSchedule.EndDate,
-                };
-
-                await _applicationDbContext.SingleSchedules.AddAsync(singleScheduleData);
-            }
-            else
-            {
-                throw new ArgumentException("Invalid schedule type");
-            }
+            await _applicationDbContext.SingleSchedules.AddAsync(singleScheduleData);
 
             return schedule.Id;
         }
 
-        public async Task DeleteAsync(Schedule schedule)
+        public async Task<Guid> CreateAsync(RecurringSchedule schedule)
+        {
+            var scheduleData = new ScheduleData()
+            {
+                Id = schedule.Id,
+                Name = schedule.Name,
+                Description = schedule.Description,
+                OrganizerId = schedule.Organizer.Id,
+                DurationInMinutes = schedule.DurationInMinutes,
+                ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
+            };
+
+            await _applicationDbContext.Schedules.AddAsync(scheduleData);
+
+            var recurringScheduleData = new RecurringScheduleData()
+            {
+                ScheduleId = schedule.Id,
+                StartDate = schedule.StartDate,
+                EndDate = schedule.EndDate,
+                RecurringExpression = schedule.RecurringCronExpressionString,
+            };
+
+            await _applicationDbContext.RecurringSchedules.AddAsync(recurringScheduleData);
+
+            return schedule.Id;
+        }
+
+        public async Task DeleteAsync(SingleSchedule schedule)
         {
             var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == schedule.Id);
+            var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleAsync(s => s.ScheduleId == schedule.Id);
 
-            var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-            if (singleScheduleData != null)
-            {
-                _applicationDbContext.SingleSchedules.Remove(singleScheduleData);
-            }
+            _applicationDbContext.SingleSchedules.Remove(singleScheduleData);
+            _applicationDbContext.Schedules.Remove(scheduleData);
+        }
 
-            var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-            if (recurringScheduleData != null)
-            {
-                _applicationDbContext.RecurringSchedules.Remove(recurringScheduleData);
-            }
+        public async Task DeleteAsync(RecurringSchedule schedule)
+        {
+            var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == schedule.Id);
+            var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleAsync(s => s.ScheduleId == schedule.Id);
 
+            _applicationDbContext.RecurringSchedules.Remove(recurringScheduleData);
             _applicationDbContext.Schedules.Remove(scheduleData);
         }
 
@@ -123,7 +130,26 @@ namespace Ethos.EntityFrameworkCore.Repositories
             throw new ArgumentException("Invalid schedule type");
         }
 
-        public async Task UpdateAsync(Schedule schedule)
+        public async Task UpdateAsync(SingleSchedule schedule)
+        {
+            await UpdateInternalAsync(schedule);
+
+            var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
+            singleScheduleData.StartDate = schedule.StartDate;
+            singleScheduleData.EndDate = schedule.EndDate;
+        }
+
+        public async Task UpdateAsync(RecurringSchedule schedule)
+        {
+            await UpdateInternalAsync(schedule);
+
+            var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
+            recurringScheduleData.StartDate = schedule.StartDate;
+            recurringScheduleData.EndDate = schedule.EndDate;
+            recurringScheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
+        }
+
+        private async Task UpdateInternalAsync(Schedule schedule)
         {
             var scheduleData = await _applicationDbContext.Schedules.SingleAsync(s => s.Id == schedule.Id);
             scheduleData.Name = schedule.Name;
@@ -131,24 +157,6 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleData.DurationInMinutes = schedule.DurationInMinutes;
             scheduleData.ParticipantsMaxNumber = schedule.ParticipantsMaxNumber;
             scheduleData.OrganizerId = schedule.Organizer.Id;
-
-            if (schedule is SingleSchedule singleSchedule)
-            {
-                var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-                singleScheduleData.StartDate = singleSchedule.StartDate;
-                singleScheduleData.EndDate = singleSchedule.EndDate;
-            }
-            else if (schedule is RecurringSchedule recurringSchedule)
-            {
-                var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-                recurringScheduleData.StartDate = recurringSchedule.StartDate;
-                recurringScheduleData.EndDate = recurringSchedule.EndDate;
-                recurringScheduleData.RecurringExpression = recurringSchedule.RecurringCronExpressionString;
-            }
-            else
-            {
-                throw new ArgumentException("Invalid schedule type");
-            }
         }
     }
 }

@@ -12,10 +12,14 @@ namespace Ethos.Application.Contracts.Schedule
         /// </summary>
         public RecurringScheduleOperationType? RecurringScheduleOperationType { get; set; }
 
-        [Required]
-        public DateTime InstanceStartDate { get; set; }
+        /// <summary>
+        /// Required only if the schedule is recurring.
+        /// </summary>
+        public DateTime? InstanceStartDate { get; set; }
 
-        [Required]
-        public DateTime InstanceEndDate { get; set; }
+        /// <summary>
+        /// Required only if the schedule is recurring.
+        /// </summary>
+        public DateTime? InstanceEndDate { get; set; }
     }
 }

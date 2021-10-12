@@ -15,7 +15,7 @@ namespace Ethos.Domain.UnitTest
                 Id = GuidGenerator.Create(),
             };
 
-            var startDate = DateTime.Now;
+            var startDate = DateTime.UtcNow;
             var endDate = startDate.AddMonths(1);
 
             var id = GuidGenerator.Create();
@@ -31,8 +31,8 @@ namespace Ethos.Domain.UnitTest
             sut.ShouldNotBeNull();
             sut.Id.ShouldBe(id);
             sut.Organizer.Id.ShouldBe(user.Id);
-            sut.StartDate.ShouldBe(startDate);
-            sut.EndDate.ShouldBe(endDate);
+            sut.StartDate.ShouldBe(startDate.ToUniversalTime());
+            sut.EndDate.ShouldBe(endDate.ToUniversalTime());
             sut.Name.ShouldBe("Schedule");
             sut.Description.ShouldBe("Description");
             sut.ParticipantsMaxNumber.ShouldBe(10);
@@ -46,7 +46,7 @@ namespace Ethos.Domain.UnitTest
                 Id = GuidGenerator.Create(),
             };
 
-            var startDate = DateTime.Now;
+            var startDate = DateTime.UtcNow;
 
             var sut = RecurringSchedule.Factory.Create(
                 GuidGenerator.Create(),
@@ -61,7 +61,7 @@ namespace Ethos.Domain.UnitTest
 
             sut.ShouldNotBeNull();
             sut.Organizer.Id.ShouldBe(user.Id);
-            sut.StartDate.ShouldBe(startDate);
+            sut.StartDate.ShouldBe(startDate.Date.ToUniversalTime());
             sut.EndDate.ShouldBeNull();
             sut.Name.ShouldBe("Schedule recurring");
             sut.Description.ShouldBe("Recurring schedule with no end");

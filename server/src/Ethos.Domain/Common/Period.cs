@@ -20,6 +20,11 @@ namespace Ethos.Domain.Common
             Guard.Against.Default(startDate, nameof(startDate));
             Guard.Against.Default(endDate, nameof(endDate));
 
+            if (endDate < startDate)
+            {
+                throw new ArgumentException("End date is before start date!");
+            }
+
             StartDate = startDate;
             EndDate = endDate;
         }

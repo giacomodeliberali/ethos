@@ -22,90 +22,15 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IScheduleApplicationService _scheduleApplicationService;
-        private readonly IBookingApplicationService _bookingApplicationService;
 
         public UpdateScheduleTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
-            _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
-        }
-
-
-        [Fact]
-        public async Task Should_GenerateSingleInmemorySchedules_WhenSchedulesAreNotRecurring()
-        {
-            var now = DateTime.UtcNow;
-
-            var admin = await Scope.WithUser("admin");
-
-            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
-            {
-                Name = "Test schedule",
-                Description = "Description",
-                StartDate = now,
-                EndDate = now.AddMonths(1),
-                OrganizerId = admin.User.Id,
-            });
-
-            var schedules = await _scheduleApplicationService.GetSchedules(now, now.AddMonths(1));
-
-            schedules.Count().ShouldBe(1);
         }
 
         [Fact]
-        public async Task Should_GenerateInmemorySchedules_WhenSchedulesAreRecurring()
-        {
-            var firstOctober = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime();
-            var lastOctober = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime();
-
-            using var admin = await Scope.WithUser("admin");
-
-            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
-            {
-                Name = "Test recurring schedule",
-                Description = "Recurring schedule every weekday at 9am",
-                StartDate = firstOctober,
-                EndDate = lastOctober,
-                DurationInMinutes = 120,
-                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
-                OrganizerId = admin.User.Id,
-            });
-
-
-            var generatedSchedules = (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
-
-            generatedSchedules.Count().ShouldBe(21);
-        }
-
-        [Fact]
-        public async Task Should_GenerateInmemorySchedules_WhenSchedulesAreRecurring_AndWithoutEndDate()
-        {
-            var firstOctober = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime();
-            var lastOctober = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime();
-
-            using var admin = await Scope.WithUser("admin");
-
-            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
-            {
-                Name = "Test recurring schedule",
-                Description = "Recurring schedule every weekday at 9am",
-                StartDate = firstOctober,
-                EndDate = lastOctober,
-                DurationInMinutes = 120,
-                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
-                OrganizerId = admin.User.Id,
-            });
-
-
-            var generatedSchedules =
-                await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober);
-
-            generatedSchedules.Count().ShouldBe(21);
-        }
-
-        [Fact]
-        public async Task ShouldThrowError_DuringUpdate_WhenOrganizerIsNotAdmin()
+        public async Task ShouldThrowError_WhenOrganizerIsNotAdmin()
         {
             var admin = await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
@@ -137,7 +62,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldUpdateSingleScheduleFiled_WhenUpdating()
+        public async Task Should_UpdateSingleScheduleProperties()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -179,7 +104,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldConvertSingleScheduleIntoRecurring_WhenUpdating()
+        public async Task Should_ConvertSingleScheduleIntoRecurring()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -233,7 +158,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldUpdateAndKeep_RecurringSchedule()
+        public async Task Should_UpdateRecurringScheduleWithoutCreatingNewSchedules()
         {
             using var admin = await Scope.WithUser("admin");
 

@@ -31,7 +31,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldDelete_SingleSchedule()
+        public async Task Should_DeleteSingleSchedule()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -60,7 +60,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldDeleteRecurringSchedule_WhenDeletingTheFirstInstance()
+        public async Task Should_DeleteRecurringSchedule_WhenDeletingTheFirstInstance()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -99,7 +99,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task ShouldUpdateDateTime_WhenDeletingFutureRecurringSchedules()
+        public async Task Should_UpdateDateTime_WhenDeletingFutureRecurringSchedules()
         {
             var firstOctober = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime();
             var lastOctober = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime();

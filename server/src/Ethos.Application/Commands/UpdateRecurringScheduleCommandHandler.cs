@@ -44,7 +44,7 @@ namespace Ethos.Application.Commands
                 fromInclusive: true,
                 toInclusive: true).ToList();
 
-            if (occurrences.Count != 1 || occurrences.Single() < request.Schedule.StartDate || occurrences.Single() > request.Schedule.EndDate)
+            if (occurrences.Count != 1 || occurrences.Single() < request.Schedule.Period.StartDate || occurrences.Single() > request.Schedule.Period.EndDate)
             {
                 throw new BusinessException("Invalid instance start/end dates");
             }
@@ -99,8 +99,7 @@ namespace Ethos.Application.Commands
                 request.Input.Schedule.Name,
                 request.Input.Schedule.Description,
                 request.Input.Schedule.ParticipantsMaxNumber,
-                request.Input.InstanceStartDate.Value,
-                request.Input.Schedule.EndDate.Value);
+                new Period(request.Input.InstanceStartDate.Value, request.Input.Schedule.EndDate));
 
             await _scheduleRepository.CreateAsync(newSingle);
         }
@@ -108,8 +107,7 @@ namespace Ethos.Application.Commands
         private async Task RecurringToRecurring_UpdateInstanceAndFutures(UpdateRecurringScheduleCommand request, ApplicationUser organizer)
         {
             request.Schedule.UpdateDate(
-                request.Schedule.StartDate,
-                request.Input.InstanceStartDate,
+                new Period(request.Schedule.Period.StartDate, request.Input.InstanceStartDate.Value),
                 request.Schedule.DurationInMinutes,
                 request.Schedule.RecurringCronExpressionString);
 
@@ -121,8 +119,7 @@ namespace Ethos.Application.Commands
                 request.Input.Schedule.Name,
                 request.Input.Schedule.Description,
                 request.Input.Schedule.ParticipantsMaxNumber,
-                request.Input.Schedule.StartDate,
-                request.Input.Schedule.EndDate,
+                new Period(request.Input.Schedule.StartDate, request.Input.Schedule.EndDate),
                 request.Input.Schedule.DurationInMinutes,
                 request.Input.Schedule.RecurringCronExpression);
 
@@ -133,7 +130,8 @@ namespace Ethos.Application.Commands
         {
             // it was recurring, now it is single
             // devo terminare lo scheduling passato ad oggi e creare un nuovo scheduling futuro singolo con nuova start date. Le prenotazioni future vanno cancellate
-            request.Schedule.UpdateDate(request.Schedule.StartDate, request.Input.InstanceStartDate, request.Schedule.DurationInMinutes, request.Schedule.RecurringCronExpressionString);
+            var period = new Period(request.Schedule.Period.StartDate, request.Input.InstanceStartDate.Value);
+            request.Schedule.UpdateDate(period, request.Schedule.DurationInMinutes, request.Schedule.RecurringCronExpressionString);
             await _scheduleRepository.UpdateAsync(request.Schedule);
 
             Guard.Against.Default(request.Input.Schedule.EndDate, nameof(request.Input.Schedule.EndDate));
@@ -144,8 +142,7 @@ namespace Ethos.Application.Commands
                 request.Input.Schedule.Name,
                 request.Input.Schedule.Description,
                 request.Input.Schedule.ParticipantsMaxNumber,
-                request.Input.InstanceStartDate!.Value,
-                request.Input.Schedule.EndDate.Value);
+                new Period(request.Input.InstanceStartDate!.Value, request.Input.Schedule.EndDate));
 
             await _scheduleRepository.CreateAsync(newSingle);
         }

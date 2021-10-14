@@ -37,7 +37,8 @@ namespace Ethos.Application.Contracts.Schedule
             [Required]
             public DateTime StartDate { get; set; }
 
-            public DateTime? EndDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
 
             /// <summary>
             /// If not recurring this must be EndDate - StartDate.

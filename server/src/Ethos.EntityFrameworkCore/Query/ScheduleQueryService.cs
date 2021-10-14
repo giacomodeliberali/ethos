@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
@@ -17,14 +18,14 @@ namespace Ethos.EntityFrameworkCore.Query
         }
 
         /// <inheritdoc />
-        public async Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true)
         {
             var schedules =
                 await (from schedule in ApplicationDbContext.Schedules.AsNoTracking()
                 join recurringSchedule in ApplicationDbContext.RecurringSchedules.AsNoTracking() on schedule.Id equals recurringSchedule.ScheduleId
                 join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
-                where recurringSchedule.StartDate <= endDate
-                where (recurringSchedule.EndDate ?? DateTime.MaxValue) >= startDate
+                where fromInclusive ? recurringSchedule.StartDate <= period.EndDate : recurringSchedule.EndDate < period.EndDate
+                where toInclusive ? recurringSchedule.EndDate >= period.StartDate : recurringSchedule.EndDate > period.StartDate
                 select new
                 {
                     Schedule = schedule,
@@ -52,15 +53,15 @@ namespace Ethos.EntityFrameworkCore.Query
             }).ToList();
         }
 
-        public async Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true)
         {
             var schedules =
                 await (
                     from schedule in ApplicationDbContext.Schedules.AsNoTracking()
                     join singleSchedule in ApplicationDbContext.SingleSchedules.AsNoTracking() on schedule.Id equals singleSchedule.ScheduleId
                     join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
-                    where singleSchedule.StartDate <= endDate
-                    where singleSchedule.EndDate >= startDate
+                    where fromInclusive ? singleSchedule.StartDate <= period.EndDate : singleSchedule.StartDate < period.EndDate
+                    where toInclusive ? singleSchedule.EndDate >= period.StartDate : singleSchedule.EndDate > period.StartDate
                     select new
                     {
                         Schedule = schedule,

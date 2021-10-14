@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
@@ -11,14 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest.Services
+namespace Ethos.IntegrationTest.ApplicationServices.Bookings
 {
-    public class BookingApplicationServiceTest : BaseIntegrationTest
+    public class CreateBookingTest : BaseIntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;
 
-        public BookingApplicationServiceTest(CustomWebApplicationFactory<Startup> factory)
+        public CreateBookingTest(CustomWebApplicationFactory<Startup> factory)
             : base(factory)
         {
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
@@ -109,8 +110,6 @@ namespace Ethos.IntegrationTest.Services
                 });
             });
         }
-
-
 
         [Fact]
         public async Task ShouldThrow_WhenBookingIsNotValidDateTime_ForRecurringSchedule()
@@ -272,6 +271,42 @@ namespace Ethos.IntegrationTest.Services
                     EndDate = DateTime.Parse("2021-10-01T11:00:00").ToUniversalTime(),
                 });
             }
+        }
+
+
+        [Fact]
+        public async Task ShouldCreateABooking_ForTheGivenNonRecurringSchedule()
+        {
+            var startDate = DateTime.UtcNow;
+            var endDate = startDate.AddHours(2);
+
+            Guid scheduleId;
+            using (var admin = await Scope.WithUser("admin"))
+            {
+                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    OrganizerId = admin.User.Id,
+                })).Id;
+            }
+
+            await Scope.WithNewUser("userDemo", fullName: "User Demo");
+
+            await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
+            {
+                ScheduleId = scheduleId,
+                StartDate = startDate.ToUniversalTime(),
+                EndDate = endDate.ToUniversalTime(),
+            });
+
+            var generatedSchedules = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).ToList();
+
+            generatedSchedules.Count().ShouldBe(1);
+            generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
+            generatedSchedules.Single().Bookings.Single().User.ShouldBeNull();
         }
     }
 }

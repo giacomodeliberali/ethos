@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
@@ -45,8 +46,7 @@ namespace Ethos.Application.Commands
                     request.Input.Schedule.Name,
                     request.Input.Schedule.Description,
                     request.Input.Schedule.ParticipantsMaxNumber,
-                    request.Input.Schedule.StartDate,
-                    request.Input.Schedule.EndDate,
+                    new Period(request.Input.Schedule.StartDate, request.Input.Schedule.EndDate),
                     request.Input.Schedule.DurationInMinutes,
                     request.Input.Schedule.RecurringCronExpression);
 
@@ -62,7 +62,7 @@ namespace Ethos.Application.Commands
                 Guard.Against.Default(request.Input.Schedule.StartDate, nameof(request.Input.Schedule.StartDate));
                 Guard.Against.Null(request.Input.Schedule.EndDate, nameof(request.Input.Schedule.EndDate));
 
-                request.Schedule.UpdateDateTime(request.Input.Schedule.StartDate, request.Input.Schedule.EndDate.Value);
+                request.Schedule.UpdatePeriod(new Period(request.Input.Schedule.StartDate, request.Input.Schedule.EndDate));
                 await _scheduleRepository.UpdateAsync(request.Schedule);
             }
         }

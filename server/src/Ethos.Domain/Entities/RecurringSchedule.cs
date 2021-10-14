@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ardalis.GuardClauses;
 using Cronos;
 using Ethos.Domain.Common;
@@ -10,14 +12,9 @@ namespace Ethos.Domain.Entities
     public class RecurringSchedule : Schedule
     {
         /// <summary>
-        /// The first date where this schedule applies.
+        /// The period of this schedule.
         /// </summary>
-        public DateTime StartDate { get; private set; }
-
-        /// <summary>
-        /// The end date of the schedule. If no value is specified the schedule lasts forever.
-        /// </summary>
-        public DateTime? EndDate { get; private set; }
+        public Period Period { get; private set; }
 
         /// <summary>
         /// The underlying CRON expression expressed as a string.
@@ -35,12 +32,11 @@ namespace Ethos.Domain.Entities
         {
         }
 
-        public void UpdateDate(DateTime startDate, DateTime? endDate, int durationInMinutes, string recurringExpression)
+        public void UpdateDate(Period period, int durationInMinutes, string recurringExpression)
         {
             Guard.Against.NullOrEmpty(recurringExpression, nameof(recurringExpression));
             Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
-            Guard.Against.NotUtc(startDate, nameof(startDate));
-            Guard.Against.NotUtc(endDate, nameof(endDate));
+            Guard.Against.Null(period, nameof(period));
 
             try
             {
@@ -51,12 +47,21 @@ namespace Ethos.Domain.Entities
                 throw new BusinessException($"Invalid CRON expression '{recurringExpression}'", ex);
             }
 
-            Guard.Against.Null(durationInMinutes, nameof(durationInMinutes));
-
-            StartDate = startDate;
-            EndDate = endDate;
+            Period = period;
             DurationInMinutes = durationInMinutes;
             RecurringCronExpressionString = recurringExpression;
+        }
+
+        public IEnumerable<Period> GetOccurrences(Period period)
+        {
+            return RecurringCronExpression
+                .GetOccurrences(period.StartDate, period.EndDate, fromInclusive: true, toInclusive: true)
+                .Select(nextStartDate => new Period(nextStartDate, nextStartDate.AddMinutes(DurationInMinutes)));
+        }
+
+        public IEnumerable<Period> GetOccurrences()
+        {
+            return GetOccurrences(Period);
         }
 
         public static class Factory
@@ -67,8 +72,7 @@ namespace Ethos.Domain.Entities
                 string name,
                 string description,
                 int participantsMaxNumber,
-                DateTime startDate,
-                DateTime? endDate,
+                Period period,
                 int duration,
                 string recurringExpression)
             {
@@ -76,8 +80,7 @@ namespace Ethos.Domain.Entities
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
                 Guard.Against.NegativeOrZero(duration, nameof(duration));
-                Guard.Against.NotUtc(startDate, nameof(startDate));
-                Guard.Against.NotUtc(endDate, nameof(endDate));
+                Guard.Against.Null(period, nameof(period));
 
                 return new RecurringSchedule()
                 {
@@ -86,8 +89,8 @@ namespace Ethos.Domain.Entities
                     Name = name,
                     Description = description,
                     ParticipantsMaxNumber = participantsMaxNumber,
-                    StartDate = startDate.Date,                         // do not consider time for start date (00:00)
-                    EndDate = endDate?.Date.AddDays(1).AddTicks(-1),    // do not consider time for end date (23:59)
+                    // do not consider time
+                    Period = new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)),
                     DurationInMinutes = duration,
                     RecurringCronExpressionString = recurringExpression,
                 };
@@ -97,7 +100,7 @@ namespace Ethos.Domain.Entities
                 Guid id,
                 ApplicationUser organizer,
                 DateTime startDate,
-                DateTime? endDate,
+                DateTime endDate,
                 string recurringExpression,
                 int duration,
                 string name,
@@ -108,8 +111,7 @@ namespace Ethos.Domain.Entities
                 {
                     Id = id,
                     Organizer = organizer,
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    Period = new Period(startDate, endDate),
                     RecurringCronExpressionString = recurringExpression,
                     DurationInMinutes = duration,
                     Name = name,

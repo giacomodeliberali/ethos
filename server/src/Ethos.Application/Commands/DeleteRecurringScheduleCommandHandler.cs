@@ -69,7 +69,7 @@ namespace Ethos.Application.Commands
                 throw new BusinessException($"Non è possibile eliminare la schedulazione, sono già presenti {futureBookings.Count} prenotazioni");
             }
 
-            var firstOccurrenceStartDate = schedule.RecurringCronExpression.GetNextOccurrence(schedule.StartDate, inclusive: true);
+            var firstOccurrenceStartDate = schedule.RecurringCronExpression.GetNextOccurrence(schedule.Period.StartDate, inclusive: true);
             var isFirstOccurence = firstOccurrenceStartDate == instanceStartDate;
             if (isFirstOccurence)
             {
@@ -80,15 +80,14 @@ namespace Ethos.Application.Commands
             {
                 // I am editing an occurrence in the middle. Make the past end at last occurence (but do not delete the past!)
                 var lastPastOccurrenceEnd = schedule.RecurringCronExpression.GetOccurrences(
-                        fromUtc: schedule.StartDate,
+                        fromUtc: schedule.Period.StartDate,
                         toUtc: instanceStartDate,
                         toInclusive: false)
                     .Last()
                     .AddMinutes(schedule.DurationInMinutes);
 
                 schedule.UpdateDate(
-                    schedule.StartDate,
-                    lastPastOccurrenceEnd,
+                    new Period(schedule.Period.StartDate, lastPastOccurrenceEnd),
                     schedule.DurationInMinutes,
                     schedule.RecurringCronExpressionString);
 

@@ -11,14 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
-namespace Ethos.IntegrationTest.Services
+namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 {
-    public class GetSchedulesInRangeTest : BaseIntegrationTest
+    public class GetSchedulesTest : BaseIntegrationTest
     {
         private readonly IScheduleApplicationService _scheduleApplicationService;
         private readonly IBookingApplicationService _bookingApplicationService;
 
-        public GetSchedulesInRangeTest(CustomWebApplicationFactory<Startup> factory)
+        public GetSchedulesTest(CustomWebApplicationFactory<Startup> factory)
             : base(factory)
         {
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();

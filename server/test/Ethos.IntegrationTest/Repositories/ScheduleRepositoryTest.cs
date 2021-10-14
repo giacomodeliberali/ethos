@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
@@ -40,8 +41,9 @@ namespace Ethos.IntegrationTest.Repositories
                 "Test schedule",
                 "Description",
                 3,
-                DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
-                DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime(),
+                new Period(
+                    DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
+                    DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime()),
                 120,
                 "0 09 * * MON-FRI"
             );
@@ -64,7 +66,7 @@ namespace Ethos.IntegrationTest.Repositories
             var newStartDate = DateTime.Parse("2021-10-03T07:00:00Z").ToUniversalTime();
             var newEndDate = DateTime.Parse("2021-10-5T09:00:00Z").ToUniversalTime();
 
-            originalSchedule!.UpdateDate(newStartDate, newEndDate, 60, "0 09 * * MON-FRI");
+            originalSchedule!.UpdateDate(new Period(newStartDate, newEndDate), 60, "0 09 * * MON-FRI");
             originalSchedule.UpdateParticipantsMaxNumber(3);
             originalSchedule.UpdateNameAndDescription("New name", "New description");
 
@@ -101,8 +103,7 @@ namespace Ethos.IntegrationTest.Repositories
                 "Test schedule",
                 "Description",
                 3,
-                startDate,
-                endDate,
+                new Period(startDate, endDate),
                 120,
                 "0 09 * * MON-FRI"
             );

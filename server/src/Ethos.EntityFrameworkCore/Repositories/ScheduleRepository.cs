@@ -38,8 +38,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var singleScheduleData = new SingleScheduleData()
             {
                 ScheduleId = schedule.Id,
-                StartDate = schedule.StartDate,
-                EndDate = schedule.EndDate,
+                StartDate = schedule.Period.StartDate,
+                EndDate = schedule.Period.EndDate,
             };
 
             await _applicationDbContext.SingleSchedules.AddAsync(singleScheduleData);
@@ -64,8 +64,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var recurringScheduleData = new RecurringScheduleData()
             {
                 ScheduleId = schedule.Id,
-                StartDate = schedule.StartDate,
-                EndDate = schedule.EndDate,
+                StartDate = schedule.Period.StartDate,
+                EndDate = schedule.Period.EndDate,
                 RecurringExpression = schedule.RecurringCronExpressionString,
             };
 
@@ -135,8 +135,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             await UpdateInternalAsync(schedule);
 
             var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-            singleScheduleData.StartDate = schedule.StartDate;
-            singleScheduleData.EndDate = schedule.EndDate;
+            singleScheduleData.StartDate = schedule.Period.StartDate;
+            singleScheduleData.EndDate = schedule.Period.EndDate;
         }
 
         public async Task UpdateAsync(RecurringSchedule schedule)
@@ -144,8 +144,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             await UpdateInternalAsync(schedule);
 
             var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == schedule.Id);
-            recurringScheduleData.StartDate = schedule.StartDate;
-            recurringScheduleData.EndDate = schedule.EndDate;
+            recurringScheduleData.StartDate = schedule.Period.StartDate;
+            recurringScheduleData.EndDate = schedule.Period.EndDate;
             recurringScheduleData.RecurringExpression = schedule.RecurringCronExpressionString;
         }
 

@@ -67,26 +67,24 @@ namespace Ethos.Application.Services
                 throw new BusinessException("Invalid organizer id");
             }
 
+            Guard.Against.Null(input.StartDate, nameof(input.StartDate));
+            Guard.Against.Null(input.EndDate, nameof(input.EndDate));
+
             var createdScheduleId = GuidGenerator.Create();
             if (string.IsNullOrEmpty(input.RecurringCronExpression))
             {
-                Guard.Against.Null(input.StartDate, nameof(input.StartDate));
-                Guard.Against.Null(input.EndDate, nameof(input.EndDate));
-
                 var schedule = SingleSchedule.Factory.Create(
                     createdScheduleId,
                     organizer,
                     input.Name,
                     input.Description,
                     input.ParticipantsMaxNumber,
-                    input.StartDate.Value,
-                    input.EndDate.Value);
+                    new Period(input.StartDate.Value, input.EndDate.Value));
 
                 await _scheduleRepository.CreateAsync(schedule);
             }
             else
             {
-                Guard.Against.Null(input.StartDate, nameof(input.StartDate));
                 Guard.Against.NegativeOrZero(input.DurationInMinutes, nameof(input.DurationInMinutes));
 
                 var schedule = RecurringSchedule.Factory.Create(
@@ -95,8 +93,7 @@ namespace Ethos.Application.Services
                     input.Name,
                     input.Description,
                     input.ParticipantsMaxNumber,
-                    input.StartDate.Value,
-                    input.EndDate,
+                    new Period(input.StartDate.Value, input.EndDate.Value),
                     input.DurationInMinutes,
                     input.RecurringCronExpression);
 
@@ -171,7 +168,7 @@ namespace Ethos.Application.Services
 
             var result = new List<GeneratedScheduleDto>();
 
-            result.AddRange(await GetSingleSchedules(startDateStartOfDay, endDateEndOfDay, isAdmin));
+            result.AddRange(await GetSingleSchedules(new Period(startDateStartOfDay, endDateEndOfDay), isAdmin));
             result.AddRange(await GenerateRecurringSchedules(startDateStartOfDay, endDateEndOfDay, isAdmin));
 
             return result.OrderBy(s => s.StartDate);
@@ -182,7 +179,7 @@ namespace Ethos.Application.Services
             DateTime endDateEndOfDay,
             bool isAdmin)
         {
-            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(startDateStartOfDay, endDateEndOfDay);
+            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(new Period(startDateStartOfDay, endDateEndOfDay));
 
             var result = new List<GeneratedScheduleDto>();
 
@@ -249,9 +246,9 @@ namespace Ethos.Application.Services
             return result;
         }
 
-        private async Task<List<GeneratedScheduleDto>> GetSingleSchedules(DateTime startDateStartOfDay, DateTime endDateEndOfDay, bool isAdmin)
+        private async Task<List<GeneratedScheduleDto>> GetSingleSchedules(Period period, bool isAdmin)
         {
-            var singleSchedules = await _scheduleQueryService.GetOverlappingSingleSchedulesAsync(startDateStartOfDay, endDateEndOfDay);
+            var singleSchedules = await _scheduleQueryService.GetOverlappingSingleSchedulesAsync(period);
 
             var result = new List<GeneratedScheduleDto>();
 

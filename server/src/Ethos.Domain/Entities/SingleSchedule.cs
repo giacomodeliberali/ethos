@@ -1,28 +1,23 @@
 using System;
 using Ardalis.GuardClauses;
+using Ethos.Domain.Common;
 using Ethos.Domain.Guards;
 
 namespace Ethos.Domain.Entities
 {
     public class SingleSchedule : Schedule
     {
-        public DateTime StartDate { get; private set; }
-
-        public DateTime EndDate { get; private set; }
+        public Period Period { get; private set; }
 
         private SingleSchedule()
         {
         }
 
-        public void UpdateDateTime(DateTime startDate, DateTime endDate)
+        public void UpdatePeriod(Period period)
         {
-            Guard.Against.Null(endDate, nameof(endDate));
-            Guard.Against.NotUtc(startDate, nameof(startDate));
-            Guard.Against.NotUtc(endDate, nameof(endDate));
-
-            StartDate = startDate;
-            EndDate = endDate;
-            DurationInMinutes = (int)(endDate - startDate).TotalMinutes;
+            Guard.Against.Null(period, nameof(period));
+            Period = period;
+            DurationInMinutes = period.DurationInMinutes;
         }
 
         public static class Factory
@@ -33,14 +28,12 @@ namespace Ethos.Domain.Entities
                 string name,
                 string description,
                 int participantsMaxNumber,
-                DateTime startDate,
-                DateTime endDate)
+                Period period)
             {
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
-                Guard.Against.NotUtc(startDate, nameof(startDate));
-                Guard.Against.NotUtc(endDate, nameof(endDate));
+                Guard.Against.Null(period, nameof(period));
 
                 return new SingleSchedule()
                 {
@@ -49,9 +42,8 @@ namespace Ethos.Domain.Entities
                     Name = name,
                     Description = description,
                     ParticipantsMaxNumber = participantsMaxNumber,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    DurationInMinutes = (int)(endDate - startDate).TotalMinutes,
+                    Period = period,
+                    DurationInMinutes = period.DurationInMinutes,
                 };
             }
 
@@ -69,8 +61,7 @@ namespace Ethos.Domain.Entities
                 {
                     Id = id,
                     Organizer = organizer,
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    Period = new Period(startDate, endDate),
                     DurationInMinutes = duration,
                     Name = name,
                     Description = description,

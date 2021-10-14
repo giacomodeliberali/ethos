@@ -12,7 +12,7 @@ namespace Ethos.EntityFrameworkCore.Configurations
             builder.ToTable("Recurring", schema: "Schedules");
             builder.HasKey(s => s.ScheduleId);
             builder.Property(s => s.StartDate).IsRequired();
-            builder.Property(s => s.EndDate);
+            builder.Property(s => s.EndDate).IsRequired();
             builder.Property(s => s.RecurringExpression).HasMaxLength(32).IsRequired();
         }
     }

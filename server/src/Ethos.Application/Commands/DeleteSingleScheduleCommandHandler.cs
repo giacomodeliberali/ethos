@@ -28,8 +28,8 @@ namespace Ethos.Application.Commands
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 request.Schedule.Id,
-                request.Schedule.StartDate,
-                request.Schedule.EndDate);
+                request.Schedule.Period.StartDate,
+                request.Schedule.Period.EndDate);
 
             if (existingBookings.Any())
             {

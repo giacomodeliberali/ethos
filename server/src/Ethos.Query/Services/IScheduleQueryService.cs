@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.Query.Projections;
 
 namespace Ethos.Query.Services
@@ -10,11 +11,11 @@ namespace Ethos.Query.Services
         /// <summary>
         /// Return all the recurring schedules that overlaps with the provided interval.
         /// </summary>
-        Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(DateTime startDate, DateTime endDate);
+        Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true);
 
         /// <summary>
         /// Return all the single schedules that overlaps with the provided interval.
         /// </summary>
-        Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(DateTime startDate, DateTime endDate);
+        Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true);
     }
 }

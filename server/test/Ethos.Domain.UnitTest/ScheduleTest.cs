@@ -1,4 +1,5 @@
 using System;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Shouldly;
 using Xunit;
@@ -25,14 +26,13 @@ namespace Ethos.Domain.UnitTest
                 name: "Schedule",
                 description: "Description",
                 participantsMaxNumber: 10,
-                startDate,
-                endDate);
+                new Period(startDate, endDate));
 
             sut.ShouldNotBeNull();
             sut.Id.ShouldBe(id);
             sut.Organizer.Id.ShouldBe(user.Id);
-            sut.StartDate.ShouldBe(startDate.ToUniversalTime());
-            sut.EndDate.ShouldBe(endDate.ToUniversalTime());
+            sut.Period.StartDate.ShouldBe(startDate.ToUniversalTime());
+            sut.Period.EndDate.ShouldBe(endDate.ToUniversalTime());
             sut.Name.ShouldBe("Schedule");
             sut.Description.ShouldBe("Description");
             sut.ParticipantsMaxNumber.ShouldBe(10);
@@ -54,15 +54,14 @@ namespace Ethos.Domain.UnitTest
                 name: "Schedule recurring",
                 description: "Recurring schedule with no end",
                 participantsMaxNumber: 0,
-                startDate,
-                endDate: null,
+                new Period(startDate, startDate.AddMonths(1)),
                 duration: 60,
                 recurringExpression: "@weekly");
 
             sut.ShouldNotBeNull();
             sut.Organizer.Id.ShouldBe(user.Id);
-            sut.StartDate.ShouldBe(startDate.Date.ToUniversalTime());
-            sut.EndDate.ShouldBeNull();
+            sut.Period.StartDate.ShouldBe(startDate.Date.ToUniversalTime());
+            sut.Period.EndDate.ShouldBe(startDate.AddMonths(1).Date.AddDays(1).AddTicks(-1));
             sut.Name.ShouldBe("Schedule recurring");
             sut.Description.ShouldBe("Recurring schedule with no end");
             sut.RecurringCronExpression.ShouldNotBeNull();
@@ -78,7 +77,7 @@ namespace Ethos.Domain.UnitTest
                 Id = GuidGenerator.Create(),
             };
 
-            var startDate = DateTime.Now;
+            var startDate = DateTime.UtcNow;
             var endDate = startDate.AddMonths(2);
 
             var sut = RecurringSchedule.Factory.FromSnapshot(
@@ -94,8 +93,8 @@ namespace Ethos.Domain.UnitTest
 
             sut.Id.ShouldBe(guid);
             sut.Organizer.ShouldBe(user);
-            sut.StartDate.ShouldBe(startDate);
-            sut.EndDate.ShouldBe(endDate);
+            sut.Period.StartDate.ShouldBe(startDate);
+            sut.Period.EndDate.ShouldBe(endDate);
             sut.Name.ShouldBe("name");
             sut.Description.ShouldBe("description");
             sut.ParticipantsMaxNumber.ShouldBe(10);

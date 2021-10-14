@@ -62,14 +62,14 @@ namespace Ethos.Application.Services
                     fromInclusive: true,
                     toInclusive: true).ToList();
 
-                if (occurrences.Count != 1 || occurrences.Single() < recurringSchedule.StartDate || occurrences.Single() > recurringSchedule.EndDate)
+                if (occurrences.Count != 1 || occurrences.Single() < recurringSchedule.Period.StartDate || occurrences.Single() > recurringSchedule.Period.EndDate)
                 {
                     throw new BusinessException("Invalid booking date/time.");
                 }
             }
             else if (schedule is SingleSchedule singleSchedule)
             {
-                if (input.StartDate < singleSchedule.StartDate || input.EndDate > singleSchedule.EndDate)
+                if (input.StartDate < singleSchedule.Period.StartDate || input.EndDate > singleSchedule.Period.EndDate)
                 {
                     throw new BusinessException("Invalid booking date/time.");
                 }

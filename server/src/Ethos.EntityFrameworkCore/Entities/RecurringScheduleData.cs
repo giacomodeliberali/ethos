@@ -8,7 +8,7 @@ namespace Ethos.EntityFrameworkCore.Entities
 
         public DateTime StartDate { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public string RecurringExpression { get; set; }
     }

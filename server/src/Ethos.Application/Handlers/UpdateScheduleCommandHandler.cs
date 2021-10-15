@@ -53,6 +53,12 @@ namespace Ethos.Application.Handlers
             await _unitOfWork.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// I'm updating an instance of a specific recurring schedule.
+        /// I can choose to update only this specific instance of this and all the future ones.
+        ///
+        /// The schedule could remain recurring or it could be converted into a single (thus deleting the future occurrences).
+        /// </summary>
         private async Task UpdateSchedule(RecurringSchedule schedule, UpdateScheduleCommand request)
         {
             var occurrences = schedule.RecurringCronExpression.GetOccurrences(
@@ -76,7 +82,7 @@ namespace Ethos.Application.Handlers
             if (string.IsNullOrEmpty(request.UpdatedSchedule.RecurringCronExpression))
             {
                 // it was recurring, now it is single
-                // devo terminare lo scheduling passato ad oggi e creare un nuovo scheduling futuro singolo con nuova start date. Le prenotazioni future vanno cancellate
+                // devo terominare lo scheduling passato ad oggi e creare un nuvo scheduling futuro singolo con nuova start date. Le prenotazioni future vanno cancellate
                 await RecurringToSingle(request, organizer, schedule);
             }
             else

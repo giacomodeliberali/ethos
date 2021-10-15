@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
+using Ethos.Application.Commands;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
@@ -10,30 +12,51 @@ using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using MediatR;
 
-namespace Ethos.Application.Commands
+namespace Ethos.Application.Handlers
 {
-    public class DeleteRecurringScheduleCommandHandler : AsyncRequestHandler<DeleteRecurringScheduleCommand>
+    public class DeleteScheduleCommandHandler : AsyncRequestHandler<DeleteScheduleCommand>
     {
         private readonly IScheduleRepository _scheduleRepository;
-        private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IBookingQueryService _bookingQueryService;
+        private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
         private readonly IGuidGenerator _guidGenerator;
 
-        public DeleteRecurringScheduleCommandHandler(
+        public DeleteScheduleCommandHandler(
             IScheduleRepository scheduleRepository,
-            IScheduleExceptionRepository scheduleExceptionRepository,
+            IUnitOfWork unitOfWork,
             IBookingQueryService bookingQueryService,
+            IScheduleExceptionRepository scheduleExceptionRepository,
             IGuidGenerator guidGenerator)
         {
             _scheduleRepository = scheduleRepository;
-            _scheduleExceptionRepository = scheduleExceptionRepository;
+            _unitOfWork = unitOfWork;
             _bookingQueryService = bookingQueryService;
+            _scheduleExceptionRepository = scheduleExceptionRepository;
             _guidGenerator = guidGenerator;
         }
 
-        protected override async Task Handle(DeleteRecurringScheduleCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
         {
-            var occurrences = request.Schedule.RecurringCronExpression.GetOccurrences(
+            var schedule = await _scheduleRepository.GetByIdAsync(request.Id);
+
+            if (schedule is RecurringSchedule recurringSchedule)
+            {
+                await DeleteSchedule(recurringSchedule, request);
+            }
+            else if (schedule is SingleSchedule singleSchedule)
+            {
+                await DeleteSchedule(singleSchedule, request);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        private async Task DeleteSchedule(RecurringSchedule schedule, DeleteScheduleCommand request)
+        {
+            Guard.Against.Null(request.RecurringScheduleOperationType, nameof(request.RecurringScheduleOperationType));
+
+            var occurrences = schedule.RecurringCronExpression.GetOccurrences(
                 request.InstanceStartDate,
                 request.InstanceEndDate,
                 fromInclusive: true,
@@ -44,13 +67,13 @@ namespace Ethos.Application.Commands
                 throw new BusinessException("Invalid instance start/end dates");
             }
 
-            if (request.OperationType == RecurringScheduleOperationType.Future)
+            if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.Future)
             {
-                await DeleteFutureSchedules(request.Schedule, request.InstanceStartDate, request.InstanceEndDate);
+                await DeleteFutureSchedules(schedule, request.InstanceStartDate, request.InstanceEndDate);
             }
-            else if (request.OperationType == RecurringScheduleOperationType.Instance)
+            else if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.Instance)
             {
-                await DeleteSingleInstanceOfRecurringSchedule(request.Schedule, request.InstanceStartDate, request.InstanceEndDate);
+                await DeleteSingleInstanceOfRecurringSchedule(schedule, request.InstanceStartDate, request.InstanceEndDate);
             }
         }
 
@@ -119,6 +142,21 @@ namespace Ethos.Application.Commands
                 instanceEndDate);
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
+        }
+
+        private async Task DeleteSchedule(SingleSchedule schedule, DeleteScheduleCommand request)
+        {
+            var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
+                schedule.Id,
+                schedule.Period.StartDate,
+                schedule.Period.EndDate);
+
+            if (existingBookings.Any())
+            {
+                throw new BusinessException($"Non è possibile eliminare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
+            }
+
+            await _scheduleRepository.DeleteAsync(schedule);
         }
     }
 }

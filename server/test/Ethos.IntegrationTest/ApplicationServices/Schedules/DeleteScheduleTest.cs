@@ -47,6 +47,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
+                InstanceStartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
             });
 
             await Should.ThrowAsync<Exception>(async () =>

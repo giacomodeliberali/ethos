@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
-using Ethos.Domain.Entities;
 
 namespace Ethos.Application.Services
 {

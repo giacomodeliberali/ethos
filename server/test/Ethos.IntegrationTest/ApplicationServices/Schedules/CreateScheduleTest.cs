@@ -58,8 +58,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 {
                     Name = "Test schedule",
                     Description = "Description",
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddMonths(1),
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddMonths(1),
                     OrganizerId = demoUser.Id,
                 });
             });

@@ -9,14 +9,16 @@ namespace Ethos.Application.Contracts.Schedule
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Required only if the schedule is recurring.
+        /// The start date of the selected schedule instance to update.
         /// </summary>
-        public DateTime? InstanceStartDate { get; set; }
+        [Required]
+        public DateTime InstanceStartDate { get; set; }
 
         /// <summary>
-        /// Required only if the schedule is recurring.
+        /// The end date of the selected schedule instance to update.
         /// </summary>
-        public DateTime? InstanceEndDate { get; set; }
+        [Required]
+        public DateTime InstanceEndDate { get; set; }
 
         [Required]
         public ScheduleDto Schedule { get; set; }

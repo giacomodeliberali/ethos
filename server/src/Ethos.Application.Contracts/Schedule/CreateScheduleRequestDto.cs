@@ -15,12 +15,10 @@ namespace Ethos.Application.Contracts.Schedule
         public string Description { get; set; }
 
         [Required]
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
-        /// <summary>
-        /// If no value is specified it must contain a RecurringCronExpression.
-        /// </summary>
-        public DateTime? EndDate { get; set; }
+        [Required]
+        public DateTime EndDate { get; set; }
 
         /// <summary>
         /// If not recurring this must be EndDate - StartDate.

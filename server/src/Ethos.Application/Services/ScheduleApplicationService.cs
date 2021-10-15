@@ -2,160 +2,95 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ardalis.GuardClauses;
-using AutoMapper;
 using Cronos;
 using Ethos.Application.Commands;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Domain.Common;
-using Ethos.Domain.Entities;
-using Ethos.Domain.Exceptions;
-using Ethos.Domain.Guards;
 using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using Ethos.Shared;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Ethos.Application.Services
 {
     public class ScheduleApplicationService : BaseApplicationService, IScheduleApplicationService
     {
-        private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleQueryService _scheduleQueryService;
         private readonly IBookingQueryService _bookingQueryService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
         private readonly IScheduleExceptionQueryService _scheduleExceptionQueryService;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
         public ScheduleApplicationService(
             IUnitOfWork unitOfWork,
             IGuidGenerator guidGenerator,
-            IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IScheduleQueryService scheduleQueryService,
             IBookingQueryService bookingQueryService,
-            UserManager<ApplicationUser> userManager,
-            IScheduleExceptionRepository scheduleExceptionRepository,
             IScheduleExceptionQueryService scheduleExceptionQueryService,
-            IMapper mapper,
             IMediator mediator)
             : base(unitOfWork, guidGenerator)
         {
-            _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
             _scheduleQueryService = scheduleQueryService;
             _bookingQueryService = bookingQueryService;
-            _userManager = userManager;
-            _scheduleExceptionRepository = scheduleExceptionRepository;
             _scheduleExceptionQueryService = scheduleExceptionQueryService;
-            _mapper = mapper;
             _mediator = mediator;
         }
 
         /// <inheritdoc />
         public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
         {
-            var organizer = await _userManager.FindByIdAsync(input.OrganizerId.ToString());
-
-            if (organizer == null || !await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
-            {
-                throw new BusinessException("Invalid organizer id");
-            }
-
-            Guard.Against.Null(input.StartDate, nameof(input.StartDate));
-            Guard.Against.Null(input.EndDate, nameof(input.EndDate));
-
-            var createdScheduleId = GuidGenerator.Create();
-            if (string.IsNullOrEmpty(input.RecurringCronExpression))
-            {
-                var schedule = SingleSchedule.Factory.Create(
-                    createdScheduleId,
-                    organizer,
-                    input.Name,
-                    input.Description,
-                    input.ParticipantsMaxNumber,
-                    new Period(input.StartDate.Value, input.EndDate.Value));
-
-                await _scheduleRepository.CreateAsync(schedule);
-            }
-            else
-            {
-                Guard.Against.NegativeOrZero(input.DurationInMinutes, nameof(input.DurationInMinutes));
-
-                var schedule = RecurringSchedule.Factory.Create(
-                    createdScheduleId,
-                    organizer,
-                    input.Name,
-                    input.Description,
-                    input.ParticipantsMaxNumber,
-                    new Period(input.StartDate.Value, input.EndDate.Value),
-                    input.DurationInMinutes,
-                    input.RecurringCronExpression);
-
-                await _scheduleRepository.CreateAsync(schedule);
-            }
-
-            await UnitOfWork.SaveChangesAsync();
+            var scheduleId = await _mediator.Send(new CreateScheduleCommand(
+                input.Name,
+                input.Description,
+                input.StartDate,
+                input.EndDate,
+                input.DurationInMinutes,
+                input.RecurringCronExpression,
+                input.ParticipantsMaxNumber,
+                input.OrganizerId));
 
             return new CreateScheduleReplyDto()
             {
-                Id = createdScheduleId,
+                Id = scheduleId,
             };
         }
 
         /// <inheritdoc />
         public async Task UpdateAsync(UpdateScheduleRequestDto input)
         {
-            var schedule = await _scheduleRepository.GetByIdAsync(input.Id);
-
-            if (schedule is RecurringSchedule recurringSchedule)
+            await _mediator.Send(new UpdateScheduleCommand()
             {
-                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceStartDate));
-                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceEndDate));
-                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
-                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
-                Guard.Against.Null(input.RecurringScheduleOperationType, nameof(input.RecurringScheduleOperationType));
-
-                await _mediator.Send(new UpdateRecurringScheduleCommand(input, recurringSchedule));
-            }
-            else if (schedule is SingleSchedule singleSchedule)
-            {
-                await _mediator.Send(new UpdateSingleScheduleCommand(input, singleSchedule));
-            }
-
-            await UnitOfWork.SaveChangesAsync();
+                Id = input.Id,
+                InstanceStartDate = input.InstanceStartDate,
+                InstanceEndDate = input.InstanceEndDate,
+                RecurringScheduleOperationType = input.RecurringScheduleOperationType,
+                UpdatedSchedule = new UpdateScheduleCommand.Schedule()
+                {
+                    Name = input.Schedule.Name,
+                    Description = input.Schedule.Description,
+                    StartDate = input.Schedule.StartDate,
+                    EndDate = input.Schedule.EndDate,
+                    OrganizerId = input.Schedule.OrganizerId,
+                    DurationInMinutes = input.Schedule.DurationInMinutes,
+                    ParticipantsMaxNumber = input.Schedule.ParticipantsMaxNumber,
+                    RecurringCronExpression = input.Schedule.RecurringCronExpression,
+                },
+            });
         }
 
         /// <inheritdoc />
         public async Task DeleteAsync(DeleteScheduleRequestDto input)
         {
-            var schedule = await _scheduleRepository.GetByIdAsync(input.Id);
-
-            if (schedule is RecurringSchedule recurringSchedule)
+            await _mediator.Send(new DeleteScheduleCommand
             {
-                Guard.Against.Null(input.RecurringScheduleOperationType, nameof(input.RecurringScheduleOperationType));
-                Guard.Against.Null(input.InstanceStartDate, nameof(input.InstanceStartDate));
-                Guard.Against.Null(input.InstanceEndDate, nameof(input.InstanceEndDate));
-                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
-                Guard.Against.NotUtc(input.InstanceEndDate, nameof(input.InstanceEndDate));
-
-                await _mediator.Send(new DeleteRecurringScheduleCommand(
-                    recurringSchedule,
-                    input.RecurringScheduleOperationType.Value,
-                    input.InstanceStartDate.Value,
-                    input.InstanceEndDate.Value));
-            }
-            else if (schedule is SingleSchedule singleSchedule)
-            {
-                await _mediator.Send(new DeleteSingleScheduleCommand(singleSchedule));
-            }
-
-            await UnitOfWork.SaveChangesAsync();
+                Id = input.Id,
+                InstanceStartDate = input.InstanceStartDate,
+                InstanceEndDate = input.InstanceEndDate,
+                RecurringScheduleOperationType = input.RecurringScheduleOperationType,
+            });
         }
 
         /// <inheritdoc />

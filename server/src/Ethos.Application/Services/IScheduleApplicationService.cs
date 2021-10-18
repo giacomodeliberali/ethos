@@ -25,6 +25,6 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Generate (in memory) all the schedules that are in the given interval.
         /// </summary>
-        Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime from, DateTime to);
+        Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate);
     }
 }

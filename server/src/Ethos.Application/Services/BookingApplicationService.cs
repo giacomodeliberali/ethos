@@ -12,11 +12,13 @@ using Ethos.Domain.Guards;
 using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using Ethos.Shared;
+using MediatR;
 
 namespace Ethos.Application.Services
 {
     public class BookingApplicationService : BaseApplicationService, IBookingApplicationService
     {
+        private readonly IGuidGenerator _guidGenerator;
         private readonly IBookingRepository _bookingRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ICurrentUser _currentUser;
@@ -30,9 +32,11 @@ namespace Ethos.Application.Services
             IScheduleRepository scheduleRepository,
             ICurrentUser currentUser,
             IMapper mapper,
-            IBookingQueryService bookingQueryService)
-        : base(unitOfWork, guidGenerator)
+            IBookingQueryService bookingQueryService,
+            IMediator mediator)
+        : base(mediator, unitOfWork)
         {
+            _guidGenerator = guidGenerator;
             _bookingRepository = bookingRepository;
             _scheduleRepository = scheduleRepository;
             _currentUser = currentUser;
@@ -92,7 +96,7 @@ namespace Ethos.Application.Services
             var currentUser = await _currentUser.GetCurrentUser();
 
             var booking = Booking.Factory.Create(
-                GuidGenerator.Create(),
+                _guidGenerator.Create(),
                 schedule,
                 currentUser,
                 input.StartDate,

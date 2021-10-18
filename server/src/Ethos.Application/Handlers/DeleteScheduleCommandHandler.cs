@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using MediatR;
 
 namespace Ethos.Application.Handlers
 {
-    public class DeleteScheduleCommandHandler : AsyncRequestHandler<DeleteScheduleCommand>
+    public class DeleteScheduleCommandHandler : IRequestHandler<DeleteScheduleCommand, DeleteScheduleReplyDto>
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -36,8 +37,13 @@ namespace Ethos.Application.Handlers
             _guidGenerator = guidGenerator;
         }
 
-        protected override async Task Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteScheduleReplyDto> Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
         {
+            var result = new DeleteScheduleReplyDto
+            {
+                AffectedUsers = new List<DeleteScheduleReplyDto.UserDto>(),
+            };
+
             var schedule = await _scheduleRepository.GetByIdAsync(request.Id);
 
             if (schedule is RecurringSchedule recurringSchedule)
@@ -50,6 +56,8 @@ namespace Ethos.Application.Handlers
             }
 
             await _unitOfWork.SaveChangesAsync();
+
+            return result;
         }
 
         private async Task DeleteSchedule(RecurringSchedule schedule, DeleteScheduleCommand request)

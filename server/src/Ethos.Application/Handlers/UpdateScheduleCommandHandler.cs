@@ -8,6 +8,7 @@ using Ethos.Application.Contracts.Schedule;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
+using Ethos.Domain.Extensions;
 using Ethos.Domain.Repositories;
 using Ethos.Shared;
 using MediatR;
@@ -72,7 +73,7 @@ namespace Ethos.Application.Handlers
                 throw new BusinessException("Invalid instance start/end dates");
             }
 
-            var organizer = await _userManager.FindByIdAsync(request.UpdatedSchedule.OrganizerId.ToString());
+            var organizer = await _userManager.FindByIdAsync(request.UpdatedSchedule.OrganizerId);
 
             if (organizer == null || !await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
             {
@@ -82,7 +83,8 @@ namespace Ethos.Application.Handlers
             if (string.IsNullOrEmpty(request.UpdatedSchedule.RecurringCronExpression))
             {
                 // it was recurring, now it is single
-                // devo terominare lo scheduling passato ad oggi e creare un nuvo scheduling futuro singolo con nuova start date. Le prenotazioni future vanno cancellate
+                // update the recurring schedule's end date and create a single future schedule
+                // future bookings will be canceled.
                 await RecurringToSingle(request, organizer, schedule);
             }
             else
@@ -92,11 +94,11 @@ namespace Ethos.Application.Handlers
                 switch (request.RecurringScheduleOperationType)
                 {
                     case RecurringScheduleOperationType.Future:
-                        // devo terminare lo scheduling passato ad oggi e creare un nuovo scheduling futuro che parte dalla nuova start date. Le prenotazioni future vanno cancellate
+                        // update the recurring schedule's end date and create a new recurring schedule with the new info. Future bookings will be canceled.
                         await RecurringToRecurring_UpdateInstanceAndFutures(request, organizer, schedule);
                         break;
                     case RecurringScheduleOperationType.Instance:
-                        // aggiungo alle eccezioni la giornata e creo una singola
+                        // do not update the recurring schedule, just create an exception for that day
                         await RecurringToRecurring_UpdateOnlySingleInstance(request, organizer, schedule);
                         break;
                 }

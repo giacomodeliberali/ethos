@@ -41,9 +41,6 @@ namespace Ethos.Application.Handlers
                 throw new BusinessException("Invalid organizer id");
             }
 
-            Guard.Against.Default(request.StartDate, nameof(request.StartDate));
-            Guard.Against.Default(request.EndDate, nameof(request.EndDate));
-
             var createdScheduleId = _guidGenerator.Create();
             if (string.IsNullOrEmpty(request.RecurringCronExpression))
             {
@@ -59,8 +56,6 @@ namespace Ethos.Application.Handlers
             }
             else
             {
-                Guard.Against.NegativeOrZero(request.DurationInMinutes, nameof(request.DurationInMinutes));
-
                 var schedule = RecurringSchedule.Factory.Create(
                     createdScheduleId,
                     organizer,

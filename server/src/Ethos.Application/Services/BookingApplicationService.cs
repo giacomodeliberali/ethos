@@ -1,81 +1,44 @@
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
+using Ethos.Application.Commands;
 using Ethos.Application.Contracts.Booking;
-using Ethos.Application.Contracts.Schedule;
-using Ethos.Application.Identity;
-using Ethos.Domain.Common;
-using Ethos.Domain.Entities;
-using Ethos.Domain.Exceptions;
+using Ethos.Application.Queries;
 using Ethos.Domain.Repositories;
+using MediatR;
 
 namespace Ethos.Application.Services
 {
+    /// <summary>
+    /// Contains the use cases for the web UI.
+    /// </summary>
     public class BookingApplicationService : BaseApplicationService, IBookingApplicationService
     {
-        private readonly IBookingRepository _bookingRepository;
-        private readonly IScheduleRepository _scheduleRepository;
-        private readonly ICurrentUser _currentUser;
-        private readonly IMapper _mapper;
-
         public BookingApplicationService(
             IUnitOfWork unitOfWork,
-            IGuidGenerator guidGenerator,
-            IBookingRepository bookingRepository,
-            IScheduleRepository scheduleRepository,
-            ICurrentUser currentUser,
-            IMapper mapper)
-        : base(unitOfWork, guidGenerator)
+            IMediator mediator)
+        : base(mediator, unitOfWork)
         {
-            _bookingRepository = bookingRepository;
-            _scheduleRepository = scheduleRepository;
-            _currentUser = currentUser;
-            _mapper = mapper;
         }
 
         /// <inheritdoc />
         public async Task<CreateBookingReplyDto> CreateAsync(CreateBookingRequestDto input)
         {
-            var currentUser = await _currentUser.GetCurrentUser();
-
-            var schedule = await _scheduleRepository.GetByIdAsync(input.ScheduleId);
-
-            var booking = Booking.Factory.Create(
-                GuidGenerator.Create(),
-                schedule,
-                currentUser,
+            return await Mediator.Send(new CreateBookingCommand(
+                input.ScheduleId,
                 input.StartDate,
-                input.EndDate);
-
-            await _bookingRepository.CreateAsync(booking);
-
-            await UnitOfWork.SaveChangesAsync();
-
-            return new CreateBookingReplyDto()
-            {
-                Id = booking.Id,
-            };
+                input.EndDate));
         }
 
         /// <inheritdoc />
         public async Task DeleteAsync(Guid id)
         {
-            var booking = await _bookingRepository.GetByIdAsync(id);
-
-            if (booking.User.Id != _currentUser.GetCurrentUserId())
-            {
-                throw new BusinessException("You can only delete your own bookings!");
-            }
-
-            await _bookingRepository.DeleteAsync(booking);
-            await UnitOfWork.SaveChangesAsync();
+            await Mediator.Send(new DeleteBookingCommand(id));
         }
 
         /// <inheritdoc />
         public async Task<BookingDto> GetByIdAsync(Guid id)
         {
-            var booking = await _bookingRepository.GetByIdAsync(id);
-            return _mapper.Map<BookingDto>(booking);
+            return await Mediator.Send(new GetBookingByIdCommand(id));
         }
     }
 }

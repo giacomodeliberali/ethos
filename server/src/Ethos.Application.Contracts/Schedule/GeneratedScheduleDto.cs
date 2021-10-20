@@ -30,6 +30,11 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public int ParticipantsMaxNumber { get; set; }
 
+        [Required]
+        public bool IsRecurring { get; set; }
+
+        public string RecurringCronExpression { get; set; }
+
         public class BookingDto
         {
             [Required]

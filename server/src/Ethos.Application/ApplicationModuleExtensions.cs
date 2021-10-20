@@ -11,6 +11,9 @@ using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ethos.Application
@@ -38,6 +41,14 @@ namespace Ethos.Application
             serviceCollection.AddEthosAutoMapper();
 
             serviceCollection.AddDataSeedContributors();
+
+            // add MediatoR
+            serviceCollection.AddMediatR(typeof(IApplicationModuleAssemblyMarker));
+            serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidateCommandsPipelineBehaviour<,>));
+
+            // add fluent validation
+            serviceCollection.AddFluentValidation();
+            serviceCollection.AddValidatorsFromAssembly(typeof(IApplicationModuleAssemblyMarker).Assembly);
         }
 
         private static void AddDataSeedContributors(this IServiceCollection serviceCollection)

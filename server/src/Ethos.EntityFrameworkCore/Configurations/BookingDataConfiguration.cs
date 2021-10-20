@@ -9,7 +9,7 @@ namespace Ethos.EntityFrameworkCore.Configurations
         /// <inheritdoc />
         public void Configure(EntityTypeBuilder<BookingData> builder)
         {
-            builder.ToTable("Bookings");
+            builder.ToTable("Bookings", schema: "Bookings");
             builder.Property(u => u.Id).ValueGeneratedOnAdd();
             builder.Property(s => s.ScheduleId).IsRequired();
             builder.Property(s => s.UserId).IsRequired();

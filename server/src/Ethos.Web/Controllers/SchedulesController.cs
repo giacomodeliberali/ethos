@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
+using Ethos.Domain.Exceptions;
 using Ethos.Shared;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,9 +56,14 @@ namespace Ethos.Web.Controllers
         /// Delete an existing schedule.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task DeleteScheduleAsync(Guid id)
+        public async Task DeleteScheduleAsync([FromBody] DeleteScheduleRequestDto input, Guid id)
         {
-            await _scheduleApplicationService.DeleteAsync(id);
+            if (input.Id != id)
+            {
+                throw new BusinessException("Invalid request: Ids mismatch URL/body.");
+            }
+
+            await _scheduleApplicationService.DeleteAsync(input);
         }
     }
 }

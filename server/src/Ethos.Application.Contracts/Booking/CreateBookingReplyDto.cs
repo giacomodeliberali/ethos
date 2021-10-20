@@ -7,5 +7,8 @@ namespace Ethos.Application.Contracts.Booking
     {
         [Required]
         public Guid Id { get; set; }
+
+        [Required]
+        public int CurrentParticipantsNumber { get; set; }
     }
 }

@@ -14,12 +14,6 @@ namespace Ethos.EntityFrameworkCore.Entities
 
         public int DurationInMinutes { get; set; }
 
-        public DateTime StartDate { get; set; }
-
-        public DateTime? EndDate { get; set; }
-
-        public string RecurringExpression { get; set; }
-
         public int ParticipantsMaxNumber { get; set; }
     }
 }

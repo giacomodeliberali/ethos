@@ -1,20 +1,21 @@
 using Ethos.Domain.Common;
 using Ethos.Domain.Repositories;
+using MediatR;
 
 namespace Ethos.Application.Services
 {
     public class BaseApplicationService
     {
+        protected IMediator Mediator { get; }
+
         protected IUnitOfWork UnitOfWork { get; }
 
-        protected IGuidGenerator GuidGenerator { get; }
-
         protected BaseApplicationService(
-            IUnitOfWork unitOfWork,
-            IGuidGenerator guidGenerator)
+            IMediator mediator,
+            IUnitOfWork unitOfWork)
         {
+            Mediator = mediator;
             UnitOfWork = unitOfWork;
-            GuidGenerator = guidGenerator;
         }
     }
 }

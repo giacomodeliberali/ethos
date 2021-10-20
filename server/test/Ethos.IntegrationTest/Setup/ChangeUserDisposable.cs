@@ -30,6 +30,7 @@ namespace Ethos.IntegrationTest.Setup
 
             _currentUser.ClearSubstitute();
             _currentUser.GetCurrentUser().Returns(_user);
+            _currentUser.GetCurrentUserId().Returns(_user.Id);
             _currentUser.IsInRole(RoleConstants.Admin).Returns(_roles.Contains(RoleConstants.Admin));
         }
 

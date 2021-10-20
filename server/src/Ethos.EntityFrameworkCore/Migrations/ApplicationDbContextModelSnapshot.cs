@@ -137,7 +137,29 @@ namespace Ethos.EntityFrameworkCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", "Bookings");
+                });
+
+            modelBuilder.Entity("Ethos.EntityFrameworkCore.Entities.RecurringScheduleData", b =>
+                {
+                    b.Property<Guid>("ScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RecurringExpression")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ScheduleId");
+
+                    b.ToTable("Recurring", "Schedules");
                 });
 
             modelBuilder.Entity("Ethos.EntityFrameworkCore.Entities.ScheduleData", b =>
@@ -154,9 +176,6 @@ namespace Ethos.EntityFrameworkCore.Migrations
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -168,16 +187,46 @@ namespace Ethos.EntityFrameworkCore.Migrations
                     b.Property<int>("ParticipantsMaxNumber")
                         .HasColumnType("int");
 
-                    b.Property<string>("RecurringExpression")
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                    b.HasKey("Id");
+
+                    b.ToTable("Schedules", "Schedules");
+                });
+
+            modelBuilder.Entity("Ethos.EntityFrameworkCore.Entities.ScheduleExceptionData", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ScheduleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schedules");
+                    b.ToTable("Exceptions", "Schedules");
+                });
+
+            modelBuilder.Entity("Ethos.EntityFrameworkCore.Entities.SingleScheduleData", b =>
+                {
+                    b.Property<Guid>("ScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ScheduleId");
+
+                    b.ToTable("Singles", "Schedules");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

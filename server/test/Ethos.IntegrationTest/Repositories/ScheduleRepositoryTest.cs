@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
@@ -34,14 +35,17 @@ namespace Ethos.IntegrationTest.Repositories
 
             var createdSchedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
-            var expected = Schedule.Factory.CreateNonRecurring(
+            var expected = RecurringSchedule.Factory.Create(
                 scheduleId,
                 organizer,
                 "Test schedule",
                 "Description",
                 3,
-                DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
-                DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime()
+                new Period(
+                    DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
+                    DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime()),
+                120,
+                "0 09 * * MON-FRI"
             );
 
             createdSchedule.ShouldBeEquivalentTo(expected);
@@ -57,13 +61,14 @@ namespace Ethos.IntegrationTest.Repositories
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            var originalSchedule = await _scheduleRepository.GetByIdAsync(scheduleId);
+            var originalSchedule = (await _scheduleRepository.GetByIdAsync(scheduleId)) as RecurringSchedule;
 
-            var newStartDate = DateTime.Parse("2021-10-03T07:00:00").ToUniversalTime();
-            var newEndDate = DateTime.Parse("2021-10-5T09:00:00").ToUniversalTime();
+            var newStartDate = DateTime.Parse("2021-10-03T07:00:00Z").ToUniversalTime();
+            var newEndDate = DateTime.Parse("2021-10-5T09:00:00Z").ToUniversalTime();
 
-            originalSchedule.UpdateDateTime(newStartDate, newEndDate, null, null);
-            originalSchedule.UpdateNameAndDescription("New name", "New description", 8);
+            originalSchedule!.UpdateDate(new Period(newStartDate, newEndDate), 60, "0 09 * * MON-FRI");
+            originalSchedule.UpdateParticipantsMaxNumber(3);
+            originalSchedule.UpdateNameAndDescription("New name", "New description");
 
             await _scheduleRepository.UpdateAsync(originalSchedule);
 
@@ -71,34 +76,36 @@ namespace Ethos.IntegrationTest.Repositories
 
             var updatedSchedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
-            var expected = Schedule.Factory.CreateNonRecurring(
+            var expected = RecurringSchedule.Factory.FromSnapshot(
                 scheduleId,
                 organizer,
+                newStartDate,
+                newEndDate,
+                "0 09 * * MON-FRI",
+                60,
                 "New name",
                 "New description",
-                8,
-                newStartDate,
-                newEndDate
-            );
+                3);
 
 
             updatedSchedule.ShouldBeEquivalentTo(expected);
         }
 
-        private Schedule GenerateScheduleFor(ApplicationUser organizer)
+        private RecurringSchedule GenerateScheduleFor(ApplicationUser organizer)
         {
 
             var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
             var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
 
-            var schedule = Schedule.Factory.CreateNonRecurring(
+            var schedule = RecurringSchedule.Factory.Create(
                 GuidGenerator.Create(),
                 organizer,
                 "Test schedule",
                 "Description",
                 3,
-                startDate,
-                endDate
+                new Period(startDate, endDate),
+                120,
+                "0 09 * * MON-FRI"
             );
 
             return schedule;

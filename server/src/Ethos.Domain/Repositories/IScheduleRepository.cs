@@ -7,12 +7,18 @@ namespace Ethos.Domain.Repositories
 {
     public interface IScheduleRepository
     {
-        Task<Guid> CreateAsync(Schedule schedule);
+        Task<Guid> CreateAsync(SingleSchedule schedule);
 
-        Task DeleteAsync(Schedule schedule);
+        Task<Guid> CreateAsync(RecurringSchedule schedule);
+
+        Task DeleteAsync(SingleSchedule schedule);
+
+        Task DeleteAsync(RecurringSchedule schedule);
 
         Task<Schedule> GetByIdAsync(Guid id);
 
-        Task UpdateAsync(Schedule schedule);
+        Task UpdateAsync(SingleSchedule schedule);
+
+        Task UpdateAsync(RecurringSchedule schedule);
     }
 }

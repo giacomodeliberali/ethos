@@ -75,7 +75,7 @@ namespace Ethos.Application.Handlers
                 throw new BusinessException("Invalid instance start/end dates");
             }
 
-            if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.Future)
+            if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.InstanceAndFuture)
             {
                 await DeleteFutureSchedules(schedule, request.InstanceStartDate, request.InstanceEndDate);
             }

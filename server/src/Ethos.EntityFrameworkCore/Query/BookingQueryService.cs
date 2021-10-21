@@ -48,5 +48,37 @@ namespace Ethos.EntityFrameworkCore.Query
                 .OrderBy(b => b.StartDate)
                 .ToList();
         }
+
+        public async Task<List<BookingProjection>> GetAllBookings(Guid scheduleId)
+        {
+            var bookings = await (
+                from booking in ApplicationDbContext.Bookings.AsNoTracking()
+                join schedule in ApplicationDbContext.Schedules.AsNoTracking() on booking.ScheduleId equals schedule.Id
+                join user in ApplicationDbContext.Users.AsNoTracking() on booking.UserId equals user.Id
+                where booking.ScheduleId == scheduleId
+                select new
+                {
+                    Booking = booking,
+                    Schedule = schedule,
+                    User = user,
+                }).ToListAsync();
+
+            var bookingsResult = bookings
+                .Select(item => new BookingProjection()
+                {
+                    Id = item.Booking.Id,
+                    StartDate = item.Booking.StartDate,
+                    EndDate = item.Booking.EndDate,
+                    ScheduleId = item.Booking.ScheduleId,
+                    UserId = item.Booking.UserId,
+                    UserFullName = item.User.FullName,
+                    UserEmail = item.User.Email,
+                    UserName = item.User.UserName,
+                }).ToList();
+
+            return bookingsResult
+                .OrderBy(b => b.StartDate)
+                .ToList();
+        }
     }
 }

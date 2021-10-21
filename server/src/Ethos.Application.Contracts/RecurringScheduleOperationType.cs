@@ -13,6 +13,6 @@ namespace Ethos.Application.Contracts.Schedule
         /// <summary>
         /// Execute operation only on future instances.
         /// </summary>
-        Future = 2,
+        InstanceAndFuture = 2,
     }
 }

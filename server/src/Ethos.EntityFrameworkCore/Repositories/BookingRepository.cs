@@ -60,6 +60,12 @@ namespace Ethos.EntityFrameworkCore.Repositories
             _applicationDbContext.Bookings.Remove(bookingData);
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            var bookingData = await _applicationDbContext.Bookings.SingleAsync(b => b.Id == id);
+            _applicationDbContext.Bookings.Remove(bookingData);
+        }
+
         public async Task UpdateAsync(Booking booking)
         {
             var bookingData = await _applicationDbContext.Bookings.SingleAsync(b => b.Id == booking.Id);

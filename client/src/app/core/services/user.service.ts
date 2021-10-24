@@ -3,35 +3,37 @@ import { Observable } from 'rxjs';
 import { UserDto } from './ethos.generated.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
+  private _tokenKey = 'token';
+  private _userKey = 'user';
 
-  constructor() { }
+  constructor() {}
 
-  setAuthentication(user: UserDto, token: string){
+  setAuthentication(user: UserDto, token: string) {
     this.setUser(user);
     this.setToken(token);
   }
 
-  setToken(token: string){
-    localStorage.setItem('token', token);
+  setToken(token: string) {
+    localStorage.setItem(this._tokenKey, token);
   }
 
-  getToken(){
-    localStorage.getItem('token');
+  getToken() {
+    return localStorage.getItem(this._tokenKey);
   }
 
-  setUser(user: UserDto){
-    localStorage.setItem('user', JSON.stringify(user));
+  setUser(user: UserDto) {
+    localStorage.setItem(this._userKey, JSON.stringify(user));
   }
 
-  getUser(): UserDto{
-    return JSON.parse(localStorage.getItem('user'));
+  getUser(): UserDto {
+    return JSON.parse(localStorage.getItem(this._userKey));
   }
 
-  getTokenAsObservable(){
-    return new Observable(subscriber => {
+  getTokenAsObservable() {
+    return new Observable((subscriber) => {
       subscriber.next(this.getToken());
       subscriber.complete();
     });

@@ -309,17 +309,21 @@ export class SchedulesService extends NswagBaseClass {
      * Delete an existing schedule.
      * @return Success
      */
-    deleteSchedule(id: string): Observable<void> {
+    deleteSchedule(id: string, body: DeleteScheduleRequestDto): Observable<void> {
         let url_ = this.baseUrl + "/api/schedules/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "json",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
             })
         };
 
@@ -350,6 +354,7 @@ export interface BookingDto_UserDto {
 
 export interface CreateBookingReplyDto {
     id: string;
+    currentParticipantsNumber: number;
 }
 
 export interface CreateBookingRequestDto {
@@ -366,8 +371,7 @@ export interface CreateScheduleRequestDto {
     name: string;
     description: string;
     startDate: string;
-    /** If no value is specified it must contain a RecurringCronExpression. */
-    endDate?: string | null;
+    endDate: string;
     /** If not recurring this must be EndDate - StartDate.
 If recurring it represent the duration of the schedule. */
     durationInMinutes?: number;
@@ -377,6 +381,14 @@ If recurring it represent the duration of the schedule. */
     participantsMaxNumber: number;
     /** The id of the organizer of this schedule. */
     organizerId: string;
+}
+
+export interface DeleteScheduleRequestDto {
+    id?: string;
+    /** Required only if the schedule is recurring. */
+    recurringScheduleOperationType?: RecurringScheduleOperationType | null;
+    instanceStartDate: string;
+    instanceEndDate: string;
 }
 
 /** Every exception will be serialized to the client wrapped in this class. */
@@ -397,6 +409,8 @@ export interface GeneratedScheduleDto {
     description: string;
     bookings: GeneratedScheduleDto_BookingDto[];
     participantsMaxNumber: number;
+    isRecurring: boolean;
+    recurringCronExpression?: string | null;
 }
 
 export interface GeneratedScheduleDto_BookingDto {
@@ -427,6 +441,12 @@ export interface LoginResponseDto {
     user: UserDto;
 }
 
+/** Describe how to handle operations on recurring schedules. */
+export enum RecurringScheduleOperationType {
+    Instance = "Instance",
+    InstanceAndFuture = "InstanceAndFuture",
+}
+
 /** The DTO for creating a new user. */
 export interface RegisterRequestDto {
     /** The email address. */
@@ -447,10 +467,20 @@ export interface ResetPasswordRequestDto {
 
 export interface UpdateScheduleRequestDto {
     id: string;
+    /** The start date of the selected schedule instance to update. */
+    instanceStartDate: string;
+    /** The end date of the selected schedule instance to update. */
+    instanceEndDate: string;
+    schedule: UpdateScheduleRequestDto_ScheduleDto;
+    /** Required only if the schedule is recurring. */
+    recurringScheduleOperationType?: RecurringScheduleOperationType | null;
+}
+
+export interface UpdateScheduleRequestDto_ScheduleDto {
     name: string;
     description: string;
     startDate: string;
-    endDate?: string | null;
+    endDate: string;
     /** If not recurring this must be EndDate - StartDate.
 If recurring it represent the duration of the schedule. */
     durationInMinutes: number;

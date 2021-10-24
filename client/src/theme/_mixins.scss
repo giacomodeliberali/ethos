@@ -65,7 +65,7 @@ $breakpoints: (
       var(--ion-color-#{$color}-tint),
       var(--ion-color-#{$color})
     );
-  } @else if $type == "shade"{
+  } @else if $type == "shade" {
     --background: white;
   } @else {
     --background: white;

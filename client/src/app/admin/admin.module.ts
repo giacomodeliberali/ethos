@@ -5,15 +5,13 @@ import { SharedModule } from '@shared/shared.module';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { AdminRoutingModule } from './admin-routing.module';
 
-
-
 @NgModule({
   declarations: [AdminPageComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class AdminModule { }
+export class AdminModule {}

@@ -1,4 +1,5 @@
-<div modal-default-content 
+<div
+  modal-default-content
   [successButton]="{
     type: 'danger',
     fill: true,
@@ -10,9 +11,7 @@
     title: 'Annulla'
   }"
   (buttonClicked)="closeModal($event)"
-  >
+>
   <h3 class="popup-title">Logout</h3>
-  <div class="text">
-    Sei sicuro di voler uscire dall'applicazione?
-  </div>
+  <div class="text">Sei sicuro di voler uscire dall'applicazione?</div>
 </div>

@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./modal-default-content.component.scss'],
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
-    class: 'inner-content'
-  }
+    class: 'inner-content',
+  },
 })
 export class ModalDefaultContentComponent {}

@@ -1,16 +1,18 @@
 <ion-content>
   <div class="page-container">
     <div class="toolbar">
-      <div class="logo-container"><img src="../../../../assets/images/ethos.svg"></div>
+      <div class="logo-container">
+        <img src="../../../../assets/images/ethos.svg" />
+      </div>
     </div>
     <div class="slider-container">
       <ion-slides [options]="slideOpts" #slideWithNav>
         <ion-slide *ngFor="let s of slides">
-            <ion-card>
-              <ion-card-title>{{s}}</ion-card-title>
-            </ion-card>
+          <ion-card>
+            <ion-card-title>{{ s }}</ion-card-title>
+          </ion-card>
         </ion-slide>
-    </ion-slides>
+      </ion-slides>
     </div>
   </div>
 </ion-content>

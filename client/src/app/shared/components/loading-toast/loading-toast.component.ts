@@ -5,10 +5,10 @@ import { enterFromTopAnimation } from '@shared/animations';
   selector: 'app-loading-toast',
   templateUrl: './loading-toast.component.html',
   styleUrls: ['./loading-toast.component.scss'],
-  animations: [enterFromTopAnimation]
+  animations: [enterFromTopAnimation],
 })
 export class LoadingToastComponent {
-  @HostBinding('@enterFromTopAnimation') get getEnterFromTopAnimation(){
+  @HostBinding('@enterFromTopAnimation') get getEnterFromTopAnimation() {
     return true;
   }
   @Input()

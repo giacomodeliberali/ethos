@@ -14,9 +14,13 @@ import { map, switchMap } from 'rxjs/operators';
   styleUrls: ['./reset-password-page.component.scss'],
 })
 export class ResetPasswordPageComponent extends BaseDirective {
-
   newPasswordForm = new FormGroup({
-    password: new FormControl('', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{6,}$/)])
+    password: new FormControl('', [
+      Validators.required,
+      Validators.pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{6,}$/
+      ),
+    ]),
   });
 
   private email: string;
@@ -27,45 +31,57 @@ export class ResetPasswordPageComponent extends BaseDirective {
     private route: ActivatedRoute,
     private identityService: IdentityService,
     private loadingSvc: LoadingService,
-    private toastSvc: ToastService) {
-      super();
-      this.email = this.route.snapshot.queryParamMap.get('email');
-      this.resetToken = this.route.snapshot.queryParamMap.get('resetToken');
-    }
+    private toastSvc: ToastService
+  ) {
+    super();
+    this.email = this.route.snapshot.queryParamMap.get('email');
+    this.resetToken = this.route.snapshot.queryParamMap.get('resetToken');
+  }
 
-  resetPassword(){
-    if(this.newPasswordForm.valid){
-      new Observable(subscriber => {
+  resetPassword() {
+    if (this.newPasswordForm.valid) {
+      new Observable((subscriber) => {
         subscriber.next([this.email, this.resetToken]);
         subscriber.complete();
-      }).pipe(
-        map(([email, token]) => {
-          console.log(email, token, this.email, this.resetToken);
-          if(!email || !token)
-            {throw new Error();}
-          return [email, token];
-        }),
-        switchMap(_ => this.loadingSvc.startLoading(this, 'RESET_PASSWORD', this.identityService.resetPassword({
-          email: this.email,
-          resetToken: this.resetToken,
-          newPassword: this.newPasswordForm.get('password').value
-        }), { message: 'Sto reimpostando la password.'}))).subscribe({
-          next: _ => {
+      })
+        .pipe(
+          map(([email, token]) => {
+            console.log(email, token, this.email, this.resetToken);
+            if (!email || !token) {
+              throw new Error();
+            }
+            return [email, token];
+          }),
+          switchMap((_) =>
+            this.loadingSvc.startLoading(
+              this,
+              'RESET_PASSWORD',
+              this.identityService.resetPassword({
+                email: this.email,
+                resetToken: this.resetToken,
+                newPassword: this.newPasswordForm.get('password').value,
+              }),
+              { message: 'Sto reimpostando la password.' }
+            )
+          )
+        )
+        .subscribe({
+          next: (_) => {
             this.toastSvc.addSuccessToast({
               header: 'Password cambiata',
-              message: 'La password è stata cambiata con successo.'
+              message: 'La password è stata cambiata con successo.',
             });
             this.router.navigate(['auth', 'login']);
           },
-          error: _ => {
+          error: (_) => {
             this.toastSvc.addErrorToast({
-              message: 'Il link utilizzato è sbagliato o il codice di reset non è più valido.'
+              message:
+                'Il link utilizzato è sbagliato o il codice di reset non è più valido.',
             });
             this.router.navigate(['auth', 'login']);
-          }
+          },
         });
     }
     this.router.navigate(['auth', 'login']);
   }
-
 }

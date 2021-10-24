@@ -8,11 +8,12 @@ import { LoadingService } from '@shared/services/loading.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild(LoadingDirective, {static: true}) loadingHost!: LoadingDirective;
+  @ViewChild(LoadingDirective, { static: true })
+  loadingHost!: LoadingDirective;
 
   constructor(private loadingSvc: LoadingService) {}
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.loadingSvc.loadingHost = this.loadingHost.viewContainerRef;
   }
 }

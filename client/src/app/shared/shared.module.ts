@@ -9,7 +9,6 @@ import { LogoutModalComponent } from './components/logout-modal/logout-modal.com
 import { ModalDefaultContentComponent } from './components/modal-default-content/modal-default-content.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
 
-
 @NgModule({
   declarations: [
     InputComponent,
@@ -17,19 +16,15 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     LogoutModalComponent,
     ModalDefaultContentComponent,
     UnsavedChangesComponent,
-    LoadingComponent
+    LoadingComponent,
   ],
-  imports: [
-    CommonModule,
-    IonicModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [
     InputComponent,
     LoadingToastComponent,
     LogoutModalComponent,
     ModalDefaultContentComponent,
-    UnsavedChangesComponent
-  ]
+    UnsavedChangesComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

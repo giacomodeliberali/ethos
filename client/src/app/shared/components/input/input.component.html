@@ -1,10 +1,18 @@
 <div class="page">
-    <ion-icon [name]="icon"></ion-icon>
-    <input (keyup)="changeValue($event)" [placeholder]="placeholder" [name]="name" [type]="type" (focus)="changeFocus(true)" (blur)="changeFocus(false)"/>
-    <ion-icon 
-        class="show-password" 
-        *ngIf="type === 'password' || (type === 'text' && showPassword)" 
-        [name]="(showPassword) ? 'eye-off-outline' : 'eye-outline'"
-        (click)="changeShowPassword()"></ion-icon>
+  <ion-icon [name]="icon"></ion-icon>
+  <input
+    (keyup)="changeValue($event)"
+    [placeholder]="placeholder"
+    [name]="name"
+    [type]="type"
+    (focus)="changeFocus(true)"
+    (blur)="changeFocus(false)"
+  />
+  <ion-icon
+    class="show-password"
+    *ngIf="type === 'password' || (type === 'text' && showPassword)"
+    [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+    (click)="changeShowPassword()"
+  ></ion-icon>
 </div>
 <div *ngIf="!isValid" class="error-message" [innerHTML]="errorMessage"></div>

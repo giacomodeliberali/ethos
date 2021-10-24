@@ -14,8 +14,6 @@ import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-
-
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -23,20 +21,23 @@ import { AppComponent } from './app.component';
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot({
-      navAnimation
+      navAnimation,
     }),
     AppRoutingModule,
     ReactiveFormsModule,
     SharedModule,
     HttpClientModule,
-    CoreModule
+    CoreModule,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, {
-    provide: HTTP_INTERCEPTORS,
-    useClass: TokenInterceptor,
-    multi: true,
-  },
-  {provide: API_BASE_URL, useValue: environment.baseUrl}],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
+    { provide: API_BASE_URL, useValue: environment.baseUrl },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

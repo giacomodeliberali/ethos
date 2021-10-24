@@ -8,21 +8,21 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./forgot-password-modal.component.scss'],
 })
 export class ForgotPasswordModalComponent {
-
   forgotPasswordForm: FormGroup = new FormGroup({
-    email: new FormControl('', [ Validators.required, Validators.email])
+    email: new FormControl('', [Validators.required, Validators.email]),
   });
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController) {}
 
-  closeModal(event: 'success' | 'cancel'){
-    if(event === 'success'){
-      if(this.forgotPasswordForm.valid){
-        this.modalCtrl.dismiss({email: this.forgotPasswordForm.get('email').value});
+  closeModal(event: 'success' | 'cancel') {
+    if (event === 'success') {
+      if (this.forgotPasswordForm.valid) {
+        this.modalCtrl.dismiss({
+          email: this.forgotPasswordForm.get('email').value,
+        });
       }
-    }else{
-      this.modalCtrl.dismiss({user: null});
+    } else {
+      this.modalCtrl.dismiss({ user: null });
     }
   }
-
 }

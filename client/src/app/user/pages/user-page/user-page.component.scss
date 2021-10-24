@@ -1,4 +1,4 @@
-@import "mixins";
+@import 'mixins';
 
 ion-content {
   .page-container {
@@ -6,7 +6,7 @@ ion-content {
     flex-direction: column;
     height: 100%;
     .toolbar {
-      --background: "transparent";
+      --background: 'transparent';
       .logo-container {
         display: flex;
         align-items: center;

@@ -99,8 +99,8 @@ export class ToastService {
     );
     if (stack || this.toastQueue.length <= 0) {
       this.toastQueue.push({
-        // eslint-disable-next-line max-len
         message: new IonicSafeString(
+          // eslint-disable-next-line max-len
           `${colorToIcon[color]}<div class="text-container" style="padding-left:0.75rem"><div class="header" style="font-weight:bold;padding-bottom:0.25rem">${options.header}</div><div class="message">${options.message}</div></div>`
         ),
         duration: 5000,

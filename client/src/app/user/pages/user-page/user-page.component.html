@@ -3,14 +3,26 @@
     <div class="toolbar">
       <div class="logo-container"><img src="../../../../assets/images/ethos.svg"></div>
     </div>
-    <div class="slider-container">
-      <ion-slides (ionSlideWillChange)="slideChange($event)" [options]="slideOpts" #test>
-        <ion-slide *ngFor="let s of slides">
-            <ion-card>
-              <ion-card-title>{{s}}</ion-card-title>
-            </ion-card>
-        </ion-slide>
-    </ion-slides>
+    <div class="content-container">
+      <div class="datepicker-container">
+        <ion-item lines="none">
+          <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
+          <ion-datetime 
+            mode="ios" 
+            [value]="currentDate" 
+            [monthShortNames]="['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']"
+            (ionChange)="dateChanged($event.detail.value)"
+            placeholder="Select Date"></ion-datetime>
+        </ion-item>
+      </div>
+      <div class="day-periods">
+        <div class="day-period" *ngFor="let dayPeriod of schedules | keyvalue">
+          <h1 class="title">{{dayPeriod.key | titlecase}}</h1>
+          <div class="courses-container">
+            <div class="course" *ngFor="let schedule of dayPeriod.value">AAA</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>

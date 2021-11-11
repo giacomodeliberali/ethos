@@ -9,6 +9,8 @@
       "sourceRoot": "src",
       "projectType": "application",
       "prefix": "app",
+      "i18n": {
+      },
       "schematics": {},
       "architect": {
         "build": {

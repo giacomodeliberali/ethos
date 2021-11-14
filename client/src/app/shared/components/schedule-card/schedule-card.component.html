@@ -1,0 +1,24 @@
+<ion-card>
+  <div class="time-and-people" *ngIf="freeSpots > 0 && isValidDate">
+    <ion-icon class="time-icon" name="time-outline"></ion-icon>
+    <div class="time-value">{{time}}</div>
+    <ion-icon class="partecipants-icon" name="person-circle-outline"></ion-icon>
+    <div class="partecipants-value">x{{schedule.participantsMaxNumber}}</div>
+  </div>
+  <h4>{{schedule.name}}</h4>
+  <div>{{schedule.description}}</div>
+  <ion-chip class="ion-margin-start">
+    <ion-avatar>
+      <img src="../../../../assets/icon/favicon.png">
+    </ion-avatar>
+    <ion-label>{{schedule.organizer.userName}}</ion-label>
+  </ion-chip>
+  <div class="overlay no-places-overlay" *ngIf="freeSpots <= 0 && isValidDate">
+    <h2>Oh no!</h2>
+    <span>Non ci sono più posti disponibili per questo corso</span>
+  </div>
+  <div class="overlay invalid-date-overlay" *ngIf="!isValidDate">
+    <h2>Oh no!</h2>
+    <span>Non puoi iscriverti ad un allenamento già concluso ;)</span>
+  </div>
+</ion-card>

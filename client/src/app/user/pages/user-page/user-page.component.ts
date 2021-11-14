@@ -16,6 +16,17 @@ const eveningStart = {hour: 18, minutes: 0};
 export class UserPageComponent extends BaseDirective{
 
   currentDate: string = new Date().toISOString();
+
+  get dateLimits(){
+    const lowerLimit = new Date();
+    const upperLimit = new Date();
+    upperLimit.setDate(lowerLimit.getDate() + 5);
+    return {
+      lowerLimit: lowerLimit.getFullYear() + '-' + (lowerLimit.getMonth() + 1) + '-' + lowerLimit.getDate(),
+      upperLimit: upperLimit.getFullYear() + '-' + (upperLimit.getMonth() + 1) + '-' + upperLimit.getDate(),
+    };
+  }
+
   schedules: {
     morning: Array<GeneratedScheduleDto>;
     afternoon: Array<GeneratedScheduleDto>;

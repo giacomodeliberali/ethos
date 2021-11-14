@@ -40,17 +40,25 @@ ion-content{
                 grid-template-rows: auto;
                 grid-template-columns: 1fr;
                 column-gap: 2rem;
-                margin: 1rem 4rem 1rem 4rem;
+                margin: 1rem 2rem 4.5rem 2rem;
                 @include respond-to("tablet"){
                     grid-template-columns: 1fr 1fr;
+                    margin: 1rem 4rem 4.5rem 4rem;
                 }
                 @include respond-to("desktop"){
                     grid-template-columns: 1fr 1fr 1fr;
+                    margin: 1rem 4rem 4.5rem 4rem;
                 }
                 .day-period{
                     height: 100%;
                     h1{
                         color: var(--ion-color-secondary);
+                    }
+                    .courses-container{
+                        .no-elements{
+                            color: var(--ion-color-primary-contrast);
+                            margin-top: 1.5rem;
+                        }
                     }
                 }
             }

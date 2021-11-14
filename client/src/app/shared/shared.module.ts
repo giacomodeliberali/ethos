@@ -7,6 +7,7 @@ import { LoadingToastComponent } from './components/loading-toast/loading-toast.
 import { LoadingComponent } from './components/loading-toast/loading.component';
 import { LogoutModalComponent } from './components/logout-modal/logout-modal.component';
 import { ModalDefaultContentComponent } from './components/modal-default-content/modal-default-content.component';
+import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
 
 
@@ -17,7 +18,8 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     LogoutModalComponent,
     ModalDefaultContentComponent,
     UnsavedChangesComponent,
-    LoadingComponent
+    LoadingComponent,
+    ScheduleCardComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +31,8 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     LoadingToastComponent,
     LogoutModalComponent,
     ModalDefaultContentComponent,
-    UnsavedChangesComponent
+    UnsavedChangesComponent,
+    ScheduleCardComponent
   ]
 })
 export class SharedModule { }

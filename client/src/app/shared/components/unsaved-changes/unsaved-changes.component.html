@@ -1,15 +1,17 @@
-<div modal-default-content
-[cancelButton]="{
-  title: 'Annulla',
-  type: 'secondary',
-  fill: false
-}" 
-[successButton]="{
-  title: 'Continua',
-  type: 'secondary',
-  fill: true
-}"
-(buttonClicked)="dismiss($event)">
+<div
+  modal-default-content
+  [cancelButton]="{
+    title: 'Annulla',
+    type: 'secondary',
+    fill: false
+  }"
+  [successButton]="{
+    title: 'Continua',
+    type: 'secondary',
+    fill: true
+  }"
+  (buttonClicked)="dismiss($event)"
+>
   <div class="container">
     <h3>Modifiche non salvate</h3>
     Hai ancora delle modifiche non salvate. Sei sicuro di voler uscire?

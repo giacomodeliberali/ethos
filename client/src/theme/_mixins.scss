@@ -1,11 +1,11 @@
 $breakpoints: (
-  "very-small": (
+  'very-small': (
     max-width: 359px,
   ),
-  "tablet": (
+  'tablet': (
     min-width: 768px,
   ),
-  "desktop": (
+  'desktop': (
     min-width: 1024px,
   ),
 ) !default;
@@ -58,14 +58,14 @@ $breakpoints: (
   #{$property}: linear-gradient(45deg, $first-color 0%, $second-color 100%);
 }
 
-@mixin ion-button-style($color: "primary", $type: "fill") {
-  @if $type == "fill" {
+@mixin ion-button-style($color: 'primary', $type: 'fill') {
+  @if $type == 'fill' {
     @include default-gradient(
-      "--background",
+      '--background',
       var(--ion-color-#{$color}-tint),
       var(--ion-color-#{$color})
     );
-  } @else if $type == "shade"{
+  } @else if $type == 'shade' {
     --background: white;
   } @else {
     --background: white;

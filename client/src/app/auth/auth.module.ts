@@ -7,15 +7,12 @@ import { ForgotPasswordModalComponent } from './components/forgot-password-modal
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ResetPasswordPageComponent } from './pages/reset-password-page/reset-password-page.component';
 
-
-
 @NgModule({
-  declarations: [LoginPageComponent, ForgotPasswordModalComponent, ResetPasswordPageComponent],
-  imports: [
-    CommonModule,
-    AuthRoutingModule,
-    SharedModule,
-    ReactiveFormsModule
-  ]
+  declarations: [
+    LoginPageComponent,
+    ForgotPasswordModalComponent,
+    ResetPasswordPageComponent,
+  ],
+  imports: [CommonModule, AuthRoutingModule, SharedModule, ReactiveFormsModule],
 })
-export class AuthModule { }
+export class AuthModule {}

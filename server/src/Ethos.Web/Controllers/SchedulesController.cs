@@ -56,7 +56,7 @@ namespace Ethos.Web.Controllers
         /// Delete an existing schedule.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task DeleteScheduleAsync([FromBody] DeleteScheduleRequestDto input, Guid id)
+        public async Task DeleteScheduleAsync([Required] DeleteScheduleRequestDto input, Guid id)
         {
             if (input.Id != id)
             {

@@ -35,12 +35,15 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var admin = await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
 
+            var startDate = DateTime.UtcNow;
+            var endDate = startDate.AddHours(2);
+
             var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(1),
+                StartDate = startDate,
+                EndDate = endDate,
                 OrganizerId = admin.User.Id,
             });
 
@@ -49,6 +52,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
                 {
                     Id = scheduleReplyDto.Id,
+                    InstanceStartDate = startDate,
+                    InstanceEndDate = endDate,
                     Schedule = new UpdateScheduleRequestDto.ScheduleDto()
                     {
                         Name = "Test schedule up",
@@ -62,7 +67,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task Should_UpdateSingleScheduleProperties()
+        public async Task Should_UpdateSingle()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -80,6 +85,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
+                InstanceStartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
                 Schedule = new UpdateScheduleRequestDto.ScheduleDto()
                 {
                     Name = "Name up",
@@ -101,10 +108,13 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 new Period(DateTime.Parse("2021-10-02").ToUniversalTime(), DateTime.Parse("2021-10-02").ToUniversalTime()));
 
             updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
+
+            var schedulesCount = await ApplicationDbContext.Schedules.CountAsync();
+            schedulesCount.ShouldBe(1);
         }
 
         [Fact]
-        public async Task Should_ConvertSingleScheduleIntoRecurring()
+        public async Task Should_UpdateSingle_AndConvert_ToRecurring()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -126,6 +136,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
+                InstanceStartDate = DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-01T11:00Z").ToUniversalTime(),
                 Schedule = new UpdateScheduleRequestDto.ScheduleDto()
                 {
                     Name = "Name up",
@@ -134,7 +146,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     EndDate = DateTime.Parse("2022-12-01T00:00Z").ToUniversalTime(),
                     DurationInMinutes = 30,
                     ParticipantsMaxNumber = 1,
-                    RecurringCronExpression = "0 09 * * MON-FRI",
+                    RecurringCronExpression = CronTestExpressions.EveryWeekDayAt9,
                     OrganizerId = newUser.Id,
                 },
             });
@@ -148,7 +160,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 newUser,
                 DateTime.Parse("2021-12-01T00:00Z").ToUniversalTime(),
                 DateTime.Parse("2022-12-01T00:00Z").AddDays(1).AddTicks(-1).ToUniversalTime(),
-                "0 09 * * MON-FRI",
+                CronTestExpressions.EveryWeekDayAt9,
                 30,
                 "Name up",
                 "Description up",
@@ -158,7 +170,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task Should_UpdateRecurringScheduleWithoutCreatingNewSchedules()
+        public async Task Should_UpdateRecurring_InstanceAndFuture()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -167,7 +179,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Single schedule",
                 Description = "Schedule",
                 StartDate = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-31T23:59Z").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime(),
                 DurationInMinutes = 60,
                 ParticipantsMaxNumber = 2,
                 RecurringCronExpression = "0 09 * * MON-FRI",
@@ -176,7 +188,15 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             var originalSchedule = await _scheduleRepository.GetByIdAsync(scheduleReplyDto.Id);
 
-            originalSchedule.ShouldBeOfType<RecurringSchedule>();
+            var occurrences = originalSchedule
+                .ShouldBeOfType<RecurringSchedule>()
+                .GetOccurrences()
+                .ToList();
+
+            occurrences.First().StartDate.ShouldBe(DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime());
+            occurrences.First().EndDate.ShouldBe(DateTime.Parse("2021-10-01T10:00Z").ToUniversalTime());
+            occurrences.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-29T09:00Z").ToUniversalTime());
+            occurrences.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-29T10:00Z").ToUniversalTime());
 
             var newUser = await CreateUser("admin2", role: RoleConstants.Admin);
 
@@ -184,17 +204,17 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Id = scheduleReplyDto.Id,
                 InstanceStartDate = DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-15T11:00:00Z").ToUniversalTime(),
-                RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+                InstanceEndDate = DateTime.Parse("2021-10-15T10:00:00Z").ToUniversalTime(),
+                RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
                 Schedule = new UpdateScheduleRequestDto.ScheduleDto()
                 {
-                    Name = "Name up",
-                    Description = "Description up",
-                    StartDate = DateTime.Parse("2021-10-16T00:00Z").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-16T00:00Z").ToUniversalTime(),
-                    DurationInMinutes = 30,
-                    ParticipantsMaxNumber = 1,
-                    RecurringCronExpression = "0 09 * * TUE-FRI",
+                    Name = "Single schedule up",
+                    Description = "Schedule up",
+                    StartDate = DateTime.Parse("2021-10-15T00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-25T00:00Z").ToUniversalTime(),
+                    DurationInMinutes = 60,
+                    ParticipantsMaxNumber = 5,
+                    RecurringCronExpression = "0 18 * * MON-FRI",
                     OrganizerId = newUser.Id,
                 },
             });
@@ -203,11 +223,21 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             updatedSchedule.ShouldBeOfType<RecurringSchedule>();
 
+            occurrences = updatedSchedule
+                .ShouldBeOfType<RecurringSchedule>()
+                .GetOccurrences()
+                .ToList();
+
+            occurrences.First().StartDate.ShouldBe(DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime());
+            occurrences.First().EndDate.ShouldBe(DateTime.Parse("2021-10-01T10:00Z").ToUniversalTime());
+            occurrences.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-14T09:00Z").ToUniversalTime());
+            occurrences.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-14T10:00Z").ToUniversalTime());
+
             var expectedSchedule = RecurringSchedule.Factory.FromSnapshot(
                 scheduleReplyDto.Id,
                 admin.User,
                 DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime(),
-                DateTime.Parse("2021-10-15T09:00Z").ToUniversalTime(),
+                DateTime.Parse("2021-10-14T10:00Z").ToUniversalTime(),
                 "0 09 * * MON-FRI",
                 60,
                 "Single schedule",
@@ -219,16 +249,26 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var newScheduleData = (await ApplicationDbContext.Schedules.ToListAsync()).Last();
             var newSchedule = (await _scheduleRepository.GetByIdAsync(newScheduleData.Id) as RecurringSchedule);
 
+            occurrences = newSchedule
+                .ShouldBeOfType<RecurringSchedule>()
+                .GetOccurrences()
+                .ToList();
+
+            occurrences.First().StartDate.ShouldBe(DateTime.Parse("2021-10-15T18:00Z").ToUniversalTime());
+            occurrences.First().EndDate.ShouldBe(DateTime.Parse("2021-10-15T19:00Z").ToUniversalTime());
+            occurrences.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-25T18:00Z").ToUniversalTime());
+            occurrences.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-25T19:00Z").ToUniversalTime());
+
             expectedSchedule = RecurringSchedule.Factory.FromSnapshot(
                 newScheduleData.Id,
                 newUser,
-                DateTime.Parse("2021-10-16T00:00Z").ToUniversalTime(),
-                DateTime.Parse("2021-10-16T00:00Z").AddDays(1).AddTicks(-1).ToUniversalTime(),
-                "0 09 * * TUE-FRI",
-                30,
-                "Name up",
-                "Description up",
-                1);
+                DateTime.Parse("2021-10-15T00:00Z").ToUniversalTime(),
+                DateTime.Parse("2021-10-25T00:00Z").AddDays(1).AddTicks(-1).ToUniversalTime(),
+                "0 18 * * MON-FRI",
+                60,
+                "Single schedule up",
+                "Schedule up",
+                5);
 
             newSchedule.ShouldBeEquivalentTo(expectedSchedule);
         }

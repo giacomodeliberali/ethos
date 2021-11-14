@@ -10,6 +10,7 @@ using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Extensions;
 using Ethos.Domain.Repositories;
+using Ethos.Query.Services;
 using Ethos.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -23,19 +24,25 @@ namespace Ethos.Application.Handlers
         private readonly IGuidGenerator _guidGenerator;
         private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBookingQueryService _bookingQueryService;
+        private readonly IBookingRepository _bookingRepository;
 
         public UpdateScheduleCommandHandler(
             IScheduleRepository scheduleRepository,
             UserManager<ApplicationUser> userManager,
             IGuidGenerator guidGenerator,
             IScheduleExceptionRepository scheduleExceptionRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IBookingQueryService bookingQueryService,
+            IBookingRepository bookingRepository)
         {
             _scheduleRepository = scheduleRepository;
             _userManager = userManager;
             _guidGenerator = guidGenerator;
             _scheduleExceptionRepository = scheduleExceptionRepository;
             _unitOfWork = unitOfWork;
+            _bookingQueryService = bookingQueryService;
+            _bookingRepository = bookingRepository;
         }
 
         protected override async Task Handle(UpdateScheduleCommand request, CancellationToken cancellationToken)
@@ -68,7 +75,10 @@ namespace Ethos.Application.Handlers
                 fromInclusive: true,
                 toInclusive: true).ToList();
 
-            if (occurrences.Count != 1 || occurrences.Single() < schedule.Period.StartDate || occurrences.Single() > schedule.Period.EndDate)
+            if (occurrences.Count != 1 ||
+                occurrences.Single() < schedule.Period.StartDate ||
+                occurrences.Single() > schedule.Period.EndDate ||
+                (request.InstanceEndDate - request.InstanceStartDate).TotalMinutes != schedule.DurationInMinutes)
             {
                 throw new BusinessException("Invalid instance start/end dates");
             }
@@ -93,7 +103,7 @@ namespace Ethos.Application.Handlers
 
                 switch (request.RecurringScheduleOperationType)
                 {
-                    case RecurringScheduleOperationType.Future:
+                    case RecurringScheduleOperationType.InstanceAndFuture:
                         // update the recurring schedule's end date and create a new recurring schedule with the new info. Future bookings will be canceled.
                         await RecurringToRecurring_UpdateInstanceAndFutures(request, organizer, schedule);
                         break;
@@ -129,8 +139,12 @@ namespace Ethos.Application.Handlers
 
         private async Task RecurringToRecurring_UpdateInstanceAndFutures(UpdateScheduleCommand request, ApplicationUser organizer, RecurringSchedule schedule)
         {
+            var lastOccurence = schedule
+                .GetOccurrences(new Period(schedule.Period.StartDate, request.InstanceStartDate), toInclusive: false)
+                .Last();
+
             schedule.UpdateDate(
-                new Period(schedule.Period.StartDate, request.InstanceStartDate),
+                new Period(schedule.Period.StartDate, lastOccurence.EndDate),
                 schedule.DurationInMinutes,
                 schedule.RecurringCronExpressionString);
 
@@ -163,7 +177,7 @@ namespace Ethos.Application.Handlers
                 request.UpdatedSchedule.Name,
                 request.UpdatedSchedule.Description,
                 request.UpdatedSchedule.ParticipantsMaxNumber,
-                new Period(request.InstanceStartDate, request.UpdatedSchedule.EndDate));
+                new Period(request.UpdatedSchedule.StartDate, request.UpdatedSchedule.EndDate));
 
             await _scheduleRepository.CreateAsync(newSingle);
         }

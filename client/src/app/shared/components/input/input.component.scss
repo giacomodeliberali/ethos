@@ -1,47 +1,57 @@
-:host{
-    --line-color: var(--ion-color-secondary);
-    display: block;
-    margin-bottom: 16px;
-    .page{
-        background: white no-repeat;
-        background-image: linear-gradient(to bottom, var(--line-color), var(--line-color)), linear-gradient(to bottom, var(--ion-color-medium), var(--ion-color-medium));
-        background-size: 0 2px, 100% 1px;
-        background-position: 50% 100%, 50% 100%;
-        transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 8px;
-        ion-icon{
-            color: var(--ion-color-medium);
-            font-size: 1rem;
-            --ionicon-stroke-width: 3rem;
-        }
-        .show-password{
-            cursor:pointer;
-        }
+:host {
+  --line-color: var(--ion-color-secondary);
+  display: block;
+  margin-bottom: 16px;
+  .page {
+    background: white no-repeat;
+    background-image: linear-gradient(
+        to bottom,
+        var(--line-color),
+        var(--line-color)
+      ),
+      linear-gradient(
+        to bottom,
+        var(--ion-color-medium),
+        var(--ion-color-medium)
+      );
+    background-size: 0 2px, 100% 1px;
+    background-position: 50% 100%, 50% 100%;
+    transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px;
+    ion-icon {
+      color: var(--ion-color-medium);
+      font-size: 1rem;
+      --ionicon-stroke-width: 3rem;
     }
-    &.input-focused, &.error{
-        .page{
-            background-size: 100% 2px, 100% 1px;
-            outline: none;
-            ion-icon{
-                color: var(--line-color);
-            }
-        }
-        .error-message{
-            color: var(--ion-color-danger);
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
+    .show-password {
+      cursor: pointer;
     }
-    input{
-        &::placeholder{
-            color: var(--ion-color-medium);
-        }
-        width: 100%;
-        border: none;
-        margin-left: 8px;
-        outline: none;
+  }
+  &.input-focused,
+  &.error {
+    .page {
+      background-size: 100% 2px, 100% 1px;
+      outline: none;
+      ion-icon {
+        color: var(--line-color);
+      }
     }
+    .error-message {
+      color: var(--ion-color-danger);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+  }
+  input {
+    &::placeholder {
+      color: var(--ion-color-medium);
+    }
+    width: 100%;
+    border: none;
+    margin-left: 8px;
+    outline: none;
+  }
 }

@@ -7,13 +7,11 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./unsaved-changes.component.scss'],
 })
 export class UnsavedChangesComponent {
+  constructor(private modalCtrl: ModalController) {}
 
-  constructor(private modalCtrl: ModalController) { }
-
-  dismiss(result: 'success' | 'cancel'){
+  dismiss(result: 'success' | 'cancel') {
     this.modalCtrl.dismiss({
-      close: (result === 'success')
+      close: result === 'success',
     });
   }
-
 }

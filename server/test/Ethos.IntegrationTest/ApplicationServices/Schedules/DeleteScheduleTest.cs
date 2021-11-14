@@ -62,7 +62,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         }
 
         [Fact]
-        public async Task Should_DeleteRecurringSchedule_WhenDeletingTheFirstInstance()
+        public async Task Should_DeleteRecurringSchedule_When_DeletingTheFirstInstance()
         {
             using var admin = await Scope.WithUser("admin");
 
@@ -78,19 +78,10 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 OrganizerId = admin.User.Id,
             });
 
-            await Should.ThrowAsync<Exception>(async () =>
-            {
-                // missing instance info
-                await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
-                {
-                    Id = singleScheduleReply.Id,
-                });
-            });
-
             await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
-                RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+                RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
                 InstanceStartDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
                 InstanceEndDate = DateTime.Parse("2021-10-01T11:00:00Z").ToUniversalTime(),
             });
@@ -114,41 +105,18 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 StartDate = firstOctober,
                 EndDate = lastOctober,
                 DurationInMinutes = 120,
-                RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
+                RecurringCronExpression = CronTestExpressions.EveryWeekDayAt9,
                 OrganizerId = admin.User.Id,
             });
 
-
-            using (await Scope.WithNewUser("demo"))
-            {
-                await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
-                {
-                    ScheduleId = scheduleReplyDto.Id,
-                    StartDate = DateTime.Parse("2021-10-06T09:00:00Z").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2021-10-06T11:00:00Z").ToUniversalTime(),
-                });
-            }
-
             await Scope.WithUser("admin");
-
-            await Should.ThrowAsync<BusinessException>(async () =>
-            {
-                // Non è possibile eliminare la schedulazione, sono già presenti 1 prenotazioni
-                await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
-                {
-                    Id = scheduleReplyDto.Id,
-                    InstanceStartDate = DateTime.Parse("2021-10-06T09:00:00Z").ToUniversalTime(),
-                    InstanceEndDate = DateTime.Parse("2021-10-06T11:00:00Z").ToUniversalTime(),
-                    RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
-                });
-            });
 
             await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
                 InstanceStartDate = DateTime.Parse("2021-10-07T09:00:00Z").ToUniversalTime(),
                 InstanceEndDate = DateTime.Parse("2021-10-07T11:00:00Z").ToUniversalTime(),
-                RecurringScheduleOperationType = RecurringScheduleOperationType.Future,
+                RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
             });
 
             var result = (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
@@ -159,6 +127,29 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             result.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-06T09:00:00Z").ToUniversalTime());
             result.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-06T11:00:00Z").ToUniversalTime());
+        }
+
+        [Fact]
+        public async Task Should_ThrowError_When_InstanceDateTimeAreNotProvided()
+        {
+            using var admin = await Scope.WithUser("admin");
+            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Single schedule",
+                Description = "Schedule",
+                StartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                OrganizerId = admin.User.Id,
+            });
+
+            await Should.ThrowAsync<Exception>(async () =>
+            {
+                // missing instance info
+                await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+                {
+                    Id = singleScheduleReply.Id,
+                });
+            });
         }
     }
 }

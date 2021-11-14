@@ -1,9 +1,11 @@
 using System.Linq;
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 using Ethos.Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Converters;
 
 namespace Ethos.Web.Host
 {
@@ -12,6 +14,10 @@ namespace Ethos.Web.Host
         public static void AddEthosControllers(this IServiceCollection services)
         {
             services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context =>

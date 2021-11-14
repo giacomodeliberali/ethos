@@ -4,25 +4,25 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ResetPasswordPageComponent } from './pages/reset-password-page/reset-password-page.component';
 
 const routes: Routes = [
-    {
-      path: 'login',
-      component: LoginPageComponent,
-      data: {animation: 'LoginPage'}
-    },
-    {
-      path: 'reset-password',
-      component: ResetPasswordPageComponent,
-      data: {animation: 'ResetPasswordPage'}
-    },
-    {
-        path: '',
-        redirectTo: 'login',
-        pathMatch: 'full'
-    }
-  ];
+  {
+    path: 'login',
+    component: LoginPageComponent,
+    data: { animation: 'LoginPage' },
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordPageComponent,
+    data: { animation: 'ResetPasswordPage' },
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+];
 
-  @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule],
-  })
-  export class AuthRoutingModule {}
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class AuthRoutingModule {}

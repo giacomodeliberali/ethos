@@ -52,10 +52,10 @@ namespace Ethos.Domain.Entities
             RecurringCronExpressionString = recurringExpression;
         }
 
-        public IEnumerable<Period> GetOccurrences(Period period)
+        public IEnumerable<Period> GetOccurrences(Period period, bool fromInclusive = true, bool toInclusive = true)
         {
             return RecurringCronExpression
-                .GetOccurrences(period.StartDate, period.EndDate, fromInclusive: true, toInclusive: true)
+                .GetOccurrences(period.StartDate, period.EndDate, fromInclusive, toInclusive)
                 .Select(nextStartDate => new Period(nextStartDate, nextStartDate.AddMinutes(DurationInMinutes)));
         }
 

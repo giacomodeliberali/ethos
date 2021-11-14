@@ -7,539 +7,584 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
-import { NswagBaseClass } from '../nswag/nswag-base-class'
-import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, from as _observableFrom, throwError as _observableThrow, of as _observableOf } from 'rxjs';
+import { NswagBaseClass } from '../nswag/nswag-base-class';
+import {
+  mergeMap as _observableMergeMap,
+  catchError as _observableCatch,
+} from 'rxjs/operators';
+import {
+  Observable,
+  from as _observableFrom,
+  throwError as _observableThrow,
+  of as _observableOf,
+} from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpResponse,
+  HttpResponseBase,
+} from '@angular/common/http';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class BookingsService extends NswagBaseClass {
-    private http: HttpClient;
-    private baseUrl: string;
+  private http: HttpClient;
+  private baseUrl: string;
 
-    constructor(@Inject(HttpClient) configuration: HttpClient, @Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        super(configuration);
-        this.http = http;
-        this.baseUrl = baseUrl;
-    }
+  constructor(
+    @Inject(HttpClient) configuration: HttpClient,
+    @Inject(HttpClient) http: HttpClient,
+    @Optional() @Inject(API_BASE_URL) baseUrl?: string
+  ) {
+    super(configuration);
+    this.http = http;
+    this.baseUrl = baseUrl;
+  }
 
-    /**
-     * Create a new booking for the current user.
-     * @return Success
-     */
-    createBooking(body: CreateBookingRequestDto): Observable<CreateBookingReplyDto> {
-        let url_ = this.baseUrl + "/api/bookings";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Create a new booking for the current user.
+   * @return Success
+   */
+  createBooking(
+    body: CreateBookingRequestDto
+  ): Observable<CreateBookingReplyDto> {
+    let url_ = this.baseUrl + '/api/bookings';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Delete an existing booking.
-     * @return Success
-     */
-    deleteBooking(id: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/bookings?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Delete an existing booking.
+   * @return Success
+   */
+  deleteBooking(id: string): Observable<void> {
+    let url_ = this.baseUrl + '/api/bookings?';
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined and cannot be null.");
+    else url_ += 'id=' + encodeURIComponent('' + id) + '&';
+    url_ = url_.replace(/[?&]$/, '');
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-            })
-        };
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({}),
+    };
 
-        return this.processRequest("delete", url_, options_, false);
-    }
+    return this.processRequest('delete', url_, options_, false);
+  }
 
-    /**
-     * Return the requested booking or null.
-     * @return Success
-     */
-    getBookingById(id: string): Observable<BookingDto> {
-        let url_ = this.baseUrl + "/api/bookings/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Return the requested booking or null.
+   * @return Success
+   */
+  getBookingById(id: string): Observable<BookingDto> {
+    let url_ = this.baseUrl + '/api/bookings/{id}';
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("get", url_, options_, false);
-    }
+    return this.processRequest('get', url_, options_, false);
+  }
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class IdentityService extends NswagBaseClass {
-    private http: HttpClient;
-    private baseUrl: string;
+  private http: HttpClient;
+  private baseUrl: string;
 
-    constructor(@Inject(HttpClient) configuration: HttpClient, @Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        super(configuration);
-        this.http = http;
-        this.baseUrl = baseUrl;
-    }
+  constructor(
+    @Inject(HttpClient) configuration: HttpClient,
+    @Inject(HttpClient) http: HttpClient,
+    @Optional() @Inject(API_BASE_URL) baseUrl?: string
+  ) {
+    super(configuration);
+    this.http = http;
+    this.baseUrl = baseUrl;
+  }
 
-    /**
-     * Try to authenticate the given user.
-     * @param body The user to authenticate.
-     * @return Success
-     */
-    authenticate(body: LoginRequestDto): Observable<LoginResponseDto> {
-        let url_ = this.baseUrl + "/api/identity/authenticate";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Try to authenticate the given user.
+   * @param body The user to authenticate.
+   * @return Success
+   */
+  authenticate(body: LoginRequestDto): Observable<LoginResponseDto> {
+    let url_ = this.baseUrl + '/api/identity/authenticate';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Create a new user in the system with the default role.
-     * @param body The user to create.
-     * @return Success
-     */
-    registerUser(body: RegisterRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/identity/register";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Create a new user in the system with the default role.
+   * @param body The user to create.
+   * @return Success
+   */
+  registerUser(body: RegisterRequestDto): Observable<void> {
+    let url_ = this.baseUrl + '/api/identity/register';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Send the password reset link.
-     * @return Success
-     */
-    sendPasswordResetLink(email: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/identity/send-password-reset-link?";
-        if (email === undefined || email === null)
-            throw new Error("The parameter 'email' must be defined and cannot be null.");
-        else
-            url_ += "email=" + encodeURIComponent("" + email) + "&";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Send the password reset link.
+   * @return Success
+   */
+  sendPasswordResetLink(email: string): Observable<void> {
+    let url_ = this.baseUrl + '/api/identity/send-password-reset-link?';
+    if (email === undefined || email === null)
+      throw new Error(
+        "The parameter 'email' must be defined and cannot be null."
+      );
+    else url_ += 'email=' + encodeURIComponent('' + email) + '&';
+    url_ = url_.replace(/[?&]$/, '');
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-            })
-        };
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({}),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Reset the password using the reset link.
-     * @return Success
-     */
-    resetPassword(body: ResetPasswordRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/identity/reset-password";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Reset the password using the reset link.
+   * @return Success
+   */
+  resetPassword(body: ResetPasswordRequestDto): Observable<void> {
+    let url_ = this.baseUrl + '/api/identity/reset-password';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Return the list af all users with athe 'Admin' role.
-     * @return Success
-     */
-    getAllAdmins(): Observable<UserDto[]> {
-        let url_ = this.baseUrl + "/api/identity";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Return the list af all users with athe 'Admin' role.
+   * @return Success
+   */
+  getAllAdmins(): Observable<UserDto[]> {
+    let url_ = this.baseUrl + '/api/identity';
+    url_ = url_.replace(/[?&]$/, '');
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("get", url_, options_, false);
-    }
+    return this.processRequest('get', url_, options_, false);
+  }
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class SchedulesService extends NswagBaseClass {
-    private http: HttpClient;
-    private baseUrl: string;
+  private http: HttpClient;
+  private baseUrl: string;
 
-    constructor(@Inject(HttpClient) configuration: HttpClient, @Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        super(configuration);
-        this.http = http;
-        this.baseUrl = baseUrl;
-    }
+  constructor(
+    @Inject(HttpClient) configuration: HttpClient,
+    @Inject(HttpClient) http: HttpClient,
+    @Optional() @Inject(API_BASE_URL) baseUrl?: string
+  ) {
+    super(configuration);
+    this.http = http;
+    this.baseUrl = baseUrl;
+  }
 
-    /**
-     * Create a new schedule to the current user.
-     * @return Success
-     */
-    createSchedule(body: CreateScheduleRequestDto): Observable<CreateScheduleReplyDto> {
-        let url_ = this.baseUrl + "/api/schedules";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Create a new schedule to the current user.
+   * @return Success
+   */
+  createSchedule(
+    body: CreateScheduleRequestDto
+  ): Observable<CreateScheduleReplyDto> {
+    let url_ = this.baseUrl + '/api/schedules';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("post", url_, options_, false);
-    }
+    return this.processRequest('post', url_, options_, false);
+  }
 
-    /**
-     * Generate (in memory) all the schedules that are in the given interval.
-     * @return Success
-     */
-    getAllSchedulesInRange(startDate: string, endDate: string): Observable<GeneratedScheduleDto[]> {
-        let url_ = this.baseUrl + "/api/schedules?";
-        if (startDate === undefined || startDate === null)
-            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
-        else
-            url_ += "startDate=" + encodeURIComponent("" + startDate) + "&";
-        if (endDate === undefined || endDate === null)
-            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
-        else
-            url_ += "endDate=" + encodeURIComponent("" + endDate) + "&";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Generate (in memory) all the schedules that are in the given interval.
+   * @return Success
+   */
+  getAllSchedulesInRange(
+    startDate: string,
+    endDate: string
+  ): Observable<GeneratedScheduleDto[]> {
+    let url_ = this.baseUrl + '/api/schedules?';
+    if (startDate === undefined || startDate === null)
+      throw new Error(
+        "The parameter 'startDate' must be defined and cannot be null."
+      );
+    else url_ += 'startDate=' + encodeURIComponent('' + startDate) + '&';
+    if (endDate === undefined || endDate === null)
+      throw new Error(
+        "The parameter 'endDate' must be defined and cannot be null."
+      );
+    else url_ += 'endDate=' + encodeURIComponent('' + endDate) + '&';
+    url_ = url_.replace(/[?&]$/, '');
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        Accept: 'text/plain',
+      }),
+    };
 
-        return this.processRequest("get", url_, options_, false);
-    }
+    return this.processRequest('get', url_, options_, false);
+  }
 
-    /**
-     * Update an existing schedule.
-     * @return Success
-     */
-    updateSchedule(body: UpdateScheduleRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/schedules";
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Update an existing schedule.
+   * @return Success
+   */
+  updateSchedule(body: UpdateScheduleRequestDto): Observable<void> {
+    let url_ = this.baseUrl + '/api/schedules';
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
 
-        return this.processRequest("put", url_, options_, false);
-    }
+    return this.processRequest('put', url_, options_, false);
+  }
 
-    /**
-     * Delete an existing schedule.
-     * @return Success
-     */
-    deleteSchedule(id: string, body: DeleteScheduleRequestDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/schedules/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
+  /**
+   * Delete an existing schedule.
+   * @return Success
+   */
+  deleteSchedule(id: string, body: DeleteScheduleRequestDto): Observable<void> {
+    let url_ = this.baseUrl + '/api/schedules/{id}';
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
+    const content_ = JSON.stringify(body);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "json",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-            })
-        };
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
 
-        return this.processRequest("delete", url_, options_, false);
-    }
+    return this.processRequest('delete', url_, options_, false);
+  }
 }
 
 export interface BookingDto {
-    id?: string;
-    schedule?: BookingDto_ScheduleDto | null;
-    startDate?: string;
-    endDate?: string;
-    user?: BookingDto_UserDto | null;
+  id?: string;
+  schedule?: BookingDto_ScheduleDto | null;
+  startDate?: string;
+  endDate?: string;
+  user?: BookingDto_UserDto | null;
 }
 
 export interface BookingDto_ScheduleDto {
-    id?: string;
-    name?: string | null;
-    description?: string | null;
-    organizerFullName?: string | null;
-    durationInMinutes?: number;
+  id?: string;
+  name?: string | null;
+  description?: string | null;
+  organizerFullName?: string | null;
+  durationInMinutes?: number;
 }
 
 export interface BookingDto_UserDto {
-    id?: string;
-    fullName?: string | null;
+  id?: string;
+  fullName?: string | null;
 }
 
 export interface CreateBookingReplyDto {
-    id: string;
-    currentParticipantsNumber: number;
+  id: string;
+  currentParticipantsNumber: number;
 }
 
 export interface CreateBookingRequestDto {
-    scheduleId: string;
-    startDate: string;
-    endDate: string;
+  scheduleId: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface CreateScheduleReplyDto {
-    id: string;
+  id: string;
 }
 
 export interface CreateScheduleRequestDto {
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    /** If not recurring this must be EndDate - StartDate.
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  /** If not recurring this must be EndDate - StartDate.
 If recurring it represent the duration of the schedule. */
-    durationInMinutes?: number;
-    /** A CRON expression to indicate this schedule is recurring. */
-    recurringCronExpression?: string | null;
-    /** Defaults to zero if no limit is required. */
-    participantsMaxNumber: number;
-    /** The id of the organizer of this schedule. */
-    organizerId: string;
+  durationInMinutes?: number;
+  /** A CRON expression to indicate this schedule is recurring. */
+  recurringCronExpression?: string | null;
+  /** Defaults to zero if no limit is required. */
+  participantsMaxNumber: number;
+  /** The id of the organizer of this schedule. */
+  organizerId: string;
 }
 
 export interface DeleteScheduleRequestDto {
-    id?: string;
-    /** Required only if the schedule is recurring. */
-    recurringScheduleOperationType?: RecurringScheduleOperationType | null;
-    instanceStartDate: string;
-    instanceEndDate: string;
+  id?: string;
+  /** Required only if the schedule is recurring. */
+  recurringScheduleOperationType?: RecurringScheduleOperationType | null;
+  instanceStartDate: string;
+  instanceEndDate: string;
 }
 
 /** Every exception will be serialized to the client wrapped in this class. */
 export interface ExceptionDto {
-    message: string;
-    /** Visible only during development. */
-    stackTrace?: string | null;
-    /** Optional inner exception. */
-    innerException?: ExceptionDto | null;
+  message: string;
+  /** Visible only during development. */
+  stackTrace?: string | null;
+  /** Optional inner exception. */
+  innerException?: ExceptionDto | null;
 }
 
 export interface GeneratedScheduleDto {
-    scheduleId: string;
-    organizer: GeneratedScheduleDto_UserDto;
-    startDate: string;
-    endDate: string;
-    name: string;
-    description: string;
-    bookings: GeneratedScheduleDto_BookingDto[];
-    participantsMaxNumber: number;
-    isRecurring: boolean;
-    recurringCronExpression?: string | null;
+  scheduleId: string;
+  organizer: GeneratedScheduleDto_UserDto;
+  startDate: string;
+  endDate: string;
+  name: string;
+  description: string;
+  bookings: GeneratedScheduleDto_BookingDto[];
+  participantsMaxNumber: number;
+  isRecurring: boolean;
+  recurringCronExpression?: string | null;
 }
 
 export interface GeneratedScheduleDto_BookingDto {
-    id: string;
-    /** Populated only if the caller is admin. */
-    user?: GeneratedScheduleDto_UserDto | null;
+  id: string;
+  /** Populated only if the caller is admin. */
+  user?: GeneratedScheduleDto_UserDto | null;
 }
 
 export interface GeneratedScheduleDto_UserDto {
-    id: string;
-    email: string;
-    userName: string;
-    fullName: string;
+  id: string;
+  email: string;
+  userName: string;
+  fullName: string;
 }
 
 /** The login request dto. */
 export interface LoginRequestDto {
-    /** The user name or email. */
-    userNameOrEmail: string;
-    /** The user password. */
-    password: string;
+  /** The user name or email. */
+  userNameOrEmail: string;
+  /** The user password. */
+  password: string;
 }
 
 /** The response for the login. */
 export interface LoginResponseDto {
-    /** The granted Bearer token or null if authentication fails. */
-    accessToken: string;
-    user: UserDto;
+  /** The granted Bearer token or null if authentication fails. */
+  accessToken: string;
+  user: UserDto;
 }
 
 /** Describe how to handle operations on recurring schedules. */
 export enum RecurringScheduleOperationType {
-    Instance = "Instance",
-    InstanceAndFuture = "InstanceAndFuture",
+  Instance = 'Instance',
+  InstanceAndFuture = 'InstanceAndFuture',
 }
 
 /** The DTO for creating a new user. */
 export interface RegisterRequestDto {
-    /** The email address. */
-    email: string;
-    /** The user name (not email). */
-    userName: string;
-    /** The first and last name. */
-    fullName: string;
-    /** The user password. */
-    password: string;
+  /** The email address. */
+  email: string;
+  /** The user name (not email). */
+  userName: string;
+  /** The first and last name. */
+  fullName: string;
+  /** The user password. */
+  password: string;
 }
 
 export interface ResetPasswordRequestDto {
-    email: string;
-    newPassword: string;
-    resetToken: string;
+  email: string;
+  newPassword: string;
+  resetToken: string;
 }
 
 export interface UpdateScheduleRequestDto {
-    id: string;
-    /** The start date of the selected schedule instance to update. */
-    instanceStartDate: string;
-    /** The end date of the selected schedule instance to update. */
-    instanceEndDate: string;
-    schedule: UpdateScheduleRequestDto_ScheduleDto;
-    /** Required only if the schedule is recurring. */
-    recurringScheduleOperationType?: RecurringScheduleOperationType | null;
+  id: string;
+  /** The start date of the selected schedule instance to update. */
+  instanceStartDate: string;
+  /** The end date of the selected schedule instance to update. */
+  instanceEndDate: string;
+  schedule: UpdateScheduleRequestDto_ScheduleDto;
+  /** Required only if the schedule is recurring. */
+  recurringScheduleOperationType?: RecurringScheduleOperationType | null;
 }
 
 export interface UpdateScheduleRequestDto_ScheduleDto {
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    /** If not recurring this must be EndDate - StartDate.
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  /** If not recurring this must be EndDate - StartDate.
 If recurring it represent the duration of the schedule. */
-    durationInMinutes: number;
-    recurringCronExpression?: string | null;
-    participantsMaxNumber: number;
-    organizerId: string;
+  durationInMinutes: number;
+  recurringCronExpression?: string | null;
+  participantsMaxNumber: number;
+  organizerId: string;
 }
 
 export interface UserDto {
-    email: string;
-    id: string;
-    userName: string;
-    fullName: string;
-    roles: string[];
+  email: string;
+  id: string;
+  userName: string;
+  fullName: string;
+  roles: string[];
 }
 
 export class ApiException extends Error {
-    message: string;
-    status: number;
-    response: string;
-    headers: { [key: string]: any; };
-    result: any;
+  message: string;
+  status: number;
+  response: string;
+  headers: { [key: string]: any };
+  result: any;
 
-    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
-        super();
+  constructor(
+    message: string,
+    status: number,
+    response: string,
+    headers: { [key: string]: any },
+    result: any
+  ) {
+    super();
 
-        this.message = message;
-        this.status = status;
-        this.response = response;
-        this.headers = headers;
-        this.result = result;
-    }
+    this.message = message;
+    this.status = status;
+    this.response = response;
+    this.headers = headers;
+    this.result = result;
+  }
 
-    protected isApiException = true;
+  protected isApiException = true;
 
-    static isApiException(obj: any): obj is ApiException {
-        return obj.isApiException === true;
-    }
+  static isApiException(obj: any): obj is ApiException {
+    return obj.isApiException === true;
+  }
 }
 
-function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): Observable<any> {
-    if (result !== null && result !== undefined)
-        return _observableThrow(result);
-    else
-        return _observableThrow(new ApiException(message, status, response, headers, null));
+function throwException(
+  message: string,
+  status: number,
+  response: string,
+  headers: { [key: string]: any },
+  result?: any
+): Observable<any> {
+  if (result !== null && result !== undefined) return _observableThrow(result);
+  else
+    return _observableThrow(
+      new ApiException(message, status, response, headers, null)
+    );
 }
 
 function blobToText(blob: any): Observable<string> {
-    return new Observable<string>((observer: any) => {
-        if (!blob) {
-            observer.next("");
-            observer.complete();
-        } else {
-            let reader = new FileReader();
-            reader.onload = event => {
-                observer.next((<any>event.target).result);
-                observer.complete();
-            };
-            reader.readAsText(blob);
-        }
-    });
+  return new Observable<string>((observer: any) => {
+    if (!blob) {
+      observer.next('');
+      observer.complete();
+    } else {
+      let reader = new FileReader();
+      reader.onload = (event) => {
+        observer.next((<any>event.target).result);
+        observer.complete();
+      };
+      reader.readAsText(blob);
+    }
+  });
 }

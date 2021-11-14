@@ -10,7 +10,6 @@ import { ModalDefaultContentComponent } from './components/modal-default-content
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
 
-
 @NgModule({
   declarations: [
     InputComponent,
@@ -21,11 +20,7 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     LoadingComponent,
     ScheduleCardComponent
   ],
-  imports: [
-    CommonModule,
-    IonicModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [
     InputComponent,
     LoadingToastComponent,
@@ -35,4 +30,4 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     ScheduleCardComponent
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

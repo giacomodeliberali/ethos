@@ -12,6 +12,8 @@ namespace Ethos.Domain.Repositories
 
         Task DeleteAsync(Booking booking);
 
+        Task DeleteAsync(Guid id);
+
         Task UpdateAsync(Booking booking);
     }
 }

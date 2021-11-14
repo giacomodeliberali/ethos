@@ -12,7 +12,12 @@ interface RequestOptionsArgs {
 export class NswagBaseClass {
   constructor(private httpClient: HttpClient = null) {}
 
-  protected processRequest(method: string, url: string, options: RequestOptionsArgs, isReturnTypeBinary: boolean): Observable<any> {
+  protected processRequest(
+    method: string,
+    url: string,
+    options: RequestOptionsArgs,
+    isReturnTypeBinary: boolean
+  ): Observable<any> {
     const requestOptions: RequestOptionsArgs = {
       ...options,
       responseType: isReturnTypeBinary ? 'blob' : 'json', // se il backend ritorna binary, stiamo scaricando un file

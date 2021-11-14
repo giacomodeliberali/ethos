@@ -10,56 +10,60 @@
  */
 
 /* Core CSS required for Ionic components to work properly */
-@import "~@ionic/angular/css/core.css";
-@import "mixins";
+@import '~@ionic/angular/css/core.css';
+@import 'mixins';
 /* Basic CSS for apps built with Ionic */
-@import "~@ionic/angular/css/normalize.css";
-@import "~@ionic/angular/css/structure.css";
-@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/normalize.css';
+@import '~@ionic/angular/css/structure.css';
+@import '~@ionic/angular/css/typography.css';
 @import '~@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
+@import '~@ionic/angular/css/padding.css';
+@import '~@ionic/angular/css/float-elements.css';
+@import '~@ionic/angular/css/text-alignment.css';
+@import '~@ionic/angular/css/text-transformation.css';
+@import '~@ionic/angular/css/flex-utils.css';
 
 @font-face {
-    font-family: "JosefinSans";
-    src: local("JosefinSans"), url(./assets/fonts/JosefinSans-Regular.ttf) format("truetype");
+  font-family: 'JosefinSans';
+  src: local('JosefinSans'),
+    url(./assets/fonts/JosefinSans-Regular.ttf) format('truetype');
 }
 
-
-html{
-    font-family: 'JosefinSans', sans-serif;
-    font-size: 16px;
+html {
+  font-family: 'JosefinSans', sans-serif;
+  font-size: 16px;
 }
 
-:root{
-    --ion-font-family: 'JosefinSans';
+:root {
+  --ion-font-family: 'JosefinSans';
 }
 
-ion-content{
-    --background: radial-gradient(circle at bottom right, var(--ion-color-primary-tint), var(--ion-color-primary));
+ion-content {
+  --background: radial-gradient(
+    circle at bottom right,
+    var(--ion-color-primary-tint),
+    var(--ion-color-primary)
+  );
 }
 
 ion-modal {
-    &.bottom {
-        align-items: flex-end;
-        --border-radius: 4px 4px 0px 0px !important;
+  &.bottom {
+    align-items: flex-end;
+    --border-radius: 4px 4px 0px 0px !important;
+  }
+  --height: auto !important;
+  --border-radius: 4px !important;
+  .modal-wrapper {
+    max-height: 100% !important;
+    overflow: auto !important;
+    .ion-page {
+      position: relative;
+      display: block;
+      contain: content;
     }
-    --height: auto !important;
-    --border-radius: 4px !important;
-    .modal-wrapper {
-        max-height: 100% !important;
-        overflow: auto !important;
-        .ion-page {
-        position: relative;
-        display: block;
-        contain: content;
-        }
-    }
+  }
 }
 
 :root{
@@ -95,4 +99,34 @@ ion-modal {
             align-items: center;
         }
     }
+    &::part(container) {
+      border-radius: 4px;
+      &:before {
+        position: absolute;
+        content: '';
+        width: 0.5rem;
+        height: 100%;
+        border-radius: 0.25rem 0 0 0.25rem;
+        background-color: var(--ionic-toast-color);
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.3);
+        filter: blur(20px);
+      }
+    }
+    &::part(message) {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+input {
+  background-color: white;
 }

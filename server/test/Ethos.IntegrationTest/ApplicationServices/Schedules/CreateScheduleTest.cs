@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
+using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
@@ -19,13 +18,11 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IScheduleApplicationService _scheduleApplicationService;
-        private readonly IBookingApplicationService _bookingApplicationService;
 
         public CreateScheduleTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
-            _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
         }
 
         [Fact]
@@ -37,13 +34,14 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(1),
+                EndDate = DateTime.UtcNow.AddHours(2),
                 OrganizerId = admin.User.Id,
             })).Id;
 
             var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
 
             schedule.Organizer.Id.ShouldBe(admin.User.Id);
+            schedule.DurationInMinutes.ShouldBe(120);
         }
 
         [Fact]
@@ -63,6 +61,76 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     OrganizerId = demoUser.Id,
                 });
             });
+        }
+
+        [Fact]
+        public async Task ShouldThrowError_WhenStartDateIsAfterOrEqualEndDate()
+        {
+            var admin = await Scope.WithUser("admin");
+            var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
+
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = DateTime.UtcNow.AddMonths(1),
+                    EndDate = DateTime.UtcNow,
+                    OrganizerId = demoUser.Id,
+                });
+            });
+
+            var now = DateTime.UtcNow;
+
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                {
+                    Name = "Test schedule",
+                    Description = "Description",
+                    StartDate = now,
+                    EndDate = now,
+                    OrganizerId = demoUser.Id,
+                });
+            });
+        }
+
+        [Fact]
+        public async Task Should_CreateSingleSchedule()
+        {
+            var admin = await Scope.WithUser("admin");
+            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Test schedule",
+                Description = "Description",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddHours(2),
+                OrganizerId = admin.User.Id,
+            })).Id;
+
+            var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
+            schedule.ShouldBeOfType<SingleSchedule>();
+        }
+
+        [Fact]
+        public async Task Should_CreateRecurringSchedule()
+        {
+            var admin = await Scope.WithUser("admin");
+            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            {
+                Name = "Test schedule",
+                Description = "Description",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddMonths(1),
+                OrganizerId = admin.User.Id,
+                RecurringCronExpression = CronTestExpressions.EveryMondayAt14,
+                DurationInMinutes = 60,
+                ParticipantsMaxNumber = 10,
+            })).Id;
+
+            var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
+            schedule.ShouldBeOfType<RecurringSchedule>();
         }
     }
 }

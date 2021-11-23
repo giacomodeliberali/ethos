@@ -10,6 +10,8 @@ export class ScheduleCardComponent{
 
   @Input()
   schedule: GeneratedScheduleDto;
+  @Input()
+  mode: 'user' | 'admin' = 'user';
 
   get time(){
     if(this.schedule){

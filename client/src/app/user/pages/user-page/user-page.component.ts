@@ -2,11 +2,9 @@ import { Component } from '@angular/core';
 import { BaseDirective } from '@core/directives';
 import { GeneratedScheduleDto, SchedulesService } from "@core/services/ethos.generated.service";
 import { MediaService } from "@core/services/media.service";
+import { SettingsService } from '@core/services/settings.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { map } from 'rxjs/operators';
-
-const afternoonStart = {hour:12, minutes: 0};
-const eveningStart = {hour: 18, minutes: 0};
 
 @Component({
   selector: 'app-user-page',
@@ -34,7 +32,7 @@ export class UserPageComponent extends BaseDirective{
   };
 
 
-  constructor(public mediaSvc: MediaService, private schedulesSvc: SchedulesService, private loadingSvc: LoadingService) {
+  constructor(public mediaSvc: MediaService, private schedulesSvc: SchedulesService, private loadingSvc: LoadingService, private settingsSvc: SettingsService) {
     super();
     // let nextWeek = new Date();
     // nextWeek.setDate(new Date().getDate() + 7);
@@ -64,11 +62,11 @@ export class UserPageComponent extends BaseDirective{
           const currentDate = new Date(schedule.startDate);
           const hour = currentDate.getHours();
           const minutes = currentDate.getMinutes();
-          if(hour >= eveningStart.hour && minutes >= eveningStart.minutes){
+          if(hour >= this.settingsSvc.eveningStart.hour && minutes >= this.settingsSvc.eveningStart.minutes){
             schedulesByDayPortion.evening.push(schedule);
             continue;
           }
-          if(hour >= afternoonStart.hour && minutes >= afternoonStart.minutes){
+          if(hour >= this.settingsSvc.afternoonStart.hour && minutes >= this.settingsSvc.afternoonStart.minutes){
             schedulesByDayPortion.afternoon.push(schedule);
             continue;
           }

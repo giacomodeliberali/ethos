@@ -1,28 +1,21 @@
-@import 'mixins';
+@import "mixins";
 
-ion-content {
-  .page-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    .toolbar {
-      --background: 'transparent';
-      .logo-container {
+ion-content{
+    .page-container{
         display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 4rem;
-        img {
-          height: 2rem;
-        }
-      }
-    }
-    .slider-container {
-      flex: 1;
-      ion-slides {
+        flex-direction: column;
         height: 100%;
-        ion-slide {
-          height: 100%;
+        .toolbar{
+            --background: 'transparent';
+            .logo-container{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 4rem;
+                img{
+                    height: 2rem;
+                }
+            }
         }
         .content-container{
             flex: 1;
@@ -38,6 +31,7 @@ ion-content {
                     }
                     ion-datetime{
                         --placeholder-color: var(--ion-color-light);
+                        --padding-top: 1rem;
                         color: var(--ion-color-light);
                     }
                 }
@@ -58,6 +52,7 @@ ion-content {
                 }
                 .day-period{
                     height: 100%;
+                    padding-bottom: 3rem;
                     h1{
                         color: var(--ion-color-secondary);
                     }
@@ -71,5 +66,4 @@ ion-content {
             }
         }
     }
-  }
 }

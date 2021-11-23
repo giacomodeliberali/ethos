@@ -1,0 +1,16 @@
+:host {
+  display: inline-flex;
+  margin: 0 2rem 0 2rem;
+  ion-chip {
+    border: 1px solid var(--ion-color-tertiary);
+    ion-label {
+      color: var(--ion-color-tertiary);
+    }
+    &.selected {
+      background-color: var(--ion-color-tertiary);
+      ion-label {
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+}

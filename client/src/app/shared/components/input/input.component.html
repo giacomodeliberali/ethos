@@ -1,6 +1,8 @@
 <div class="page">
   <ion-icon [name]="icon"></ion-icon>
   <input
+    class="input"
+    *ngIf="!multiline"
     (keyup)="changeValue($event)"
     [placeholder]="placeholder"
     [name]="name"
@@ -8,6 +10,16 @@
     (focus)="changeFocus(true)"
     (blur)="changeFocus(false)"
   />
+  <textarea
+    class="input"
+    *ngIf="multiline"
+    (keyup)="changeValue($event)"
+    [placeholder]="placeholder"
+    [name]="name"
+    rows="3"
+    (focus)="changeFocus(true)"
+    (blur)="changeFocus(false)"
+  ></textarea>
   <ion-icon
     class="show-password"
     *ngIf="type === 'password' || (type === 'text' && showPassword)"

@@ -30,6 +30,11 @@
       cursor: pointer;
     }
   }
+  &.multiline {
+    .page {
+      align-items: flex-start;
+    }
+  }
   &.input-focused,
   &.error {
     .page {
@@ -45,7 +50,7 @@
       margin-top: 0.25rem;
     }
   }
-  input {
+  .input {
     &::placeholder {
       color: var(--ion-color-medium);
     }

@@ -1,27 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  forwardRef,
-  HostBinding,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, HostBinding, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+  selector: "app-input",
+  templateUrl: "./input.component.html",
+  styleUrls: ["./input.component.scss"],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR, // Is an InjectionToken required by the ControlValueAccessor interface to provide a form value
       useExisting: forwardRef(() => InputComponent), // tells Angular to use the existing instance
-      multi: true,
-    },
-  ],
+      multi: true
+    }
+  ]
 })
 export class InputComponent implements ControlValueAccessor, OnChanges {
   @Input()
@@ -35,9 +26,12 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @Input()
   isValid = true;
   @Input()
-  errorMessage = 'Il campo non è valido';
-  @HostBinding('class.input-focused') isFocused = false;
-  @HostBinding('class.error') _isNotValid = false;
+  errorMessage = "Il campo non è valido";
+  @Input()
+  @HostBinding("class.multiline")
+  multiline = false;
+  @HostBinding("class.input-focused") isFocused = false;
+  @HostBinding("class.error") _isNotValid = false;
 
   showPassword = false;
 
@@ -78,15 +72,9 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     if (changes.isValid) {
       this._isNotValid = !changes.isValid.currentValue;
       if (changes.isValid.currentValue === false) {
-        this.elRef.nativeElement.style.setProperty(
-          '--line-color',
-          'var(--ion-color-danger)'
-        );
+        this.elRef.nativeElement.style.setProperty("--line-color", "var(--ion-color-danger)");
       } else {
-        this.elRef.nativeElement.style.setProperty(
-          '--line-color',
-          'var(--ion-color-secondary)'
-        );
+        this.elRef.nativeElement.style.setProperty("--line-color", "var(--ion-color-secondary)");
       }
     }
   }
@@ -100,6 +88,6 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
 
   changeShowPassword() {
     this.showPassword = !this.showPassword;
-    this.type = this.showPassword ? 'text' : 'password';
+    this.type = this.showPassword ? "text" : "password";
   }
 }

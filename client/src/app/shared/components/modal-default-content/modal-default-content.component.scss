@@ -1,4 +1,4 @@
-@import 'mixins';
+@import "mixins";
 :host {
   padding: 2rem 2rem 1rem 2rem;
   .button-container {
@@ -14,27 +14,27 @@
         margin-left: 0.5rem;
       }
       &.primary {
-        @include ion-button-style('primary', 'shade');
+        @include ion-button-style("primary", "shade");
         &.fill {
-          @include ion-button-style('primary');
+          @include ion-button-style("primary");
         }
       }
       &.secondary {
-        @include ion-button-style('secondary', 'shade');
+        @include ion-button-style("secondary", "shade");
         &.fill {
-          @include ion-button-style('secondary');
+          @include ion-button-style("secondary");
         }
       }
       &.tertiary {
-        @include ion-button-style('tertiary', 'shade');
+        @include ion-button-style("tertiary", "shade");
         &.fill {
-          @include ion-button-style('tertiary');
+          @include ion-button-style("tertiary");
         }
       }
       &.danger {
-        @include ion-button-style('danger', 'shade');
+        @include ion-button-style("danger", "shade");
         &.fill {
-          @include ion-button-style('danger');
+          @include ion-button-style("danger");
         }
       }
     }

@@ -126,13 +126,13 @@ export class LoginPageComponent extends BaseDirective {
           next: (response) => {
             this.toastSvc.addSuccessToast({
               header: 'Utente creato',
-              message: "L'utente è stato creato con successo.",
+              message: `L'utente è stato creato con successo.`,
             });
             this.currentForm = 'login';
           },
           error: (error) =>
             this.toastSvc.addErrorToast({
-              message: "Errore durante la creazione dell'utente.",
+              message: `Errore durante la creazione dell'utente.`,
             }),
         });
     }
@@ -151,13 +151,12 @@ export class LoginPageComponent extends BaseDirective {
         next: (response) => {
           this.toastSvc.addSuccessToast({
             header: 'Mail inviata',
-            message:
-              "La mail è stata inviata con successo all'indirizzo indicato. Se non la vedi controlla la posta indesiderata.",
+            message: `La mail è stata inviata con successo all'indirizzo indicato. Se non la vedi controlla la posta indesiderata.`,
           });
         },
         error: (error) =>
           this.toastSvc.addErrorToast({
-            message: "Errore durante l'invio della mail.",
+            message: `Errore durante l'invio della mail.`,
           }),
       });
   }

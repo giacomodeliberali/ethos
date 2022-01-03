@@ -1,18 +1,18 @@
-import { Component, Input } from "@angular/core";
-import { ControlValueAccessor } from "@angular/forms";
+import { Component, Input } from '@angular/core';
+import { ControlValueAccessor } from '@angular/forms';
 
 @Component({
-  selector: "app-week-day-selector",
-  templateUrl: "./week-day-selector.component.html",
-  styleUrls: ["./week-day-selector.component.scss"]
+  selector: 'app-week-day-selector',
+  templateUrl: './week-day-selector.component.html',
+  styleUrls: ['./week-day-selector.component.scss'],
 })
 export class WeekDaySelectorComponent implements ControlValueAccessor {
-  weekDays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
-
   @Input()
   value: string[] = [];
   @Input()
   weekDaysLocalization;
+
+  weekDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
   constructor() {}
 
@@ -33,6 +33,8 @@ export class WeekDaySelectorComponent implements ControlValueAccessor {
   }
 
   changeValue(val: string) {
-    this.value = this.value.includes(val) ? this.value.filter((x) => x != val) : [...this.value, val];
+    this.value = this.value.includes(val)
+      ? this.value.filter((x) => x !== val)
+      : [...this.value, val];
   }
 }

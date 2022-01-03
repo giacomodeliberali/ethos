@@ -1,53 +1,53 @@
-ion-card{
-    margin: 1.5rem 0 0 0;
-    padding: 1rem 1rem 0.5rem 1rem;
+ion-card {
+  margin: 1.5rem 0 0 0;
+  padding: 1rem 1rem 0.5rem 1rem;
+  border-radius: 0.5rem;
+  overflow: inherit;
+  .time-and-people {
+    right: -0.25rem;
+    bottom: -0.25rem;
+    position: absolute;
+    background-color: var(--ion-color-tertiary);
+    color: var(--ion-color-dark);
+    display: flex;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    .time-icon {
+      margin-right: 0.25rem;
+    }
+    .time-value {
+      margin-right: 0.5rem;
+      margin-top: 1px;
+    }
+    .partecipants-icon {
+      margin-right: 0.25rem;
+    }
+    .partecipants-value {
+      margin-top: 1px;
+    }
+  }
+  h4 {
+    margin-top: 0;
+  }
+  ion-chip {
+    margin: 1rem 0 0 -6px;
+    cursor: default;
+    --background: transparent;
+  }
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
     border-radius: 0.5rem;
-    overflow: inherit;
-    .time-and-people{
-        right: -0.25rem;
-        bottom: -0.25rem;
-        position: absolute;
-        background-color: var(--ion-color-tertiary);
-        color: var(--ion-color-dark);
-        display: flex;
-        padding: 0.5rem;
-        border-radius: 0.25rem;
-        .time-icon{
-            margin-right: 0.25rem;
-        }
-        .time-value{
-            margin-right: 0.5rem;
-            margin-top: 1px;
-        }
-        .partecipants-icon{
-            margin-right: 0.25rem;
-        }
-        .partecipants-value{
-            margin-top: 1px;
-        }
+    color: var(--ion-color-light);
+    padding: 1rem;
+    font-size: 1rem;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(var(--ion-color-primary-rgb), 0.85);
+    h2 {
+      margin-top: 0;
+      color: var(--ion-color-tertiary);
     }
-    h4{
-        margin-top: 0;
-    }
-    ion-chip{
-        margin: 1rem 0 0 -6px;
-        cursor: default;
-        --background: transparent;
-    }
-    .overlay{
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: 0.5rem;
-        color: var(--ion-color-light);
-        padding: 1rem;
-        font-size: 1rem;
-        height: 100%;
-        width: 100%;
-        background-color: rgba(var(--ion-color-primary-rgb), 0.85);
-        h2{
-            margin-top: 0;
-            color: var(--ion-color-tertiary);
-        }
-    }
+  }
 }

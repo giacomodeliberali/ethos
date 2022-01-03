@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://ethostraining.azurewebsites.net'
+  baseUrl: 'https://ethostraining.azurewebsites.net',
 };
 
 /*

@@ -6,30 +6,33 @@ import { GeneratedScheduleDto } from '@core/services/ethos.generated.service';
   templateUrl: './schedule-card.component.html',
   styleUrls: ['./schedule-card.component.scss'],
 })
-export class ScheduleCardComponent{
-
+export class ScheduleCardComponent {
   @Input()
   schedule: GeneratedScheduleDto;
   @Input()
   mode: 'user' | 'admin' = 'user';
 
-  get time(){
-    if(this.schedule){
+  get time() {
+    if (this.schedule) {
       const date = new Date(this.schedule.startDate);
-      return ((date.getHours() > 9) ? '' : '0') + date.getHours() + ':' + ((date.getMinutes() > 9) ? '' : '0') + date.getMinutes();
+      return (
+        (date.getHours() > 9 ? '' : '0') +
+        date.getHours() +
+        ':' +
+        (date.getMinutes() > 9 ? '' : '0') +
+        date.getMinutes()
+      );
     }
     return null;
   }
 
-  get freeSpots(){
+  get freeSpots() {
     return this.schedule.participantsMaxNumber - this.schedule.bookings.length;
   }
 
-  get isValidDate(){
+  get isValidDate() {
     return new Date(this.schedule.startDate) > new Date();
   }
 
-  constructor() {
-  }
-
+  constructor() {}
 }

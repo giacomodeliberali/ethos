@@ -35,14 +35,6 @@
         <div class="day-period">
           <h1 class="title">
             <span>Mattina</span>
-            <ion-button
-              fill="outline"
-              color="secondary"
-              size="small"
-              (click)="openCreateEditModal($event)"
-            >
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
           </h1>
           <div class="courses-container" *ngIf="schedules">
             <div class="no-elements" *ngIf="schedules.morning.length <= 0">
@@ -61,14 +53,6 @@
         <div class="day-period">
           <h1 class="title">
             <span>Pomeriggio</span>
-            <ion-button
-              fill="outline"
-              color="secondary"
-              size="small"
-              (click)="openCreateEditModal($event)"
-            >
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
           </h1>
           <div class="courses-container" *ngIf="schedules">
             <div class="no-elements" *ngIf="schedules.afternoon.length <= 0">
@@ -87,14 +71,6 @@
         <div class="day-period">
           <h1 class="title">
             <span>Sera</span>
-            <ion-button
-              fill="outline"
-              color="secondary"
-              size="small"
-              (click)="openCreateEditModal($event)"
-            >
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
           </h1>
           <div class="courses-container" *ngIf="schedules">
             <div class="no-elements" *ngIf="schedules.evening.length <= 0">
@@ -119,6 +95,9 @@
     <ion-icon name="menu-outline"></ion-icon>
   </ion-fab-button>
   <ion-fab-list side="end">
+    <ion-fab-button color="light" (click)="openCreateEditModal($event)">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button color="light">
       <ion-icon name="today-outline"></ion-icon>
     </ion-fab-button>

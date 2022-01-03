@@ -21,9 +21,9 @@
     (blur)="changeFocus(false)"
   ></textarea>
   <ion-datetime
-    *ngIf="isSpecialType && type === 'time'"
+    *ngIf="isSpecialType && (type === 'time' || type === 'date')"
     class="input datetime"
-    displayFormat="HH:mm"
+    [displayFormat]="format"
     [placeholder]="placeholder"
     [name]="name"
     (ionChange)="changeValue($event)"

@@ -11,7 +11,7 @@
       <ion-toggle
         mode="md"
         color="tertiary"
-        formControlName="isRecurrent"
+        (ionChange)="isRecurrent = $event.detail.checked"
       ></ion-toggle>
     </div>
   </div>
@@ -30,13 +30,24 @@
         formControlName="description"
         placeholder="Descrizione"
         name="description"
-        icon="lock-open-outline"
         icon="text-outline"
         [multiline]="true"
       ></app-input>
     </div>
   </div>
-  <div class="days">
-    <app-week-day-selector></app-week-day-selector>
+  <div class="days" *ngIf="isRecurrent">
+    <h5>Giorni</h5>
+    <div class="week-days">
+      <app-week-day-selector></app-week-day-selector>
+    </div>
+  </div>
+  <div class="section">
+    <app-input
+      formControlName="time"
+      placeholder="Orario"
+      name="time"
+      type="time"
+      icon="time-outline"
+    ></app-input>
   </div>
 </div>

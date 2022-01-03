@@ -33,7 +33,12 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @HostBinding("class.input-focused") isFocused = false;
   @HostBinding("class.error") _isNotValid = false;
 
+  specialTypes = ["time"];
   showPassword = false;
+
+  get isSpecialType() {
+    return this.specialTypes.includes(this.type);
+  }
 
   private _value: string;
   @Input()
@@ -64,7 +69,7 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     this.value = value;
   }
 
-  changeValue(ev: KeyboardEvent) {
+  changeValue(ev: KeyboardEvent | Event) {
     this.value = (ev.target as any).value;
   }
 

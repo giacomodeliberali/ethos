@@ -21,7 +21,16 @@
   }
   .days {
     background-color: var(--ion-color-primary-tint);
-    padding: 1rem 0 1rem 0;
-    overflow-x: auto;
+    padding: 1rem 0 0 0;
+    margin-bottom: 2rem;
+    h5 {
+      margin: 0.5rem 2rem 1rem 2rem;
+      color: var(--ion-color-tertiary);
+    }
+    .week-days {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
   }
 }

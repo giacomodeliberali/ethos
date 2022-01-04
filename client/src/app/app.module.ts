@@ -10,7 +10,7 @@ import { API_BASE_URL } from '@core/services/ethos.generated.service';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { navAnimation } from '@shared/animations/nav.animations';
 import { SharedModule } from '@shared/shared.module';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -40,4 +40,8 @@ import { AppComponent } from './app.component';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(`Using API_BASE_URL = '${environment.baseUrl}'`);
+  }
+}

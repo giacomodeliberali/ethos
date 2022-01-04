@@ -6,8 +6,8 @@ import { UserDto } from './ethos.generated.service';
   providedIn: 'root',
 })
 export class UserService {
-  private _tokenKey = 'token';
-  private _userKey = 'user';
+  private tokenKey = 'token';
+  private userKey = 'user';
 
   constructor() {}
 
@@ -17,19 +17,19 @@ export class UserService {
   }
 
   setToken(token: string) {
-    localStorage.setItem(this._tokenKey, token);
+    localStorage.setItem(this.tokenKey, token);
   }
 
   getToken() {
-    return localStorage.getItem(this._tokenKey);
+    return localStorage.getItem(this.tokenKey);
   }
 
   setUser(user: UserDto) {
-    localStorage.setItem(this._userKey, JSON.stringify(user));
+    localStorage.setItem(this.userKey, JSON.stringify(user));
   }
 
   getUser(): UserDto {
-    return JSON.parse(localStorage.getItem(this._userKey));
+    return JSON.parse(localStorage.getItem(this.userKey));
   }
 
   getTokenAsObservable() {

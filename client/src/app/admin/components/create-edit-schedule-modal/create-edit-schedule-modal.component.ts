@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-create-edit-schedule-modal',
@@ -16,12 +17,12 @@ export class CreateEditScheduleModalComponent implements OnInit {
     return nextWeek;
   }
   scheduleForm: FormGroup = new FormGroup({
-    name: new FormControl(),
-    description: new FormControl(),
-    isRecurrent: new FormControl(),
-    fromDate: new FormControl(),
-    toDate: new FormControl(),
-    time: new FormControl(),
+    name: new FormControl(null, [Validators.required]),
+    description: new FormControl(null, [Validators.required]),
+    isRecurrent: new FormControl(false),
+    fromDate: new FormControl(null, [Validators.required]),
+    toDate: new FormControl(null),
+    time: new FormControl(null, [Validators.required]),
   });
 
   set isRecurrent(val: boolean) {
@@ -32,10 +33,18 @@ export class CreateEditScheduleModalComponent implements OnInit {
     return this.scheduleForm.get('isRecurrent').value;
   }
 
-  constructor() {}
+  constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
     this.scheduleForm.get('fromDate').setValue(this.currentDate);
     this.scheduleForm.get('toDate').setValue(this.nextWeekDate);
+  }
+
+  closeModal(event: 'success' | 'cancel') {
+    if (this.scheduleForm.valid && event === 'success') {
+      this.modalCtrl.dismiss(this.scheduleForm.value);
+    } else if (event === 'cancel') {
+      this.modalCtrl.dismiss();
+    }
   }
 }

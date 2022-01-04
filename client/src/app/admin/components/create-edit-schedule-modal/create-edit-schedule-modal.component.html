@@ -2,7 +2,18 @@
   class="container"
   modal-default-content
   [formGroup]="scheduleForm"
-  (buttonClicked)="closeModal($event)"
+  [cancelButton]="{
+    title: 'Annulla',
+    fill: false,
+    type: 'tertiary'
+  }"
+  [successButton]="{
+    title: 'Salva',
+    fill: true,
+    type: 'tertiary'
+  }"
+  [successDisabled]="!scheduleForm.valid"
+  (closeModalEvent)="closeModal($event)"
 >
   <div class="section title-section">
     <h2>Crea un corso</h2>
@@ -33,7 +44,7 @@
     <app-input
       formControlName="fromDate"
       [placeholder]="isRecurrent ? 'Data' : 'Dal'"
-      [value]="currentSelectedDate"
+      [value]="currentDate"
       name="fromDate"
       type="date"
       icon="calendar-outline"

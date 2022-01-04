@@ -15,6 +15,8 @@ export class ModalDefaultContentComponent {
   cancelButton: ModalDefaultContentButton;
   @Input()
   successButton: ModalDefaultContentButton;
+  @Input()
+  successDisabled: boolean;
   @Output()
   closeModalEvent: EventEmitter<'success' | 'cancel'> = new EventEmitter<
     'success' | 'cancel'

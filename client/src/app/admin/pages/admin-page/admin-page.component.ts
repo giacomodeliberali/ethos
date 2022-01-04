@@ -101,5 +101,7 @@ export class AdminPageComponent extends BaseDirective {
     });
     await modal.present();
     const { data } = await modal.onWillDismiss();
+    if (data) {
+    }
   }
 }

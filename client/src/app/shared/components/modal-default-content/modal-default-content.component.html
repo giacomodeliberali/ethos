@@ -1,1 +1,23 @@
 <ng-content></ng-content>
+<div class="button-container" *ngIf="cancelButton || successButton">
+  <ion-button
+    *ngIf="cancelButton"
+    mode="md"
+    class="{{ cancelButton.type || 'primary' }}{{
+      cancelButton.fill ? ' fill' : ''
+    }}{{ !successButton ? ' alone' : '' }}"
+    (click)="closeModal('cancel')"
+    [disabled]="cancelButton.disabled"
+    >{{ cancelButton.title }}
+  </ion-button>
+  <ion-button
+    *ngIf="successButton"
+    mode="md"
+    class="{{ successButton.type || 'primary' }}{{
+      successButton.fill ? ' fill' : ''
+    }}{{ !cancelButton ? ' alone' : '' }}"
+    (click)="closeModal('success')"
+    [disabled]="successButton.disabled"
+    >{{ successButton.title }}
+  </ion-button>
+</div>

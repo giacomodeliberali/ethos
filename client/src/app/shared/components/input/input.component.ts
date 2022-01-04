@@ -67,7 +67,7 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     } else {
       switch (this.type) {
         case 'date':
-          this._format = 'dd/MM/yyyy';
+          this._format = 'DD/MM/YYYY';
           break;
         case 'time':
           this._format = 'HH:mm';
@@ -97,9 +97,9 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     return this.specialTypes.includes(this.type);
   }
 
-  private _value: string;
+  private _value: string | Date;
   @Input()
-  set value(val: string) {
+  set value(val: string | Date) {
     this._value = val;
     this.onChange(this._value);
   }
@@ -144,6 +144,9 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
           'var(--ion-color-secondary)'
         );
       }
+    }
+    if (changes.type) {
+      this.format = this.format || null;
     }
   }
 

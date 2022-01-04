@@ -7,7 +7,9 @@ import { LoadingToastComponent } from './components/loading-toast/loading-toast.
 import { LoadingComponent } from './components/loading-toast/loading.component';
 import { LogoutModalComponent } from './components/logout-modal/logout-modal.component';
 import { ModalDefaultContentComponent } from './components/modal-default-content/modal-default-content.component';
+import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
+import { WeekDaySelectorComponent } from './components/week-day-selector/week-day-selector.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     ModalDefaultContentComponent,
     UnsavedChangesComponent,
     LoadingComponent,
+    ScheduleCardComponent,
+    WeekDaySelectorComponent,
   ],
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [
@@ -25,6 +29,8 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
     LogoutModalComponent,
     ModalDefaultContentComponent,
     UnsavedChangesComponent,
+    ScheduleCardComponent,
+    WeekDaySelectorComponent,
   ],
 })
 export class SharedModule {}

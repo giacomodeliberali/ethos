@@ -1,4 +1,4 @@
-@import 'mixins';
+@import "mixins";
 
 ion-content {
   .page-container {
@@ -6,7 +6,7 @@ ion-content {
     flex-direction: column;
     height: 100%;
     .toolbar {
-      --background: 'transparent';
+      --background: "transparent";
       .logo-container {
         display: flex;
         align-items: center;
@@ -17,12 +17,51 @@ ion-content {
         }
       }
     }
-    .slider-container {
+    .content-container {
       flex: 1;
-      ion-slides {
-        height: 100%;
-        ion-slide {
+      .datepicker-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        ion-item {
+          max-width: 48rem;
+          --background: var(--ion-color-primary);
+          ion-label {
+            --color: var(--ion-color-secondary);
+          }
+          ion-datetime {
+            --placeholder-color: var(--ion-color-light);
+            --padding-top: 1rem;
+            color: var(--ion-color-light);
+          }
+        }
+      }
+      .day-periods {
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr;
+        column-gap: 2rem;
+        margin: 1rem 2rem 4.5rem 2rem;
+        @include respond-to("tablet") {
+          grid-template-columns: 1fr 1fr;
+          margin: 1rem 4rem 4.5rem 4rem;
+        }
+        @include respond-to("desktop") {
+          grid-template-columns: 1fr 1fr 1fr;
+          margin: 1rem 4rem 4.5rem 4rem;
+        }
+        .day-period {
           height: 100%;
+          padding-bottom: 3rem;
+          h1 {
+            color: var(--ion-color-secondary);
+          }
+          .courses-container {
+            .no-elements {
+              color: var(--ion-color-primary-contrast);
+              margin-top: 1.5rem;
+            }
+          }
         }
       }
     }

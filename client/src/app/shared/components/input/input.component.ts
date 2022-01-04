@@ -10,6 +10,30 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+type InputType =
+  | 'button'
+  | 'checkbox'
+  | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'email'
+  | 'file'
+  | 'hidden'
+  | 'image'
+  | 'month'
+  | 'number'
+  | 'password'
+  | 'radio'
+  | 'range'
+  | 'reset'
+  | 'search'
+  | 'submit'
+  | 'tel'
+  | 'text'
+  | 'time'
+  | 'url'
+  | 'week';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-input',
@@ -27,7 +51,7 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @Input()
   icon: string;
   @Input()
-  type: string;
+  type: InputType;
   @Input()
   placeholder: string;
   @Input()
@@ -36,14 +60,46 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   isValid = true;
   @Input()
   errorMessage = 'Il campo non è valido';
+  @Input()
+  set format(value: string) {
+    if (value) {
+      this._format = value;
+    } else {
+      switch (this.type) {
+        case 'date':
+          this._format = 'DD/MM/YYYY';
+          break;
+        case 'time':
+          this._format = 'HH:mm';
+          break;
+        //Add cases if needed with other input types
+        default:
+          this._format = null;
+      }
+    }
+  }
+
+  get format() {
+    return this._format;
+  }
+  // If the input is type text it could be a multiline one (texarea)
+  @Input()
+  @HostBinding('class.multiline')
+  multiline = false;
   @HostBinding('class.input-focused') isFocused = false;
   @HostBinding('class.error') _isNotValid = false;
-
   showPassword = false;
 
-  private _value: string;
+  private specialTypes = ['time', 'date'];
+  private _format: string;
+
+  get isSpecialType() {
+    return this.specialTypes.includes(this.type);
+  }
+
+  private _value: string | Date;
   @Input()
-  set value(val: string) {
+  set value(val: string | Date) {
     this._value = val;
     this.onChange(this._value);
   }
@@ -70,7 +126,7 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     this.value = value;
   }
 
-  changeValue(ev: KeyboardEvent) {
+  changeValue(ev: KeyboardEvent | Event) {
     this.value = (ev.target as any).value;
   }
 
@@ -88,6 +144,9 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
           'var(--ion-color-secondary)'
         );
       }
+    }
+    if (changes.type) {
+      this.format = this.format || null;
     }
   }
 

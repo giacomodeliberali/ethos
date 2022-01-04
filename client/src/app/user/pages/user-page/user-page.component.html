@@ -5,14 +5,75 @@
         <img src="../../../../assets/images/ethos.svg" />
       </div>
     </div>
-    <div class="slider-container">
-      <ion-slides [options]="slideOpts" #slideWithNav>
-        <ion-slide *ngFor="let s of slides">
-          <ion-card>
-            <ion-card-title>{{ s }}</ion-card-title>
-          </ion-card>
-        </ion-slide>
-      </ion-slides>
+    <div class="content-container">
+      <div class="datepicker-container">
+        <ion-item lines="none">
+          <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
+          <ion-datetime
+            mode="ios"
+            [value]="currentDate"
+            [min]="dateLimits.lowerLimit"
+            [max]="dateLimits.upperLimit"
+            [monthShortNames]="[
+              'Gen',
+              'Feb',
+              'Mar',
+              'Apr',
+              'Mag',
+              'Giu',
+              'Lug',
+              'Ago',
+              'Set',
+              'Ott',
+              'Nov',
+              'Dic'
+            ]"
+            (ionChange)="dateChanged($event.detail.value)"
+            placeholder="Select Date"
+          ></ion-datetime>
+        </ion-item>
+      </div>
+      <div class="day-periods">
+        <div class="day-period">
+          <h1 class="title">Mattina</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.morning.length <= 0">
+              Non sono previsti corsi durante la mattinata
+            </div>
+            <ng-container *ngIf="schedules.morning.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.morning">
+                <app-schedule-card [schedule]="schedule"></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="day-period">
+          <h1 class="title">Pomeriggio</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.afternoon.length <= 0">
+              Non sono previsti corsi durante il pomeriggio
+            </div>
+            <ng-container *ngIf="schedules.afternoon.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.afternoon">
+                <app-schedule-card [schedule]="schedule"></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="day-period">
+          <h1 class="title">Sera</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.evening.length <= 0">
+              Non sono previsti corsi durante la sera
+            </div>
+            <ng-container *ngIf="schedules.evening.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.evening">
+                <app-schedule-card [schedule]="schedule"></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>

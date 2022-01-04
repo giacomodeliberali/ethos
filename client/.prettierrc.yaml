@@ -1,8 +1,10 @@
 overrides:
-  - files: "*.html"
+  - files: '*.html'
     options:
-      parser: "html"
-  - files: "*.component.html"
+      parser: 'html'
+  - files: '*.component.html'
     options:
-      parser: "angular"
+      parser: 'angular'
 endOfLine: auto
+singleQuote: true
+trailingComma: 'es5'

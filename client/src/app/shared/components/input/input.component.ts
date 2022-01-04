@@ -6,9 +6,15 @@ import {
   HostBinding,
   Input,
   OnChanges,
+  Optional,
+  Self,
   SimpleChanges,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  NgControl,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 
 type InputType =
   | 'button'
@@ -57,9 +63,16 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @Input()
   name: string;
   @Input()
-  isValid = true;
-  @Input()
   errorMessage = 'Il campo non è valido';
+  // If the input is type text it could be a multiline one (texarea)
+  @Input()
+  @HostBinding('class.multiline')
+  multiline = false;
+  @HostBinding('class.input-focused') isFocused = false;
+  @HostBinding('class.error') private isNotValid = false;
+  showPassword = false;
+
+  private _format: string;
   @Input()
   set format(value: string) {
     if (value) {
@@ -78,37 +91,59 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
       }
     }
   }
-
   get format() {
     return this._format;
   }
-  // If the input is type text it could be a multiline one (texarea)
-  @Input()
-  @HostBinding('class.multiline')
-  multiline = false;
-  @HostBinding('class.input-focused') isFocused = false;
-  @HostBinding('class.error') _isNotValid = false;
-  showPassword = false;
 
   private specialTypes = ['time', 'date'];
-  private _format: string;
-
   get isSpecialType() {
     return this.specialTypes.includes(this.type);
   }
 
-  private _value: string | Date;
+  private _value: string;
   @Input()
-  set value(val: string | Date) {
+  set value(val: string) {
     this._value = val;
     this.onChange(this._value);
   }
-
   get value() {
     return this._value;
   }
 
-  constructor(private elRef: ElementRef) {}
+  get invalid(): boolean {
+    this.isNotValid = this.control.invalid;
+    if (this.control.invalid) {
+      this.elRef.nativeElement.style.setProperty(
+        '--line-color',
+        'var(--ion-color-danger)'
+      );
+    } else {
+      this.elRef.nativeElement.style.setProperty(
+        '--line-color',
+        'var(--ion-color-secondary)'
+      );
+    }
+    return this.control ? this.control.invalid : false;
+  }
+
+  get showError(): boolean {
+    if (!this.control) {
+      return false;
+    }
+
+    const { dirty, touched } = this.control;
+
+    return this.invalid ? dirty || touched : false;
+  }
+
+  constructor(
+    @Self() @Optional() public control: NgControl,
+    private elRef: ElementRef
+  ) {
+    if (this.control) {
+      this.control.valueAccessor = this;
+    }
+  }
 
   onChange = (_: any) => {}; // Called on a value change
   onTouched = () => {}; // Called if you care if the form was touched
@@ -131,20 +166,6 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.isValid) {
-      this._isNotValid = !changes.isValid.currentValue;
-      if (changes.isValid.currentValue === false) {
-        this.elRef.nativeElement.style.setProperty(
-          '--line-color',
-          'var(--ion-color-danger)'
-        );
-      } else {
-        this.elRef.nativeElement.style.setProperty(
-          '--line-color',
-          'var(--ion-color-secondary)'
-        );
-      }
-    }
     if (changes.type) {
       this.format = this.format || null;
     }

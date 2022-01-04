@@ -178,10 +178,6 @@
               <div class="input-container">
                 <app-input
                   formControlName="email"
-                  [isValid]="
-                    registerForm.get('email').valid ||
-                    !this.registerForm.get('email').touched
-                  "
                   errorMessage="La mail non è valida"
                   type="email"
                   placeholder="email"
@@ -192,10 +188,6 @@
               <div class="input-container">
                 <app-input
                   formControlName="userName"
-                  [isValid]="
-                    registerForm.get('userName').valid ||
-                    !this.registerForm.get('userName').touched
-                  "
                   errorMessage="Il campo è obbligatorio"
                   type="text"
                   placeholder="username"
@@ -206,10 +198,6 @@
               <div class="input-container">
                 <app-input
                   formControlName="fullName"
-                  [isValid]="
-                    registerForm.get('fullName').valid ||
-                    !this.registerForm.get('fullName').touched
-                  "
                   errorMessage="Il campo è obbligatorio"
                   type="text"
                   placeholder="nome completo"
@@ -221,10 +209,6 @@
                 <app-input
                   formControlName="password"
                   errorMessage="Password da 6 caratteri e deve contenere:<br/>  - Una lettera minuscola<br/>  - Una lettera maiuscola<br/>  - Un numero<br/>  - Un carattere speciale (#$^+=!*()@%&)"
-                  [isValid]="
-                    registerForm.get('password').valid ||
-                    !this.registerForm.get('password').touched
-                  "
                   type="password"
                   placeholder="password"
                   name="password"

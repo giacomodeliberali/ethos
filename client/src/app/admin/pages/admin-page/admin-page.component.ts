@@ -94,6 +94,7 @@ export class AdminPageComponent extends BaseDirective {
     event?.stopPropagation();
     const modal = await this.modalCtrl.create({
       component: CreateEditScheduleModalComponent,
+      componentProps: { currentDate: this.currentDate },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
       mode: 'ios',

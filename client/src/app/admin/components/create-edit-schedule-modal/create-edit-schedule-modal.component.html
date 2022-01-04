@@ -16,32 +16,37 @@
     </div>
   </div>
   <div class="section">
-    <div class="input-container">
-      <app-input
-        formControlName="name"
-        type="text"
-        placeholder="Nome del corso"
-        name="name"
-        icon="person-circle-outline"
-      ></app-input>
-    </div>
-    <div class="input-container">
-      <app-input
-        formControlName="description"
-        placeholder="Descrizione"
-        name="description"
-        icon="text-outline"
-        [multiline]="true"
-      ></app-input>
-    </div>
-  </div>
-  <div class="days" *ngIf="isRecurrent">
-    <h5>Giorni</h5>
-    <div class="week-days">
-      <app-week-day-selector></app-week-day-selector>
-    </div>
-  </div>
-  <div class="section">
+    <app-input
+      formControlName="name"
+      type="text"
+      placeholder="Nome del corso"
+      name="name"
+      icon="person-circle-outline"
+    ></app-input>
+    <app-input
+      formControlName="description"
+      placeholder="Descrizione"
+      name="description"
+      icon="text-outline"
+      [multiline]="true"
+    ></app-input>
+    <app-input
+      formControlName="fromDate"
+      [placeholder]="isRecurrent ? 'Data' : 'Dal'"
+      [value]="currentSelectedDate"
+      name="fromDate"
+      type="date"
+      icon="calendar-outline"
+    ></app-input>
+    <app-input
+      *ngIf="!isRecurrent"
+      formControlName="toDate"
+      placeholder="Al"
+      [value]="nextWeekDate"
+      name="toDate"
+      type="date"
+      icon="calendar-outline"
+    ></app-input>
     <app-input
       formControlName="time"
       placeholder="Orario"
@@ -49,5 +54,11 @@
       type="time"
       icon="time-outline"
     ></app-input>
+  </div>
+  <div class="days" *ngIf="isRecurrent">
+    <h5>Giorni</h5>
+    <div class="week-days">
+      <app-week-day-selector></app-week-day-selector>
+    </div>
   </div>
 </div>

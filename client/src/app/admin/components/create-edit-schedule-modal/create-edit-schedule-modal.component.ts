@@ -8,12 +8,19 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class CreateEditScheduleModalComponent implements OnInit {
   @Input()
-  currentSelectedDate: Date;
+  currentDate: Date;
 
+  get nextWeekDate(): Date {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    return nextWeek;
+  }
   scheduleForm: FormGroup = new FormGroup({
     name: new FormControl(),
     description: new FormControl(),
     isRecurrent: new FormControl(),
+    fromDate: new FormControl(),
+    toDate: new FormControl(),
     time: new FormControl(),
   });
 
@@ -27,5 +34,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.scheduleForm.get('fromDate').setValue(this.currentDate);
+    this.scheduleForm.get('toDate').setValue(this.nextWeekDate);
+  }
 }

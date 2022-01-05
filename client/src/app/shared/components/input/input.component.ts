@@ -6,13 +6,12 @@ import {
   HostBinding,
   Input,
   OnChanges,
-  Optional,
-  Self,
   SimpleChanges,
 } from '@angular/core';
 import {
   ControlValueAccessor,
-  NgControl,
+  FormControl,
+  NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
 
@@ -51,6 +50,11 @@ type InputType =
       useExisting: forwardRef(() => InputComponent), // tells Angular to use the existing instance
       multi: true,
     },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => InputComponent),
+      multi: true,
+    },
   ],
 })
 export class InputComponent implements ControlValueAccessor, OnChanges {
@@ -69,8 +73,30 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @HostBinding('class.multiline')
   multiline = false;
   @HostBinding('class.input-focused') isFocused = false;
-  @HostBinding('class.error') private isNotValid = false;
+  @HostBinding('class.error')
+  get showError(): boolean {
+    if (!this.control) {
+      return false;
+    }
+    const { dirty, touched } = this.control;
+    const invalidity = this.invalid && (dirty || touched);
+    if (invalidity) {
+      this.elRef.nativeElement.style.setProperty(
+        '--line-color',
+        'var(--ion-color-danger)'
+      );
+    } else {
+      this.elRef.nativeElement.style.setProperty(
+        '--line-color',
+        'var(--ion-color-secondary)'
+      );
+    }
+    return invalidity;
+  }
+
   showPassword = false;
+  control: FormControl;
+  disabled = false;
 
   private _format: string;
   @Input()
@@ -111,37 +137,14 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   }
 
   get invalid(): boolean {
-    this.isNotValid = this.control.invalid;
-    if (this.control.invalid) {
-      this.elRef.nativeElement.style.setProperty(
-        '--line-color',
-        'var(--ion-color-danger)'
-      );
-    } else {
-      this.elRef.nativeElement.style.setProperty(
-        '--line-color',
-        'var(--ion-color-secondary)'
-      );
-    }
     return this.control ? this.control.invalid : false;
   }
 
-  get showError(): boolean {
-    if (!this.control) {
-      return false;
-    }
+  constructor(private elRef: ElementRef) {}
 
-    const { dirty, touched } = this.control;
-
-    return this.invalid ? dirty || touched : false;
-  }
-
-  constructor(
-    @Self() @Optional() public control: NgControl,
-    private elRef: ElementRef
-  ) {
-    if (this.control) {
-      this.control.valueAccessor = this;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.type) {
+      this.format = this.format || null;
     }
   }
 
@@ -161,14 +164,12 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
     this.value = value;
   }
 
-  changeValue(ev: KeyboardEvent | Event) {
-    this.value = (ev.target as any).value;
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.type) {
-      this.format = this.format || null;
-    }
+  changeValue(ev: KeyboardEvent | Event) {
+    this.value = (ev.target as any).value;
   }
 
   changeFocus(focus: boolean) {
@@ -181,5 +182,10 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   changeShowPassword() {
     this.showPassword = !this.showPassword;
     this.type = this.showPassword ? 'text' : 'password';
+  }
+
+  validate(c: FormControl) {
+    if (!this.control) this.control = c;
+    return this.control.valid;
   }
 }

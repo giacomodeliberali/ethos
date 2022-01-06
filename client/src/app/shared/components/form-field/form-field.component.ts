@@ -41,23 +41,23 @@ type InputType =
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+  selector: 'app-form-field',
+  templateUrl: './form-field.component.html',
+  styleUrls: ['./form-field.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR, // Is an InjectionToken required by the ControlValueAccessor interface to provide a form value
-      useExisting: forwardRef(() => InputComponent), // tells Angular to use the existing instance
+      useExisting: forwardRef(() => FormFieldComponent), // tells Angular to use the existing instance
       multi: true,
     },
     {
       provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => InputComponent),
+      useExisting: forwardRef(() => FormFieldComponent),
       multi: true,
     },
   ],
 })
-export class InputComponent implements ControlValueAccessor, OnChanges {
+export class FormFieldComponent implements ControlValueAccessor, OnChanges {
   @Input()
   icon: string;
   @Input()

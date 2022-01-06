@@ -2,7 +2,7 @@
   --line-color: var(--ion-color-secondary);
   display: block;
   margin-bottom: 16px;
-  .page {
+  .form-field-container {
     background: white no-repeat;
     background-image: linear-gradient(
         to bottom,
@@ -31,13 +31,13 @@
     }
   }
   &.multiline {
-    .page {
+    .form-field-container {
       align-items: flex-start;
     }
   }
   &.input-focused,
   &.error {
-    .page {
+    .form-field-container {
       background-size: 100% 2px, 100% 1px;
       outline: none;
       ion-icon {

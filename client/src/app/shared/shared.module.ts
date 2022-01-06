@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { InputComponent } from './components/input/input.component';
+import { FormFieldComponent } from './components/form-field/form-field.component';
 import { LoadingToastComponent } from './components/loading-toast/loading-toast.component';
 import { LoadingComponent } from './components/loading-toast/loading.component';
 import { LogoutModalComponent } from './components/logout-modal/logout-modal.component';
@@ -13,7 +13,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
 
 @NgModule({
   declarations: [
-    InputComponent,
+    FormFieldComponent,
     LoadingToastComponent,
     LogoutModalComponent,
     ModalDefaultContentComponent,
@@ -24,7 +24,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
   ],
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [
-    InputComponent,
+    FormFieldComponent,
     LoadingToastComponent,
     LogoutModalComponent,
     ModalDefaultContentComponent,

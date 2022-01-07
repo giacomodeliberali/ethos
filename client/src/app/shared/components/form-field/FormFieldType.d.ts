@@ -2,8 +2,7 @@ type FormFieldType =
   | 'button'
   | 'checkbox'
   | 'color'
-  | 'date'
-  | 'datetime-local'
+  | 'datetime'
   | 'email'
   | 'file'
   | 'hidden'
@@ -18,7 +17,6 @@ type FormFieldType =
   | 'submit'
   | 'tel'
   | 'text'
-  | 'time'
   | 'url'
   | 'week'
   | 'textarea';

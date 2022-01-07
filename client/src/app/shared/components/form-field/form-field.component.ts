@@ -26,9 +26,12 @@ import { BaseDirective } from '@core/directives';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DefaultInputComponent } from './form-field-types/default-input/default-input.component';
+import { PasswordInputComponent } from './form-field-types/password-input/password-input.component';
 import { FormField, formFieldInstance } from './models';
 
-const typeComponentMap: Map<FormFieldType, Type<FormField>> = new Map([]);
+const typeComponentMap: Map<FormFieldType, Type<FormField>> = new Map([
+  ['password', PasswordInputComponent],
+]);
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

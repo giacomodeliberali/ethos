@@ -20,8 +20,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
     name: new FormControl(null, [Validators.required]),
     description: new FormControl(null, [Validators.required]),
     isRecurrent: new FormControl(false),
-    fromDate: new FormControl(null, [Validators.required]),
-    toDate: new FormControl(null),
+    startDate: new FormControl(null, [Validators.required]),
+    endDate: new FormControl(null),
     time: new FormControl(null, [Validators.required]),
   });
 
@@ -36,8 +36,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    this.scheduleForm.get('fromDate').setValue(this.currentDate.toISOString());
-    this.scheduleForm.get('toDate').setValue(this.nextWeekDate.toISOString());
+    this.scheduleForm.get('startDate').setValue(this.currentDate.toISOString());
+    this.scheduleForm.get('endDate').setValue(this.nextWeekDate.toISOString());
   }
 
   closeModal(event: 'success' | 'cancel') {

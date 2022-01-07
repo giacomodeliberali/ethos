@@ -42,10 +42,10 @@
       [multiline]="true"
     ></app-form-field>
     <app-form-field
-      formControlName="fromDate"
+      formControlName="startDate"
       [placeholder]="isRecurrent ? 'Data' : 'Dal'"
       [value]="currentDate"
-      name="fromDate"
+      name="startDate"
       type="datetime"
       [fieldOptions]="{
         format: 'DD/MM/YYYY'
@@ -54,10 +54,10 @@
     ></app-form-field>
     <app-form-field
       *ngIf="isRecurrent"
-      formControlName="toDate"
+      formControlName="endDate"
       placeholder="Al"
       [value]="nextWeekDate"
-      name="toDate"
+      name="endDate"
       type="datetime"
       [fieldOptions]="{
         format: 'DD/MM/YYYY'

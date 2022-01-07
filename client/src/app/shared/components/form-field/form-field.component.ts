@@ -24,7 +24,8 @@ import {
 } from '@angular/forms';
 import { BaseDirective } from '@core/directives';
 import { BehaviorSubject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { DateTimeInputComponent } from './form-field-types/date-time-input/date-time-input.component';
 import { DefaultInputComponent } from './form-field-types/default-input/default-input.component';
 import { PasswordInputComponent } from './form-field-types/password-input/password-input.component';
 import { TextareaInputComponent } from './form-field-types/textarea-input/textarea-input.component';
@@ -33,6 +34,7 @@ import { FormField, formFieldInstance } from './models';
 const typeComponentMap: { [key in FormFieldType]?: Type<FormField> } = {
   textarea: TextareaInputComponent,
   password: PasswordInputComponent,
+  datetime: DateTimeInputComponent,
 };
 
 @Component({
@@ -106,34 +108,6 @@ export class FormFieldComponent
     'blur'
   );
 
-  private _format: string;
-  @Input()
-  set format(value: string) {
-    if (value) {
-      this._format = value;
-    } else {
-      switch (this.type) {
-        case 'date':
-          this._format = 'DD/MM/YYYY';
-          break;
-        case 'time':
-          this._format = 'HH:mm';
-          break;
-        //Add cases if needed with other input types
-        default:
-          this._format = null;
-      }
-    }
-  }
-  get format() {
-    return this._format;
-  }
-
-  private specialTypes = ['time', 'date'];
-  get isSpecialType() {
-    return this.specialTypes.includes(this.type);
-  }
-
   private _value: any;
   @Input()
   set value(val: any) {
@@ -155,10 +129,10 @@ export class FormFieldComponent
   ) {
     super();
     this.valueChange
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
       .subscribe((val) => (this.value = val));
     this.focusChange
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
       .subscribe((focus) => this.changeFocus(focus === 'focus'));
   }
 
@@ -242,7 +216,7 @@ export class FormFieldComponent
   }
 
   private setComponentPropertiesFromObject(obj: any) {
-    if (obj) {
+    if (obj && this.componentRef) {
       for (const [key, value] of Object.entries(obj)) {
         this.setComponentProperty(key, value);
       }

@@ -47,21 +47,4 @@
       margin-top: 0.25rem;
     }
   }
-  input {
-    width: 100%;
-    border: none;
-    padding: 0;
-    margin-left: 1rem;
-    outline: none;
-    &::placeholder {
-      color: var(--ion-color-medium);
-    }
-    &.datetime {
-      margin: 0;
-      width: 100%;
-      padding: 0 0 0 1rem;
-      top: 2px;
-      --placeholder-color: var(--ion-color-medium);
-    }
-  }
 }

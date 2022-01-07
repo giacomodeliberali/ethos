@@ -1,32 +1,5 @@
 <div class="form-field-container">
   <ion-icon [name]="icon"></ion-icon>
-  <template #formFieldTemplateContainer></template>
-  <!-- 
-  <textarea
-    class="input"
-    *ngIf="multiline && !isSpecialType"
-    (keyup)="changeValue($event)"
-    [placeholder]="placeholder"
-    [name]="name"
-    rows="3"
-    [value]="value"
-    [disabled]="disabled"
-    (focus)="changeFocus(true)"
-    (blur)="changeFocus(false)"
-  ></textarea>
-  <ion-datetime
-    *ngIf="isSpecialType && (type === 'time' || type === 'date')"
-    class="input datetime"
-    [displayFormat]="format"
-    [placeholder]="placeholder"
-    [name]="name"
-    [value]="value"
-    [disabled]="disabled"
-    (ionChange)="changeValue($event)"
-    (ionFocus)="changeFocus(true)"
-    (ionBlur)="changeFocus(false)"
-  >
-  </ion-datetime>
-   -->
+  <ng-template #formFieldTemplateContainer></ng-template>
 </div>
 <div *ngIf="showError" class="error-message" [innerHTML]="errorMessage"></div>

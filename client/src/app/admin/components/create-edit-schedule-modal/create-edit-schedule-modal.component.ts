@@ -23,6 +23,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     startDate: new FormControl(null, [Validators.required]),
     endDate: new FormControl(null),
     time: new FormControl(null, [Validators.required]),
+    participantsMaxNumber: new FormControl(null, [Validators.required]),
   });
 
   set isRecurrent(val: boolean) {

@@ -27,29 +27,29 @@
     </div>
   </div>
   <div class="section">
-    <app-input
+    <app-form-field
       formControlName="name"
       type="text"
       placeholder="Nome del corso"
       name="name"
       icon="person-circle-outline"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       formControlName="description"
       placeholder="Descrizione"
       name="description"
       icon="text-outline"
       [multiline]="true"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       formControlName="fromDate"
       [placeholder]="isRecurrent ? 'Data' : 'Dal'"
       [value]="currentDate"
       name="fromDate"
       type="date"
       icon="calendar-outline"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       *ngIf="!isRecurrent"
       formControlName="toDate"
       placeholder="Al"
@@ -57,14 +57,14 @@
       name="toDate"
       type="date"
       icon="calendar-outline"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       formControlName="time"
       placeholder="Orario"
       name="time"
       type="time"
       icon="time-outline"
-    ></app-input>
+    ></app-form-field>
   </div>
   <div class="days" *ngIf="isRecurrent">
     <h5>Giorni</h5>

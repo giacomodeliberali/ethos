@@ -1,0 +1,12 @@
+<ion-datetime
+  class="input"
+  [displayFormat]="format"
+  [placeholder]="placeholder"
+  [name]="name"
+  [value]="valueChange | async"
+  [disabled]="disabled"
+  (ionChange)="changeValue($event)"
+  (ionFocus)="changeFocus('focus')"
+  (ionBlur)="changeFocus('blur')"
+>
+</ion-datetime>

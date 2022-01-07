@@ -46,23 +46,32 @@
       [placeholder]="isRecurrent ? 'Data' : 'Dal'"
       [value]="currentDate"
       name="fromDate"
-      type="date"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'DD/MM/YYYY'
+      }"
       icon="calendar-outline"
     ></app-form-field>
     <app-form-field
-      *ngIf="!isRecurrent"
+      *ngIf="isRecurrent"
       formControlName="toDate"
       placeholder="Al"
       [value]="nextWeekDate"
       name="toDate"
-      type="date"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'DD/MM/YYYY'
+      }"
       icon="calendar-outline"
     ></app-form-field>
     <app-form-field
       formControlName="time"
       placeholder="Orario"
       name="time"
-      type="time"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'HH:mm'
+      }"
       icon="time-outline"
     ></app-form-field>
   </div>

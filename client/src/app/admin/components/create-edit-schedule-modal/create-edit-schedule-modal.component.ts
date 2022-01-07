@@ -36,8 +36,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    this.scheduleForm.get('fromDate').setValue(this.currentDate);
-    this.scheduleForm.get('toDate').setValue(this.nextWeekDate);
+    this.scheduleForm.get('fromDate').setValue(this.currentDate.toISOString());
+    this.scheduleForm.get('toDate').setValue(this.nextWeekDate.toISOString());
   }
 
   closeModal(event: 'success' | 'cancel') {

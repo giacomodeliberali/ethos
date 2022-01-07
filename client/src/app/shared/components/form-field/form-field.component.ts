@@ -226,7 +226,6 @@ export class FormFieldComponent
         typeComponentMap.get(this.type) || DefaultInputComponent
       );
     this.componentRef = this.container.createComponent(factory);
-    console.log(this.componentRef);
     this.setAllFormFieldComponentProperties();
   }
 
@@ -249,7 +248,10 @@ export class FormFieldComponent
   }
 
   private setComponentProperty<T>(name: string, value: T) {
-    this.componentRef.instance[name] = value;
-    this.changeDetectorRef.markForCheck();
+    // Set timeout to avoid detection error
+    setTimeout(() => {
+      this.componentRef.instance[name] = value;
+      this.changeDetectorRef.markForCheck();
+    });
   }
 }

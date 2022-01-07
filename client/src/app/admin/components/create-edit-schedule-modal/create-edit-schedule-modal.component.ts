@@ -9,12 +9,12 @@ import { ModalController } from '@ionic/angular';
 })
 export class CreateEditScheduleModalComponent implements OnInit {
   @Input()
-  currentDate: Date;
+  currentDate: string;
 
-  get nextWeekDate(): Date {
-    const nextWeek = new Date();
+  get nextWeekDate(): string {
+    const nextWeek = new Date(this.currentDate);
     nextWeek.setDate(nextWeek.getDate() + 7);
-    return nextWeek;
+    return nextWeek.toISOString();
   }
   scheduleForm: FormGroup = new FormGroup({
     name: new FormControl(null, [Validators.required]),
@@ -37,8 +37,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    this.scheduleForm.get('startDate').setValue(this.currentDate.toISOString());
-    this.scheduleForm.get('endDate').setValue(this.nextWeekDate.toISOString());
+    this.scheduleForm.get('startDate').setValue(this.currentDate);
+    this.scheduleForm.get('endDate').setValue(this.nextWeekDate);
   }
 
   closeModal(event: 'success' | 'cancel') {

@@ -16,10 +16,10 @@ export class DefaultInputComponent implements FormField {
   focusChange: BehaviorSubject<'focus' | 'blur'>;
 
   changeValue(ev: Event) {
-    this.valueChange.next((ev.target as HTMLInputElement).value);
+    this.valueChange?.next((ev.target as HTMLInputElement).value);
   }
 
   changeFocus(focus: 'focus' | 'blur') {
-    this.focusChange.next(focus);
+    this.focusChange?.next(focus);
   }
 }

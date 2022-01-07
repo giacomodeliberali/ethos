@@ -146,22 +146,22 @@
               [formGroup]="loginForm"
             >
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="userNameOrEmail"
                   type="text"
                   placeholder="email o username"
                   name="email"
                   icon="person-circle-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="password"
                   type="password"
                   placeholder="password"
                   name="password"
                   icon="lock-open-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
               <ion-button
                 mode="md"
@@ -176,44 +176,44 @@
               [formGroup]="registerForm"
             >
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="email"
                   errorMessage="La mail non è valida"
                   type="email"
                   placeholder="email"
                   name="email"
                   icon="mail-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="userName"
                   errorMessage="Il campo è obbligatorio"
                   type="text"
                   placeholder="username"
                   name="username"
                   icon="barbell-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="fullName"
                   errorMessage="Il campo è obbligatorio"
                   type="text"
                   placeholder="nome completo"
                   name="fullName"
                   icon="person-circle-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
               <div class="input-container">
-                <app-input
+                <app-form-field
                   formControlName="password"
                   errorMessage="Password da 6 caratteri e deve contenere:<br/>  - Una lettera minuscola<br/>  - Una lettera maiuscola<br/>  - Un numero<br/>  - Un carattere speciale (#$^+=!*()@%&)"
                   type="password"
                   placeholder="password"
                   name="password"
                   icon="lock-open-outline"
-                ></app-input>
+                ></app-form-field>
               </div>
             </div>
           </div>

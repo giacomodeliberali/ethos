@@ -5,7 +5,7 @@ import { FormField } from '../../models';
 @Component({
   selector: 'app-default-input',
   templateUrl: './default-input.component.html',
-  styleUrls: ['./default-input.component.scss'],
+  styleUrls: ['../input-base-style.scss', './default-input.component.scss'],
 })
 export class DefaultInputComponent implements FormField {
   type: FormFieldType;

@@ -1,12 +1,20 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  ComponentFactory,
+  ComponentFactoryResolver,
+  ComponentRef,
   ElementRef,
   forwardRef,
   HostBinding,
   Input,
   OnChanges,
   SimpleChanges,
+  Type,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -14,30 +22,13 @@ import {
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { BaseDirective } from '@core/directives';
+import { BehaviorSubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { DefaultInputComponent } from './form-field-types/default-input/default-input.component';
+import { FormField, formFieldInstance } from './models';
 
-type InputType =
-  | 'button'
-  | 'checkbox'
-  | 'color'
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'file'
-  | 'hidden'
-  | 'image'
-  | 'month'
-  | 'number'
-  | 'password'
-  | 'radio'
-  | 'range'
-  | 'reset'
-  | 'search'
-  | 'submit'
-  | 'tel'
-  | 'text'
-  | 'time'
-  | 'url'
-  | 'week';
+const typeComponentMap: Map<FormFieldType, Type<FormField>> = new Map([]);
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,15 +48,22 @@ type InputType =
     },
   ],
 })
-export class FormFieldComponent implements ControlValueAccessor, OnChanges {
+export class FormFieldComponent
+  extends BaseDirective
+  implements ControlValueAccessor, OnChanges, FormField, AfterViewInit
+{
+  @ViewChild('formFieldTemplateContainer', { read: ViewContainerRef })
+  container;
   @Input()
   icon: string;
   @Input()
-  type: InputType;
+  type: FormFieldType;
   @Input()
   placeholder: string;
   @Input()
   name: string;
+  @Input()
+  fieldOptions: any;
   @Input()
   errorMessage = 'Il campo non è valido';
   // If the input is type text it could be a multiline one (texarea)
@@ -97,6 +95,11 @@ export class FormFieldComponent implements ControlValueAccessor, OnChanges {
   showPassword = false;
   control: FormControl;
   disabled = false;
+  componentRef: ComponentRef<FormField>;
+  valueChange: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  focusChange: BehaviorSubject<'focus' | 'blur'> = new BehaviorSubject<any>(
+    'blur'
+  );
 
   private _format: string;
   @Input()
@@ -126,9 +129,9 @@ export class FormFieldComponent implements ControlValueAccessor, OnChanges {
     return this.specialTypes.includes(this.type);
   }
 
-  private _value: string;
+  private _value: any;
   @Input()
-  set value(val: string) {
+  set value(val: any) {
     this._value = val;
     this.onChange(this._value);
   }
@@ -140,11 +143,38 @@ export class FormFieldComponent implements ControlValueAccessor, OnChanges {
     return this.control ? this.control.invalid : false;
   }
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef,
+    private resolver: ComponentFactoryResolver,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    super();
+    this.valueChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((val) => (this.value = val));
+    this.focusChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((focus) => this.changeFocus(focus === 'focus'));
+  }
+
+  ngAfterViewInit() {
+    this.createFormFieldComponent();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.type) {
-      this.format = this.format || null;
+    if (changes.type && this.componentRef) {
+      this.createFormFieldComponent();
+    }
+    if (changes.value) {
+      this.valueChange.next(this.value);
+    }
+    for (const [key, value] of Object.entries(changes)) {
+      if (
+        Object.keys(formFieldInstance).includes(key) &&
+        this.componentRef?.instance
+      ) {
+        this.setComponentProperty(key, value);
+      }
     }
   }
 
@@ -166,10 +196,7 @@ export class FormFieldComponent implements ControlValueAccessor, OnChanges {
 
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
-  }
-
-  changeValue(ev: KeyboardEvent | Event) {
-    this.value = (ev.target as any).value;
+    this.setComponentProperty('disabled', this.disabled);
   }
 
   changeFocus(focus: boolean) {
@@ -187,5 +214,39 @@ export class FormFieldComponent implements ControlValueAccessor, OnChanges {
   validate(c: FormControl) {
     if (!this.control) this.control = c;
     return this.control.valid;
+  }
+
+  private createFormFieldComponent() {
+    this.container.clear();
+    const factory: ComponentFactory<FormField> =
+      this.resolver.resolveComponentFactory(
+        typeComponentMap.get(this.type) || DefaultInputComponent
+      );
+    this.componentRef = this.container.createComponent(factory);
+    console.log(this.componentRef);
+    this.setAllFormFieldComponentProperties();
+  }
+
+  private setAllFormFieldComponentProperties() {
+    this.setComponentProperty('type', this.type);
+    this.setComponentProperty('placeholder', this.placeholder);
+    this.setComponentProperty('name', this.name);
+    this.setComponentProperty('disabled', this.disabled);
+    this.setComponentProperty('valueChange', this.valueChange);
+    this.setComponentProperty('focusChange', this.focusChange);
+    this.setComponentPropertiesFromObject(this.fieldOptions);
+  }
+
+  private setComponentPropertiesFromObject(obj: any) {
+    if (obj) {
+      for (const [key, value] of Object.entries(obj)) {
+        this.setComponentProperty(key, value);
+      }
+    }
+  }
+
+  private setComponentProperty<T>(name: string, value: T) {
+    this.componentRef.instance[name] = value;
+    this.changeDetectorRef.markForCheck();
   }
 }

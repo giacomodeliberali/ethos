@@ -27,11 +27,13 @@ import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DefaultInputComponent } from './form-field-types/default-input/default-input.component';
 import { PasswordInputComponent } from './form-field-types/password-input/password-input.component';
+import { TextareaInputComponent } from './form-field-types/textarea-input/textarea-input.component';
 import { FormField, formFieldInstance } from './models';
 
-const typeComponentMap: Map<FormFieldType, Type<FormField>> = new Map([
-  ['password', PasswordInputComponent],
-]);
+const typeComponentMap: { [key in FormFieldType]?: Type<FormField> } = {
+  textarea: TextareaInputComponent,
+  password: PasswordInputComponent,
+};
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -223,7 +225,7 @@ export class FormFieldComponent
     this.container.clear();
     const factory: ComponentFactory<FormField> =
       this.resolver.resolveComponentFactory(
-        typeComponentMap.get(this.type) || DefaultInputComponent
+        typeComponentMap[this.type] || DefaultInputComponent
       );
     this.componentRef = this.container.createComponent(factory);
     this.setAllFormFieldComponentProperties();

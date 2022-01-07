@@ -20,4 +20,5 @@ type FormFieldType =
   | 'text'
   | 'time'
   | 'url'
-  | 'week';
+  | 'week'
+  | 'textarea';

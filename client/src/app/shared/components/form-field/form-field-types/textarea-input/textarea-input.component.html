@@ -1,0 +1,11 @@
+<textarea
+  class="input"
+  (keyup)="changeValue($event)"
+  [placeholder]="placeholder"
+  [name]="name"
+  [rows]="rows"
+  [value]="valueChange | async"
+  [disabled]="disabled"
+  (focus)="changeFocus('focus')"
+  (blur)="changeFocus('blur')"
+></textarea>

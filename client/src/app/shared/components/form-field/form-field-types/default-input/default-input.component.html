@@ -1,0 +1,11 @@
+<input
+  class="input"
+  (change)="changeValue($event)"
+  [placeholder]="placeholder"
+  [name]="name"
+  [type]="type"
+  [value]="valueChange | async"
+  [disabled]="disabled"
+  (focus)="changeFocus('focus')"
+  (blur)="changeFocus('blur')"
+/>

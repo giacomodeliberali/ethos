@@ -2,7 +2,7 @@
   --line-color: var(--ion-color-secondary);
   display: block;
   margin-bottom: 16px;
-  .page {
+  .form-field-container {
     background: white no-repeat;
     background-image: linear-gradient(
         to bottom,
@@ -26,18 +26,15 @@
       font-size: 1rem;
       --ionicon-stroke-width: 3rem;
     }
-    .show-password {
-      cursor: pointer;
-    }
   }
   &.multiline {
-    .page {
+    .form-field-container {
       align-items: flex-start;
     }
   }
   &.input-focused,
   &.error {
-    .page {
+    .form-field-container {
       background-size: 100% 2px, 100% 1px;
       outline: none;
       ion-icon {
@@ -48,23 +45,6 @@
       color: var(--ion-color-danger);
       font-size: 0.75rem;
       margin-top: 0.25rem;
-    }
-  }
-  .input {
-    width: 100%;
-    border: none;
-    padding: 0;
-    margin-left: 1rem;
-    outline: none;
-    &::placeholder {
-      color: var(--ion-color-medium);
-    }
-    &.datetime {
-      margin: 0;
-      width: 100%;
-      padding: 0 0 0 1rem;
-      top: 2px;
-      --placeholder-color: var(--ion-color-medium);
     }
   }
 }

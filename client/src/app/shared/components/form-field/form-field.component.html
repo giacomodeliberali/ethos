@@ -1,0 +1,5 @@
+<div class="form-field-container">
+  <ion-icon [name]="icon"></ion-icon>
+  <ng-template #formFieldTemplateContainer></ng-template>
+</div>
+<div *ngIf="showError" class="error-message" [innerHTML]="errorMessage"></div>

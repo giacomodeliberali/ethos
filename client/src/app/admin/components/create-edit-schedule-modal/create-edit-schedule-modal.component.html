@@ -2,7 +2,18 @@
   class="container"
   modal-default-content
   [formGroup]="scheduleForm"
-  (buttonClicked)="closeModal($event)"
+  [cancelButton]="{
+    title: 'Annulla',
+    fill: false,
+    type: 'tertiary'
+  }"
+  [successButton]="{
+    title: 'Salva',
+    fill: true,
+    type: 'tertiary'
+  }"
+  [successDisabled]="!scheduleForm.valid"
+  (closeModalEvent)="closeModal($event)"
 >
   <div class="section title-section">
     <h2>Crea un corso</h2>
@@ -16,49 +27,67 @@
     </div>
   </div>
   <div class="section">
-    <app-input
+    <app-form-field
       formControlName="name"
       type="text"
       placeholder="Nome del corso"
       name="name"
       icon="person-circle-outline"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       formControlName="description"
       placeholder="Descrizione"
       name="description"
       icon="text-outline"
       [multiline]="true"
-    ></app-input>
-    <app-input
-      formControlName="fromDate"
+    ></app-form-field>
+    <app-form-field
+      formControlName="startDate"
       [placeholder]="isRecurrent ? 'Data' : 'Dal'"
-      [value]="currentSelectedDate"
-      name="fromDate"
-      type="date"
+      [value]="currentDate"
+      name="startDate"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'DD/MM/YYYY'
+      }"
       icon="calendar-outline"
-    ></app-input>
-    <app-input
-      *ngIf="!isRecurrent"
-      formControlName="toDate"
+    ></app-form-field>
+    <app-form-field
+      *ngIf="isRecurrent"
+      formControlName="endDate"
       placeholder="Al"
       [value]="nextWeekDate"
-      name="toDate"
-      type="date"
+      name="endDate"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'DD/MM/YYYY'
+      }"
       icon="calendar-outline"
-    ></app-input>
-    <app-input
+    ></app-form-field>
+    <app-form-field
       formControlName="time"
       placeholder="Orario"
       name="time"
-      type="time"
+      type="datetime"
+      [fieldOptions]="{
+        format: 'HH:mm'
+      }"
       icon="time-outline"
-    ></app-input>
+    ></app-form-field>
   </div>
   <div class="days" *ngIf="isRecurrent">
     <h5>Giorni</h5>
     <div class="week-days">
       <app-week-day-selector></app-week-day-selector>
     </div>
+  </div>
+  <div class="section">
+    <app-form-field
+      formControlName="participantsMaxNumber"
+      placeholder="Numero partecipanti"
+      name="participantsMaxNumber"
+      type="number"
+      icon="people-circle-outline"
+    ></app-form-field>
   </div>
 </div>

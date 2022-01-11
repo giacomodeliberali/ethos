@@ -70,13 +70,11 @@ export class FormFieldComponent
   @Input()
   name: string;
   @Input()
+  label: string;
+  @Input()
   fieldOptions: any;
   @Input()
   errorMessage = 'Il campo non è valido';
-  // If the input is type text it could be a multiline one (texarea)
-  @Input()
-  @HostBinding('class.multiline')
-  multiline = false;
   @HostBinding('class.input-focused') isFocused = false;
   @HostBinding('class.error')
   get showError(): boolean {

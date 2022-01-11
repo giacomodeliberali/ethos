@@ -15,11 +15,20 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class WeekDaySelectorComponent implements ControlValueAccessor {
   @Input()
-  value: string[] = [];
-  @Input()
   weekDaysLocalization;
 
   weekDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+  private _value: string[];
+  @Input()
+  set value(val: string[]) {
+    this._value = val;
+    this.onChange(this._value);
+    this.onTouched();
+  }
+  get value() {
+    return this._value;
+  }
 
   constructor() {}
 

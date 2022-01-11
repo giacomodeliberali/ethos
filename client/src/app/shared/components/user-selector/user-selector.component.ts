@@ -24,11 +24,19 @@ import { UserDto } from '@core/services/ethos.generated.service';
 })
 export class UserSelectorComponent implements ControlValueAccessor, OnChanges {
   @Input()
-  value: string[] | string;
-  @Input()
   users: (UserDto & { selected?: boolean })[];
   @Input()
   multiSelection = false;
+  private _value: string[] | string;
+  @Input()
+  set value(val: string[] | string) {
+    this._value = val;
+    this.onChange(this._value);
+    this.onTouched();
+  }
+  get value() {
+    return this._value;
+  }
 
   constructor() {}
 

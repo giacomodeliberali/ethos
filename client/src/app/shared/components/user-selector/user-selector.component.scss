@@ -1,0 +1,34 @@
+:host {
+  display: inline-flex;
+  margin: 0 2rem 0 2rem;
+  .avatars-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    ion-avatar {
+      border: 1px solid var(--ion-color-tertiary);
+      position: relative;
+      .selection-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 0;
+        left: 0;
+        border-radius: 2000px;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        background-color: rgba(var(--ion-color-tertiary-rgb), 0.8);
+        ion-icon {
+          font-size: 1.25rem;
+          --ionicon-stroke-width: 3rem;
+        }
+      }
+    }
+    span {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}

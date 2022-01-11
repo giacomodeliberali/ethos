@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { BaseDirective } from '@core/directives';
 import {
   GeneratedScheduleDto,
+  IdentityService,
   SchedulesService,
+  UserDto,
 } from '@core/services/ethos.generated.service';
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
@@ -18,6 +20,7 @@ import { CreateEditScheduleModalComponent } from '../../components/create-edit-s
 })
 export class AdminPageComponent extends BaseDirective {
   currentDate: string = new Date().toISOString();
+  editModal: HTMLIonModalElement;
 
   schedules: {
     morning: Array<GeneratedScheduleDto>;
@@ -30,12 +33,10 @@ export class AdminPageComponent extends BaseDirective {
     private schedulesSvc: SchedulesService,
     private loadingSvc: LoadingService,
     private settingsSvc: SettingsService,
+    private identitySvc: IdentityService,
     private modalCtrl: ModalController
   ) {
     super();
-    // let nextWeek = new Date();
-    // nextWeek.setDate(new Date().getDate() + 7);
-    // this.schedulesSvc.getAllSchedulesInRange(new Date().toISOString(), nextWeek.toISOString()).subscribe(result => console.log(result));
 
     this.dateChanged(this.currentDate);
   }
@@ -90,17 +91,24 @@ export class AdminPageComponent extends BaseDirective {
       .subscribe((schedules) => (this.schedules = schedules));
   }
 
-  async openCreateEditModal(event: MouseEvent) {
+  enterEditMode(event: MouseEvent) {
     event?.stopPropagation();
-    const modal = await this.modalCtrl.create({
+    this.identitySvc.getAllAdmins().subscribe((trainers) => {
+      console.log(trainers);
+      this.openCreateEditModal(trainers);
+    });
+  }
+
+  async openCreateEditModal(trainers: UserDto[]) {
+    this.editModal = await this.modalCtrl.create({
       component: CreateEditScheduleModalComponent,
-      componentProps: { currentDate: this.currentDate },
+      componentProps: { currentDate: this.currentDate, trainers },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
       mode: 'ios',
     });
-    await modal.present();
-    const { data } = await modal.onWillDismiss();
+    await this.editModal.present();
+    const { data } = await this.editModal.onWillDismiss();
     if (data) {
     }
   }

@@ -1,97 +1,111 @@
-<div
-  class="container"
-  modal-default-content
-  [formGroup]="scheduleForm"
-  [cancelButton]="{
-    title: 'Annulla',
-    fill: false,
-    type: 'tertiary'
-  }"
-  [successButton]="{
-    title: 'Salva',
-    fill: true,
-    type: 'tertiary'
-  }"
-  [successDisabled]="!scheduleForm.valid"
-  (closeModalEvent)="closeModal($event)"
->
-  <div class="section title-section">
-    <h2>Crea un corso</h2>
-    <div class="recurrent-container">
-      <ion-label>Ricorrente</ion-label>
-      <ion-toggle
-        mode="md"
-        color="tertiary"
-        (ionChange)="isRecurrent = $event.detail.checked"
-      ></ion-toggle>
+<div #generalContainer>
+  <div
+    class="form-container"
+    modal-default-content
+    [formGroup]="scheduleForm"
+    [cancelButton]="{
+      title: 'Annulla',
+      fill: false,
+      type: 'tertiary'
+    }"
+    [successButton]="{
+      title: 'Salva',
+      fill: true,
+      type: 'tertiary'
+    }"
+    [successDisabled]="!scheduleForm.valid"
+    (closeModalEvent)="closeModal($event)"
+    *ngIf="!showTrainersSearch"
+  >
+    <div class="section title-section">
+      <h2>Crea un corso</h2>
+      <div class="recurrent-container">
+        <ion-label>Ricorrente</ion-label>
+        <ion-toggle
+          mode="md"
+          color="tertiary"
+          (ionChange)="isRecurrent = $event.detail.checked"
+        ></ion-toggle>
+      </div>
     </div>
-  </div>
-  <div class="section">
-    <app-form-field
-      formControlName="name"
-      type="text"
-      placeholder="Nome del corso"
-      name="name"
-      icon="person-circle-outline"
-    ></app-form-field>
-    <app-form-field
-      formControlName="description"
-      placeholder="Descrizione"
-      name="description"
-      icon="text-outline"
-      [multiline]="true"
-    ></app-form-field>
-    <app-form-field
-      formControlName="startDate"
-      [placeholder]="isRecurrent ? 'Data' : 'Dal'"
-      [value]="currentDate"
-      name="startDate"
-      type="datetime"
-      [fieldOptions]="{
-        format: 'DD/MM/YYYY'
-      }"
-      icon="calendar-outline"
-    ></app-form-field>
-    <app-form-field
-      *ngIf="isRecurrent"
-      formControlName="endDate"
-      placeholder="Al"
-      [value]="nextWeekDate"
-      name="endDate"
-      type="datetime"
-      [fieldOptions]="{
-        format: 'DD/MM/YYYY'
-      }"
-      icon="calendar-outline"
-    ></app-form-field>
-    <app-form-field
-      formControlName="time"
-      placeholder="Orario"
-      name="time"
-      type="datetime"
-      [fieldOptions]="{
-        format: 'HH:mm'
-      }"
-      icon="time-outline"
-    ></app-form-field>
-  </div>
-  <div class="days" *ngIf="isRecurrent">
-    <h5>Giorni</h5>
-    <div class="week-days">
-      <app-week-day-selector></app-week-day-selector>
+    <div class="section">
+      <app-form-field
+        formControlName="name"
+        type="text"
+        label="Nome del corso"
+        placeholder="e.g. Crossfit"
+        name="name"
+        icon="barbell-outline"
+      ></app-form-field>
+      <app-form-field
+        formControlName="description"
+        placeholder="e.g. Esercizi a corpo libero"
+        label="Descrizione"
+        name="description"
+        icon="text-outline"
+        type="textarea"
+      ></app-form-field>
+      <div class="row">
+        <app-form-field
+          formControlName="startDate"
+          [label]="isRecurrent ? 'Dal' : 'Data'"
+          placeholder="dd/MM/yyyy"
+          [value]="currentDate"
+          name="startDate"
+          type="datetime"
+          [fieldOptions]="{
+            format: 'DD/MM/YYYY'
+          }"
+          icon="calendar-outline"
+        ></app-form-field>
+        <app-form-field
+          *ngIf="isRecurrent"
+          formControlName="endDate"
+          label="Al"
+          placeholder="DD/MM/YYYY"
+          [value]="nextWeekDate"
+          name="endDate"
+          type="datetime"
+          [fieldOptions]="{
+            format: 'DD/MM/YYYY'
+          }"
+          icon="calendar-outline"
+        ></app-form-field>
+      </div>
+      <div class="row">
+        <app-form-field
+          formControlName="time"
+          label="Orario"
+          placeholder="HH:mm"
+          name="time"
+          type="datetime"
+          [fieldOptions]="{
+            format: 'HH:mm'
+          }"
+          icon="time-outline"
+        ></app-form-field>
+        <app-form-field
+          formControlName="participantsMaxNumber"
+          label="Membri"
+          placeholder="e.g. 50"
+          name="participantsMaxNumber"
+          type="number"
+          icon="people-circle-outline"
+        ></app-form-field>
+      </div>
     </div>
-  </div>
-  <div class="section">
-    <app-form-field
-      formControlName="participantsMaxNumber"
-      placeholder="Numero partecipanti"
-      name="participantsMaxNumber"
-      type="number"
-      icon="people-circle-outline"
-    ></app-form-field>
-    <ion-button class="trainer-button"
-      ><ion-icon name="shirt-outline" slot="start"></ion-icon
-      ><span>Scegli trainer</span></ion-button
-    >
+    <div class="other-info-container">
+      <h5>Giorni</h5>
+      <div class="scroll-container">
+        <app-week-day-selector formControlName="days"></app-week-day-selector>
+      </div>
+      <h5>Allenatore</h5>
+      <div class="scroll-container">
+        <app-user-selector
+          [users]="trainers"
+          formControlName="organizerId"
+        ></app-user-selector>
+      </div>
+    </div>
   </div>
 </div>

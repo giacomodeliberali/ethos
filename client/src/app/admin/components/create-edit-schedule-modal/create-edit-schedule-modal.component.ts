@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UserDto } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -10,6 +11,22 @@ import { ModalController } from '@ionic/angular';
 export class CreateEditScheduleModalComponent implements OnInit {
   @Input()
   currentDate: string;
+  @Input()
+  trainers: UserDto[];
+  @ViewChild('generalContainer', { read: ElementRef })
+  generalContainer: ElementRef;
+  _showTrainersSearch = false;
+  get showTrainersSearch() {
+    return this._showTrainersSearch;
+  }
+  set showTrainersSearch(value: boolean) {
+    if (this.generalContainer) {
+      this.generalContainer.nativeElement.style.height =
+        this.generalContainer.nativeElement.offsetHeight;
+    }
+    this._showTrainersSearch = value;
+  }
+  trainerSearchInput: FormControl = new FormControl(null);
 
   get nextWeekDate(): string {
     const nextWeek = new Date(this.currentDate);
@@ -23,6 +40,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
     startDate: new FormControl(null, [Validators.required]),
     endDate: new FormControl(null),
     time: new FormControl(null, [Validators.required]),
+    days: new FormControl([], [Validators.required]),
+    organizerId: new FormControl(null, [Validators.required]),
     participantsMaxNumber: new FormControl(null, [Validators.required]),
   });
 

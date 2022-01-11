@@ -60,7 +60,6 @@ export class UserSelectorComponent implements ControlValueAccessor, OnChanges {
         : [...currVal, val.id];
     } else {
       this.value = this.value === val.id ? null : val.id;
-      console.log(this.value);
     }
     this.setupSelection();
   }

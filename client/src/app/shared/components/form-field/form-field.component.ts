@@ -111,6 +111,7 @@ export class FormFieldComponent
   set value(val: any) {
     this._value = val;
     this.onChange(this._value);
+    this.onTouched();
   }
   get value() {
     return this._value;

@@ -29,9 +29,6 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
         [Fact]
         public async Task ShouldCreateABooking()
         {
-            var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddHours(2);
-
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
@@ -39,8 +36,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 {
                     Name = "Test schedule",
                     Description = "Description",
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    StartDate = DateTime.Parse("2021-10-01T10:00Z").ToUniversalTime(),
+                    DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 })).Id;
             }
@@ -49,8 +46,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
             {
                 ScheduleId = scheduleId,
-                StartDate = startDate.ToUniversalTime(),
-                EndDate = endDate.ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T10:00Z").ToUniversalTime(),
+                EndDate = DateTime.Parse("2021-10-01T12:00Z").ToUniversalTime(),
             });
 
             var booking = await ApplicationDbContext.Bookings.SingleAsync();
@@ -73,7 +70,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = startDate,
-                    EndDate = endDate,
+                    DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 })).Id;
             }
@@ -288,7 +285,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = startDate,
-                    EndDate = endDate,
+                    DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 })).Id;
             }

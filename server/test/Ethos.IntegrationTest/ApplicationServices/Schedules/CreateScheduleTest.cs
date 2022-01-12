@@ -34,7 +34,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddHours(2),
+                DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             })).Id;
 
@@ -57,7 +57,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(1),
+                    DurationInMinutes = 120,
                     OrganizerId = demoUser.Id,
                 });
             });
@@ -78,10 +78,11 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     StartDate = DateTime.UtcNow.AddMonths(1),
                     EndDate = DateTime.UtcNow,
                     OrganizerId = demoUser.Id,
+                    DurationInMinutes = 60,
+                    RecurringCronExpression = CronTestExpressions.EveryMondayAt14,
+                    ParticipantsMaxNumber = 5,
                 });
             });
-
-            var now = DateTime.UtcNow;
 
             await Should.ThrowAsync<BusinessException>(async () =>
             {
@@ -89,9 +90,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 {
                     Name = "Test schedule",
                     Description = "Description",
-                    StartDate = now,
-                    EndDate = now,
+                    StartDate = DateTime.UtcNow,
                     OrganizerId = demoUser.Id,
+                    DurationInMinutes = 60,
                 });
             });
         }
@@ -105,7 +106,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddHours(2),
+                DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             })).Id;
 

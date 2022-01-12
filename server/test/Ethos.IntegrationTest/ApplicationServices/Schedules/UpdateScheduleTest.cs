@@ -43,7 +43,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = startDate,
-                EndDate = endDate,
+                DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
             });
 
@@ -59,7 +59,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                         Name = "Test schedule up",
                         Description = "Description up",
                         StartDate = DateTime.UtcNow,
-                        EndDate = DateTime.UtcNow.AddMonths(1),
+                        DurationInMinutes = 120,
                         OrganizerId = demoUser.Id,
                     },
                 });
@@ -75,8 +75,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule every weekday at 9am",
-                StartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             });
 
@@ -85,8 +85,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await _scheduleApplicationService.UpdateAsync(new UpdateScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
-                InstanceStartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                InstanceStartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-01T11:00Z").ToUniversalTime(),
                 Schedule = new UpdateScheduleRequestDto.ScheduleDto()
                 {
                     Name = "Name up",
@@ -123,7 +123,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Single schedule",
                 Description = "Schedule",
                 StartDate = DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-01T11:00Z").ToUniversalTime(),
+                DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             });
 

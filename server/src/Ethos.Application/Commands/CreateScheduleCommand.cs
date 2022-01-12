@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 
 namespace Ethos.Application.Commands
@@ -11,12 +12,9 @@ namespace Ethos.Application.Commands
 
         public DateTime StartDate { get; }
 
-        public DateTime EndDate { get; }
+        public DateTime? EndDate { get; }
 
-        /// <summary>
-        /// If not recurring this must be EndDate - StartDate.
-        /// If recurring it represent the duration of the schedule.
-        /// </summary>
+        [Required]
         public int DurationInMinutes { get; }
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace Ethos.Application.Commands
             string name,
             string description,
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int durationInMinutes,
             string recurringCronExpression,
             int participantsMaxNumber,

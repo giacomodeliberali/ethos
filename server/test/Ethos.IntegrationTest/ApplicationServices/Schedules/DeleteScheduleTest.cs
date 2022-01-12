@@ -39,16 +39,16 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
             });
 
             await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
-                InstanceStartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                InstanceStartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                InstanceEndDate = DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime(),
             });
 
             await Should.ThrowAsync<Exception>(async () =>
@@ -137,8 +137,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-10-01").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
             });
 

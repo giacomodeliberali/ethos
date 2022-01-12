@@ -28,8 +28,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndNotIncludeParticipantsData_IfCaller_IsAdmin()
         {
-            var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
-            var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
+            var startDate = DateTime.Parse("2021-10-01T07:00:00Z").ToUniversalTime();
+            var endDate = DateTime.Parse("2021-10-31T09:00:00Z").ToUniversalTime();
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -39,7 +39,6 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Name",
                     Description = "Description",
                     StartDate = startDate,
-                    EndDate = endDate,
                     DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 });
@@ -50,8 +49,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    StartDate = DateTime.Parse("2021-10-01T07:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
                 });
 
                 var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();
@@ -64,8 +63,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndIncludeParticipantsData_IfCaller_IsUser()
         {
-            var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
-            var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
+            var startDate = DateTime.Parse("2021-10-01T07:00:00Z").ToUniversalTime();
+            var endDate = DateTime.Parse("2021-10-31T09:00:00Z").ToUniversalTime();
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -75,7 +74,6 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Name",
                     Description = "Description",
                     StartDate = startDate,
-                    EndDate = endDate,
                     DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 });
@@ -86,8 +84,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = startDate,
-                    EndDate = endDate,
+                    StartDate = DateTime.Parse("2021-10-01T07:00:00Z").ToUniversalTime(),
+                    EndDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
                 });
 
                 var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();

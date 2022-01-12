@@ -50,19 +50,23 @@ namespace Ethos.Application.Handlers
                     request.Name,
                     request.Description,
                     request.ParticipantsMaxNumber,
-                    new Period(request.StartDate, request.EndDate));
+                    new Period(
+                        request.StartDate,
+                        request.StartDate.AddMinutes(request.DurationInMinutes)));
 
                 await _scheduleRepository.CreateAsync(schedule);
             }
             else
             {
+                Guard.Against.Null(request.EndDate, nameof(request.EndDate));
+
                 var schedule = RecurringSchedule.Factory.Create(
                     createdScheduleId,
                     organizer,
                     request.Name,
                     request.Description,
                     request.ParticipantsMaxNumber,
-                    new Period(request.StartDate, request.EndDate),
+                    new Period(request.StartDate, request.EndDate.Value),
                     request.DurationInMinutes,
                     request.RecurringCronExpression);
 

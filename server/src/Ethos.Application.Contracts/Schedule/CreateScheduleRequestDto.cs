@@ -17,11 +17,12 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public DateTime StartDate { get; set; }
 
-        [Required]
-        public DateTime EndDate { get; set; }
+        /// <summary>
+        /// Populated only if recurring.
+        /// </summary>
+        public DateTime? EndDate { get; set; }
 
         /// <summary>
-        /// If not recurring this must be EndDate - StartDate.
         /// If recurring it represent the duration of the schedule.
         /// </summary>
         public int DurationInMinutes { get; set; }

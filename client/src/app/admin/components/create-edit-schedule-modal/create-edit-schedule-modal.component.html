@@ -95,10 +95,12 @@
       </div>
     </div>
     <div class="other-info-container">
-      <h5>Giorni</h5>
-      <div class="scroll-container">
-        <app-week-day-selector formControlName="days"></app-week-day-selector>
-      </div>
+      <ng-container *ngIf="isRecurrent">
+        <h5>Giorni</h5>
+        <div class="scroll-container">
+          <app-week-day-selector formControlName="days"></app-week-day-selector>
+        </div>
+      </ng-container>
       <h5>Allenatore</h5>
       <div class="scroll-container">
         <app-user-selector

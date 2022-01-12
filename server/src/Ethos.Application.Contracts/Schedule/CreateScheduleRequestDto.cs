@@ -17,18 +17,16 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public DateTime StartDate { get; set; }
 
+        [Required]
+        public int DurationInMinutes { get; set; }
+
         /// <summary>
         /// Populated only if recurring.
         /// </summary>
         public DateTime? EndDate { get; set; }
 
         /// <summary>
-        /// If recurring it represent the duration of the schedule.
-        /// </summary>
-        public int DurationInMinutes { get; set; }
-
-        /// <summary>
-        /// A CRON expression to indicate this schedule is recurring.
+        /// Populated only if recurring. A CRON expression to indicate this schedule is recurring.
         /// </summary>
         public string RecurringCronExpression { get; set; }
 

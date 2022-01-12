@@ -29,7 +29,12 @@
       }
     }
     .other-info-container {
-      background-color: var(--ion-color-primary-tint);
+      background: radial-gradient(
+        circle at bottom right,
+        var(--ion-color-primary-tint),
+        var(--ion-color-primary)
+      );
+      box-shadow: inset 0 0 1rem;
       padding: 1rem 0 0 0;
       margin-bottom: 2rem;
       h5 {

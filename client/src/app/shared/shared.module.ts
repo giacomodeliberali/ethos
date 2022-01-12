@@ -12,6 +12,7 @@ import { LoadingComponent } from './components/loading-toast/loading.component';
 import { LogoutModalComponent } from './components/logout-modal/logout-modal.component';
 import { ModalDefaultContentComponent } from './components/modal-default-content/modal-default-content.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
+import { UserSelectorComponent } from './components/user-selector/user-selector.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
 import { WeekDaySelectorComponent } from './components/week-day-selector/week-day-selector.component';
 
@@ -25,6 +26,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
     LoadingComponent,
     ScheduleCardComponent,
     WeekDaySelectorComponent,
+    UserSelectorComponent,
     DefaultInputComponent,
     PasswordInputComponent,
     TextareaInputComponent,
@@ -39,6 +41,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
     UnsavedChangesComponent,
     ScheduleCardComponent,
     WeekDaySelectorComponent,
+    UserSelectorComponent,
   ],
 })
 export class SharedModule {}

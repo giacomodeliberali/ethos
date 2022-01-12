@@ -1,7 +1,20 @@
 :host {
   --line-color: var(--ion-color-secondary);
+  --internal-padding: 8px;
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 1.25rem;
+  ion-label {
+    display: flex;
+    align-items: flex-start;
+    color: var(--ion-color-secondary);
+    margin-bottom: 0.25rem;
+    ion-icon {
+      margin-right: 0.5rem;
+    }
+    span {
+      margin-top: 2px;
+    }
+  }
   .form-field-container {
     background: white no-repeat;
     background-image: linear-gradient(
@@ -18,19 +31,9 @@
     background-position: 50% 100%, 50% 100%;
     transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
-    padding: 8px;
-    ion-icon {
-      color: var(--ion-color-medium);
-      font-size: 1rem;
-      --ionicon-stroke-width: 3rem;
-    }
-  }
-  &.multiline {
-    .form-field-container {
-      align-items: flex-start;
-    }
+    padding: var(--internal-padding);
   }
   &.input-focused,
   &.error {

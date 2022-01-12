@@ -1,18 +1,34 @@
-import { Component, Input } from '@angular/core';
-import { ControlValueAccessor } from '@angular/forms';
+import { Component, forwardRef, Input } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-week-day-selector',
   templateUrl: './week-day-selector.component.html',
   styleUrls: ['./week-day-selector.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR, // Is an InjectionToken required by the ControlValueAccessor interface to provide a form value
+      useExisting: forwardRef(() => WeekDaySelectorComponent), // tells Angular to use the existing instance
+      multi: true,
+    },
+  ],
 })
 export class WeekDaySelectorComponent implements ControlValueAccessor {
-  @Input()
-  value: string[] = [];
   @Input()
   weekDaysLocalization;
 
   weekDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+  private _value: string[];
+  @Input()
+  set value(val: string[]) {
+    this._value = val;
+    this.onChange(this._value);
+    this.onTouched();
+  }
+  get value() {
+    return this._value;
+  }
 
   constructor() {}
 

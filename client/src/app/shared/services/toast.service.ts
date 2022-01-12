@@ -7,7 +7,9 @@ import { IonicSafeString, ToastOptions } from '@ionic/core';
 })
 export class ToastService {
   /** toastQueue */
-  private toastQueue: ToastOptions[] = [];
+  private toastQueue: (ToastOptions & {
+    styleProperties?: { [key: string]: string };
+  })[] = [];
 
   constructor(private toastController: ToastController) {}
 
@@ -60,6 +62,11 @@ export class ToastService {
   /** Show next toast */
   private async displayNext() {
     const toast = await this.toastController.create(this.toastQueue[0]);
+    for (const [key, value] of Object.entries(
+      this.toastQueue[0].styleProperties
+    )) {
+      document.documentElement.style.setProperty(key, value);
+    }
     toast.present();
     toast.onDidDismiss().then(() => {
       this.toastQueue.shift();
@@ -93,10 +100,6 @@ export class ToastService {
         '<ion-icon name="checkmark-circle-outline" color="success" style="font-size: 1.5rem"></ion-icon>',
     };
     console.log(options.message);
-    document.documentElement.style.setProperty(
-      '--ionic-toast-color',
-      `var(--ion-color-${color})`
-    );
     if (stack || this.toastQueue.length <= 0) {
       this.toastQueue.push({
         message: new IonicSafeString(
@@ -106,6 +109,9 @@ export class ToastService {
         duration: 5000,
         mode: 'ios',
         cssClass: 'ionic-toast',
+        styleProperties: {
+          '--ionic-toast-color': `var(--ion-color-${color})`,
+        },
       });
       if (this.toastQueue.length === 1) {
         this.displayNext();

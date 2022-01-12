@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { PasswordInputComponent } from './password-input.component';
+import { UserSelectorComponent } from './user-selector.component';
 
-describe('PasswordInputComponent', () => {
-  let component: PasswordInputComponent;
-  let fixture: ComponentFixture<PasswordInputComponent>;
+describe('WeekDaySelectorComponent', () => {
+  let component: UserSelectorComponent;
+  let fixture: ComponentFixture<UserSelectorComponent>;
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [PasswordInputComponent],
+        declarations: [UserSelectorComponent],
         imports: [IonicModule.forRoot()],
       }).compileComponents();
 
-      fixture = TestBed.createComponent(PasswordInputComponent);
+      fixture = TestBed.createComponent(UserSelectorComponent);
       component = fixture.componentInstance;
       fixture.detectChanges();
     })

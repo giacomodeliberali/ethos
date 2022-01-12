@@ -1,36 +1,59 @@
+@import 'mixins';
 :host {
   padding: 2rem 0 2rem 0;
-  .section {
-    padding: 0 2rem 0 2rem;
-    margin-bottom: 2rem;
-    &.title-section {
-      display: flex;
-      h2 {
-        flex: 1;
-        margin: 0;
-      }
-      .recurrent-container {
+  .form-container {
+    .section {
+      padding: 0 2rem 0 2rem;
+      margin-bottom: 2rem;
+      &.title-section {
         display: flex;
-        align-items: center;
-        margin-top: -0.2rem;
-        ion-toggle {
-          padding-right: 0;
+        h2 {
+          flex: 1;
+          margin: 0;
+        }
+        .recurrent-container {
+          display: flex;
+          align-items: center;
+          margin-top: -0.2rem;
+          ion-toggle {
+            padding-right: 0;
+          }
+        }
+      }
+      .row {
+        display: flex;
+        gap: 2rem;
+        & > app-form-field {
+          flex: 1;
         }
       }
     }
-  }
-  .days {
-    background-color: var(--ion-color-primary-tint);
-    padding: 1rem 0 0 0;
-    margin-bottom: 2rem;
-    h5 {
-      margin: 0.5rem 2rem 1rem 2rem;
-      color: var(--ion-color-tertiary);
+    .other-info-container {
+      background: radial-gradient(
+        circle at bottom right,
+        var(--ion-color-primary-tint),
+        var(--ion-color-primary)
+      );
+      box-shadow: inset 0 0 1rem;
+      padding: 1rem 0 0 0;
+      margin-bottom: 2rem;
+      h5 {
+        margin: 0.5rem 2rem 1rem 2rem;
+        color: var(--ion-color-tertiary);
+      }
+      .scroll-container {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+      }
     }
-    .week-days {
-      width: 100%;
-      overflow-x: auto;
-      padding-bottom: 1rem;
+    .trainer-button {
+      @include ion-button-style('secondary', 'clear');
+    }
+  }
+  .trainers-list-container {
+    img {
+      border: 2px solid var(--ion-color-tertiary);
     }
   }
 }

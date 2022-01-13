@@ -7,6 +7,7 @@ type FormFieldType =
   | 'file'
   | 'hidden'
   | 'image'
+  | 'info'
   | 'month'
   | 'number'
   | 'password'

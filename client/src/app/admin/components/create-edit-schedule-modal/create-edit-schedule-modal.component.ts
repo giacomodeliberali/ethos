@@ -134,7 +134,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
             this.scheduleForm.get('time').value as Date
           );
         }
-        this.modalCtrl.dismiss(this.scheduleForm.value);
+        this.modalCtrl.dismiss(schedule);
         return;
       }
       this.toastSvc.addErrorToast({

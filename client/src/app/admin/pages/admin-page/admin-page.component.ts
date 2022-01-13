@@ -70,8 +70,10 @@ export class AdminPageComponent extends BaseDirective {
         }
       )
       .pipe(
-        catchError((message) => {
-          this.toastSvc.addErrorToast({ message });
+        catchError((error) => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la richiesta dei corsi',
+          });
           return of([]);
         }),
         map((schedules) => this.divideScheduleByDayPeriod(schedules))

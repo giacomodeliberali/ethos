@@ -19,27 +19,19 @@
   >
     <div class="section title-section">
       <h2>Crea un corso</h2>
-      <div class="recurrent-container">
-        <ion-label>Ricorrente</ion-label>
-        <ion-toggle
-          mode="md"
-          color="tertiary"
-          (ionChange)="isRecurrent = $event.detail.checked"
-        ></ion-toggle>
-      </div>
     </div>
     <div class="section">
       <app-form-field
         formControlName="name"
         type="text"
         label="Nome del corso"
-        placeholder="e.g. Crossfit"
+        placeholder="Crossfit"
         name="name"
         icon="barbell-outline"
       ></app-form-field>
       <app-form-field
         formControlName="description"
-        placeholder="e.g. Esercizi a corpo libero"
+        placeholder="Esercizi a corpo libero"
         label="Descrizione"
         name="description"
         icon="text-outline"
@@ -84,10 +76,35 @@
           }"
           icon="time-outline"
         ></app-form-field>
+        <div class="recurrent-container">
+          <ion-button
+            mode="md"
+            [ngClass]="{ 'recurrent-button': true, selected: isRecurrent }"
+            (click)="toggleClicked($event)"
+            >Ricorrente
+          </ion-button>
+          <div class="check-container" *ngIf="isRecurrent">
+            <ion-icon name="checkmark-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <app-form-field
+          formControlName="durationInMinutes"
+          label="Durata"
+          placeholder="60"
+          name="durationInMinutes"
+          type="info"
+          [fieldOptions]="{
+            info: 'min',
+            inputType: 'number'
+          }"
+          icon="timer-outline"
+        ></app-form-field>
         <app-form-field
           formControlName="participantsMaxNumber"
           label="Membri"
-          placeholder="e.g. 50"
+          placeholder="50"
           name="participantsMaxNumber"
           type="number"
           icon="people-circle-outline"

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BaseDirective } from '@core/directives';
 import {
+  CreateScheduleRequestDto,
   GeneratedScheduleDto,
   IdentityService,
   SchedulesService,
@@ -10,7 +11,9 @@ import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
 import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@shared/services/loading.service';
-import { map } from 'rxjs/operators';
+import { ToastService } from '@shared/services/toast.service';
+import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
 
 @Component({
@@ -19,7 +22,6 @@ import { CreateEditScheduleModalComponent } from '../../components/create-edit-s
   styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent extends BaseDirective {
-  currentDate: string = new Date().toISOString();
   editModal: HTMLIonModalElement;
 
   schedules: {
@@ -28,20 +30,29 @@ export class AdminPageComponent extends BaseDirective {
     evening: Array<GeneratedScheduleDto>;
   };
 
+  private _currentDate: string;
+  set currentDate(date: string) {
+    this._currentDate = date;
+    this.loadSchedules(date);
+  }
+  get currentDate() {
+    return this._currentDate;
+  }
+
   constructor(
     public mediaSvc: MediaService,
     private schedulesSvc: SchedulesService,
     private loadingSvc: LoadingService,
     private settingsSvc: SettingsService,
     private identitySvc: IdentityService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private toastSvc: ToastService
   ) {
     super();
-
-    this.dateChanged(this.currentDate);
+    this.currentDate = new Date().toISOString();
   }
 
-  dateChanged(date: string) {
+  loadSchedules(date: string) {
     const startDate = new Date(date);
     const endDate = new Date(date);
     startDate.setHours(0, 0, 0);
@@ -59,34 +70,11 @@ export class AdminPageComponent extends BaseDirective {
         }
       )
       .pipe(
-        map((schedules) => {
-          const schedulesByDayPortion = {
-            morning: [],
-            afternoon: [],
-            evening: [],
-          };
-          for (const schedule of schedules) {
-            const currentDate = new Date(schedule.startDate);
-            const hour = currentDate.getHours();
-            const minutes = currentDate.getMinutes();
-            if (
-              hour >= this.settingsSvc.eveningStart.hour &&
-              minutes >= this.settingsSvc.eveningStart.minutes
-            ) {
-              schedulesByDayPortion.evening.push(schedule);
-              continue;
-            }
-            if (
-              hour >= this.settingsSvc.afternoonStart.hour &&
-              minutes >= this.settingsSvc.afternoonStart.minutes
-            ) {
-              schedulesByDayPortion.afternoon.push(schedule);
-              continue;
-            }
-            schedulesByDayPortion.morning.push(schedule);
-          }
-          return schedulesByDayPortion;
-        })
+        catchError((message) => {
+          this.toastSvc.addErrorToast({ message });
+          return of([]);
+        }),
+        map((schedules) => this.divideScheduleByDayPeriod(schedules))
       )
       .subscribe((schedules) => (this.schedules = schedules));
   }
@@ -110,6 +98,53 @@ export class AdminPageComponent extends BaseDirective {
     await this.editModal.present();
     const { data } = await this.editModal.onWillDismiss();
     if (data) {
+      this.callCreateSchedule(data);
     }
+  }
+
+  callCreateSchedule(schedule: CreateScheduleRequestDto) {
+    this.schedulesSvc.createSchedule(schedule).subscribe({
+      next: (result) => {
+        this.toastSvc.addSuccessToast({
+          header: 'Corso creato!',
+          message: 'Il corso è stato creato con successo',
+        });
+        this.loadSchedules(this.currentDate);
+      },
+      error: () => {
+        this.toastSvc.addErrorToast({
+          message: 'Errore durante la creazione del corso',
+        });
+      },
+    });
+  }
+
+  divideScheduleByDayPeriod(schedules: GeneratedScheduleDto[]) {
+    const schedulesByDayPortion = {
+      morning: [],
+      afternoon: [],
+      evening: [],
+    };
+    for (const schedule of schedules) {
+      const currentDate = new Date(schedule.startDate);
+      const hour = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      if (
+        hour >= this.settingsSvc.eveningStart.hour &&
+        minutes >= this.settingsSvc.eveningStart.minutes
+      ) {
+        schedulesByDayPortion.evening.push(schedule);
+        continue;
+      }
+      if (
+        hour >= this.settingsSvc.afternoonStart.hour &&
+        minutes >= this.settingsSvc.afternoonStart.minutes
+      ) {
+        schedulesByDayPortion.afternoon.push(schedule);
+        continue;
+      }
+      schedulesByDayPortion.morning.push(schedule);
+    }
+    return schedulesByDayPortion;
   }
 }

@@ -1,4 +1,4 @@
-@import "mixins";
+@import 'mixins';
 
 ion-content {
   .page-container {
@@ -6,7 +6,7 @@ ion-content {
     flex-direction: column;
     height: 100%;
     .toolbar {
-      --background: "transparent";
+      --background: 'transparent';
       .logo-container {
         display: flex;
         align-items: center;
@@ -41,12 +41,12 @@ ion-content {
         grid-template-rows: auto;
         grid-template-columns: 1fr;
         column-gap: 2rem;
-        margin: 1rem 2rem 4.5rem 2rem;
-        @include respond-to("tablet") {
+        margin: 1rem 3rem 4.5rem 3rem;
+        @include respond-to('tablet') {
           grid-template-columns: 1fr 1fr;
           margin: 1rem 4rem 4.5rem 4rem;
         }
-        @include respond-to("desktop") {
+        @include respond-to('desktop') {
           grid-template-columns: 1fr 1fr 1fr;
           margin: 1rem 4rem 4.5rem 4rem;
         }

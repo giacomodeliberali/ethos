@@ -1,0 +1,14 @@
+<input
+  class="input"
+  (change)="changeValue($event)"
+  [placeholder]="placeholder"
+  [name]="name"
+  [type]="inputType"
+  [value]="valueChange | async"
+  [disabled]="disabled"
+  (focus)="changeFocus('focus')"
+  (blur)="changeFocus('blur')"
+/>
+<ion-chip>
+  <ion-label>{{ info }}</ion-label>
+</ion-chip>

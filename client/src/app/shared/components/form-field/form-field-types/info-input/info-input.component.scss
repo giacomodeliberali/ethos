@@ -1,0 +1,14 @@
+:host {
+  position: relative;
+  ion-chip {
+    position: absolute;
+    right: -0.5rem;
+    top: -0.25rem;
+    font-size: 0.7rem;
+    margin: 0;
+    height: 1.2rem;
+    padding: 0 0.5rem;
+    --background: rgba(var(--ion-color-primary-rgb), 0.6);
+    --color: var(--ion-color-primary-contrast);
+  }
+}

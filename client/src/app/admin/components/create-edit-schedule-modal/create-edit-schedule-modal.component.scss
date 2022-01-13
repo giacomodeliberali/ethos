@@ -3,7 +3,7 @@
   padding: 2rem 0 2rem 0;
   .form-container {
     .section {
-      padding: 0 2rem 0 2rem;
+      padding: 0 3rem 0 3rem;
       margin-bottom: 2rem;
       &.title-section {
         display: flex;
@@ -23,11 +23,40 @@
       .row {
         display: flex;
         gap: 2rem;
-        & > app-form-field {
+        & > * {
           flex: 1;
+          width: 0;
         }
       }
     }
+    .recurrent-container {
+      padding-bottom: 2rem;
+      position: relative;
+      .recurrent-button {
+        @include ion-button-style('secondary', 'clear');
+        &.selected {
+          @include ion-button-style('tertiary', 'fill');
+          --box-shadow: rgb(0, 0, 0, 0.15) 3px 3px 6px 0px inset,
+            rgba(255, 255, 255, 0.2) -3px -3px 6px 1px inset;
+        }
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .check-container {
+        position: absolute;
+        background: var(--ion-color-success);
+        border-radius: 2px;
+        top: -0.2rem;
+        right: -0.2rem;
+        padding: 0.1rem;
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        ion-icon {
+          color: var(--ion-color-success-contrast);
+        }
+      }
+    }
+
     .other-info-container {
       background: radial-gradient(
         circle at bottom right,

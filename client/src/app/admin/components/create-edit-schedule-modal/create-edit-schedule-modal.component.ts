@@ -7,8 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserDto } from '@core/services/ethos.generated.service';
+import {
+  CreateScheduleRequestDto,
+  UserDto,
+} from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
+import { ToastService } from '@shared/services/toast.service';
+import moment from 'moment';
 
 const daysValidator = (control: FormControl) => {
   const isRecurrent = control.parent?.get('isRecurrent').value;
@@ -61,6 +66,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     days: new FormControl([], [daysValidator]),
     organizerId: new FormControl(null, [Validators.required]),
     participantsMaxNumber: new FormControl(null, [Validators.required]),
+    durationInMinutes: new FormControl(null, [Validators.required]),
   });
 
   set isRecurrent(val: boolean) {
@@ -72,18 +78,83 @@ export class CreateEditScheduleModalComponent implements OnInit {
     return this.scheduleForm.get('isRecurrent').value;
   }
 
-  constructor(private modalCtrl: ModalController) {}
+  constructor(
+    private modalCtrl: ModalController,
+    private toastSvc: ToastService
+  ) {}
 
   ngOnInit() {
     this.scheduleForm.get('startDate').setValue(this.currentDate);
     this.scheduleForm.get('endDate').setValue(this.nextWeekDate);
   }
 
+  /**
+   * If the user clicked on the save button, prepare the object and send it to the parent else close the modal
+   *
+   * @param event tell if the user clicked on the success button or the cancel one
+   * @returns nothing
+   */
   closeModal(event: 'success' | 'cancel') {
     if (this.scheduleForm.valid && event === 'success') {
-      this.modalCtrl.dismiss(this.scheduleForm.value);
+      if (this.scheduleForm.valid) {
+        console.log(this.scheduleForm.value);
+        const schedule: CreateScheduleRequestDto = {
+          description: this.scheduleForm.get('description').value,
+          startDate: moment(this.scheduleForm.get('startDate').value)
+            .set({
+              hour: this.isRecurrent
+                ? 0
+                : new Date(this.scheduleForm.get('time').value).getHours(),
+              minute: this.isRecurrent
+                ? 0
+                : new Date(this.scheduleForm.get('time').value).getMinutes(),
+              second: 0,
+              millisecond: 0,
+            })
+            .toISOString(),
+          name: this.scheduleForm.get('name').value,
+          organizerId: this.scheduleForm.get('organizerId').value,
+          participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
+            .value,
+          durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+          endDate: null,
+        };
+        if (this.scheduleForm.get('isRecurrent').value) {
+          schedule.endDate = moment(this.scheduleForm.get('endDate').value)
+            .set({
+              hour: 23,
+              minute: 59,
+              second: 59,
+              millisecond: 0,
+            })
+            .toISOString();
+
+          schedule.recurringCronExpression = this.createCronExpression(
+            this.scheduleForm.get('days').value as string[],
+            this.scheduleForm.get('time').value as Date
+          );
+        }
+        this.modalCtrl.dismiss(this.scheduleForm.value);
+        return;
+      }
+      this.toastSvc.addErrorToast({
+        message: 'Controlla di avere compilato corretamente i campi',
+      });
     } else if (event === 'cancel') {
       this.modalCtrl.dismiss();
     }
+  }
+
+  toggleClicked(event: Event) {
+    event.stopPropagation();
+    this.isRecurrent = !this.isRecurrent;
+  }
+
+  private createCronExpression(days: string[], time: Date) {
+    const daysString = days.map((x) => x.toUpperCase()).join(',');
+    const timeString = new Date(time);
+    const hour = timeString.getHours();
+    const minute = timeString.getMinutes();
+    return `0 ${minute} ${hour} ? * ${daysString} *`;
   }
 }

@@ -1,77 +1,11 @@
 {
-    "runtime": "Default",
-    "defaultVariables": "Url=https://ethostraining.azurewebsites.net/swagger/v1/swagger.json,Output=../services/ethos.generated.service.ts",
-    "documentGenerator": {
-      "fromDocument": {
-        "url": "$(Url)",
-        "output": null,
-        "newLineBehavior": "Auto"
-      }
-    },
-    "codeGenerators": {
-      "openApiToTypeScriptClient": {
-        "className": "{controller}Service",
-        "moduleName": "",
-        "namespace": "",
-        "typeScriptVersion": 2.7,
-        "template": "Angular",
-        "promiseType": "Promise",
-        "httpClass": "HttpClient",
-        "withCredentials": false,
-        "useSingletonProvider": true,
-        "injectionTokenType": "InjectionToken",
-        "rxJsVersion": 6.0,
-        "dateTimeType": "String",
-        "nullValue": "Null",
-        "generateClientClasses": true,
-        "generateClientInterfaces": false,
-        "generateOptionalParameters": false,
-        "exportTypes": true,
-        "wrapDtoExceptions": false,
-        "exceptionClass": "ApiException",
-        "clientBaseClass": "NswagBaseClass",
-        "wrapResponses": false,
-        "wrapResponseMethods": [],
-        "generateResponseClasses": true,
-        "responseClass": "SwaggerResponse",
-        "protectedMethods": [],
-        "configurationClass": "HttpClient",
-        "useTransformOptionsMethod": true,
-        "useTransformResultMethod": true,
-        "generateDtoTypes": true,
-        "operationGenerationMode": "MultipleClientsFromFirstTagAndOperationId",
-        "markOptionalProperties": true,
-        "generateCloneMethod": false,
-        "typeStyle": "Interface",
-        "enumStyle": "Enum",
-        "useLeafType": false,
-        "classTypes": [],
-        "extendedClasses": [],
-        "extensionCode": "./nswag.extension",
-        "generateDefaultValues": true,
-        "excludedTypeNames": [
-         
-        ],
-        "excludedParameterNames": [],
-        "handleReferences": false,
-        "generateConstructorInterface": true,
-        "convertConstructorInterfaceData": false,
-        "importRequiredTypes": true,
-        "useGetBaseUrlMethod": false,
-        "baseUrlTokenName": "API_BASE_URL",
-        "queryNullValue": "",
-        "useAbortSignal": false,
-        "inlineNamedDictionaries": false,
-        "inlineNamedAny": false,
-        "templateDirectory": "./",
-        "typeNameGeneratorType": null,
-        "propertyNameGeneratorType": null,
-        "enumNameGeneratorType": null,
-        "serviceHost": null,
-        "serviceSchemes": null,
-        "output": "$(Output)",
-        "newLineBehavior": "Auto"
-      }
+  "runtime": "Default",
+  "defaultVariables": "Url=https://ethostraining.azurewebsites.net/swagger/v1/swagger.json,Output=../services/ethos.generated.service.ts",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "$(Url)",
+      "output": null,
+      "newLineBehavior": "Auto"
     }
   },
   "codeGenerators": {

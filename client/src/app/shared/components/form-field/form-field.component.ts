@@ -27,6 +27,7 @@ import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { DateTimeInputComponent } from './form-field-types/date-time-input/date-time-input.component';
 import { DefaultInputComponent } from './form-field-types/default-input/default-input.component';
+import { InfoInputComponent } from './form-field-types/info-input/info-input.component';
 import { PasswordInputComponent } from './form-field-types/password-input/password-input.component';
 import { TextareaInputComponent } from './form-field-types/textarea-input/textarea-input.component';
 import { FormField, formFieldInstance } from './models';
@@ -35,6 +36,7 @@ const typeComponentMap: { [key in FormFieldType]?: Type<FormField> } = {
   textarea: TextareaInputComponent,
   password: PasswordInputComponent,
   datetime: DateTimeInputComponent,
+  info: InfoInputComponent,
 };
 
 @Component({

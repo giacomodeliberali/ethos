@@ -12,6 +12,7 @@ import { SettingsService } from '@core/services/settings.service';
 import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
+import moment from 'moment';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
@@ -49,14 +50,24 @@ export class AdminPageComponent extends BaseDirective {
     private toastSvc: ToastService
   ) {
     super();
-    this.currentDate = new Date().toISOString();
+    this.currentDate = moment().toDate().toISOString();
   }
 
   loadSchedules(date: string) {
-    const startDate = new Date(date);
-    const endDate = new Date(date);
-    startDate.setHours(0, 0, 0);
-    endDate.setHours(23, 59, 59);
+    const startDate = moment(date);
+    const endDate = moment(date);
+    startDate.set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+    endDate.set({
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 0,
+    });
     this.loadingSvc
       .startLoading(
         this,

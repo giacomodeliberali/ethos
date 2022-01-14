@@ -35,25 +35,20 @@ namespace Ethos.Application.Handlers
 
         public async Task<IEnumerable<GeneratedScheduleDto>> Handle(GetSchedulesQueryCommand request, CancellationToken cancellationToken)
         {
-            var startDateStartOfDay = request.StartDate.Date.ToUniversalTime();
-            var endDateEndOfDay = request.EndDate.Date.AddDays(1).AddTicks(-1).ToUniversalTime();
-
             var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
 
             var result = new List<GeneratedScheduleDto>();
 
-            result.AddRange(await GetSingleSchedules(new Period(startDateStartOfDay, endDateEndOfDay), isAdmin));
-            result.AddRange(await GenerateRecurringSchedules(startDateStartOfDay, endDateEndOfDay, isAdmin));
+            var period = new Period(request.StartDate, request.EndDate);
+            result.AddRange(await GetSingleSchedules(period, isAdmin));
+            result.AddRange(await GenerateRecurringSchedules(period, isAdmin));
 
             return result.OrderBy(s => s.StartDate);
         }
 
-        private async Task<List<GeneratedScheduleDto>> GenerateRecurringSchedules(
-            DateTime startDateStartOfDay,
-            DateTime endDateEndOfDay,
-            bool isAdmin)
+        private async Task<List<GeneratedScheduleDto>> GenerateRecurringSchedules(Period period, bool isAdmin)
         {
-            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(new Period(startDateStartOfDay, endDateEndOfDay));
+            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(period);
 
             var result = new List<GeneratedScheduleDto>();
 
@@ -61,11 +56,11 @@ namespace Ethos.Application.Handlers
             {
                 var cronExpression = CronExpression.Parse(schedule.RecurringExpression);
 
-                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, startDateStartOfDay, endDateEndOfDay);
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, period);
 
                 var nextExecutions = cronExpression.GetOccurrences(
-                    fromUtc: schedule.StartDate >= startDateStartOfDay ? schedule.StartDate.ToUniversalTime() : startDateStartOfDay,
-                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= endDateEndOfDay ? schedule.EndDate.Value.ToUniversalTime() : endDateEndOfDay,
+                    fromUtc: schedule.StartDate >= period.StartDate ? schedule.StartDate.ToUniversalTime() : period.StartDate,
+                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= period.EndDate ? schedule.EndDate.Value.ToUniversalTime() : period.EndDate,
                     fromInclusive: true,
                     toInclusive: true);
 

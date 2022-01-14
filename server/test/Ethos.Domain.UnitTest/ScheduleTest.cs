@@ -1,6 +1,7 @@
 using System;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
+using Ethos.Domain.Exceptions;
 using Shouldly;
 using Xunit;
 
@@ -66,6 +67,30 @@ namespace Ethos.Domain.UnitTest
             sut.Description.ShouldBe("Recurring schedule with no end");
             sut.RecurringCronExpression.ShouldNotBeNull();
             sut.ParticipantsMaxNumber.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Should_Throw_WhenInvalidCron()
+        {
+            Should.Throw<BusinessException>(() =>
+            {
+                var user = new ApplicationUser()
+                {
+                    Id = GuidGenerator.Create(),
+                };
+
+                var startDate = DateTime.UtcNow;
+
+                var sut = RecurringSchedule.Factory.Create(
+                    GuidGenerator.Create(),
+                    user,
+                    name: "Schedule recurring",
+                    description: "Recurring schedule with no end",
+                    participantsMaxNumber: 0,
+                    new Period(startDate, startDate.AddMonths(1)),
+                    duration: 60,
+                    recurringExpression: "00 10 37 ? * SUN,MON"); // invalid cron
+            });
         }
 
         [Fact]

@@ -51,11 +51,9 @@ namespace Ethos.Web.Host
                 var errorMessage = new ExceptionDto()
                 {
                     Message = exception.Message,
-                    StackTrace = exception.StackTrace,
                     InnerException = exception.InnerException != null ? new ExceptionDto()
                     {
                         Message = exception.InnerException.Message,
-                        StackTrace = exception.InnerException.StackTrace,
                     }
                         : null,
                 };

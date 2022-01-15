@@ -3,12 +3,12 @@ using Ethos.EntityFrameworkCore;
 using Ethos.Shared;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Ethos.Web.Host
 {
@@ -32,9 +32,6 @@ namespace Ethos.Web.Host
         /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
-            // register Application Insights
-            services.AddApplicationInsightsTelemetry();
-
             // register strongly typed configuration
             services.Configure<JwtConfig>(_configuration.GetSection(nameof(JwtConfig)));
             services.Configure<EmailConfig>(_configuration.GetSection(nameof(EmailConfig)));
@@ -84,6 +81,8 @@ namespace Ethos.Web.Host
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseCors("AllowCorsPolicy");
 

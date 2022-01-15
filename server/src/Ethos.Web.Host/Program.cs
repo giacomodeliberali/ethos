@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Ethos.Web.Host
 {
@@ -33,6 +34,14 @@ namespace Ethos.Web.Host
                 {
                     config.AddEnvironmentVariables();
                 })
+                .UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.Seq(
+                        serverUrl: context.Configuration["Serilog:SeqUrl"],
+                        apiKey: context.Configuration["Serilog:SeqApiKey"]))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -37,11 +37,7 @@ namespace Ethos.Web.Host
                 .UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console()
-                    .WriteTo.Seq(
-                        serverUrl: context.Configuration["Serilog:SeqUrl"],
-                        apiKey: context.Configuration["Serilog:SeqApiKey"]))
+                    .Enrich.FromLogContext())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -139,7 +139,7 @@ namespace Ethos.Application.Identity
                 audience: _jwtConfig.ValidAudience,
                 claims: claims,
                 notBefore: new DateTime(2021, 10, 1),
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddMonths(1),
                 signingCredentials: signingCredentials);
 
             var handler = new JwtSecurityTokenHandler();

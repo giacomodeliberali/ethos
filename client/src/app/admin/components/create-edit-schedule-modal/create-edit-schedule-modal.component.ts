@@ -138,7 +138,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
         return;
       }
       this.toastSvc.addErrorToast({
-        message: 'Controlla di avere compilato corretamente i campi',
+        message: 'Controlla di avere compilato correttamente i campi',
       });
     } else if (event === 'cancel') {
       this.modalCtrl.dismiss();

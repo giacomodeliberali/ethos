@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.EntityFrameworkCore.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
@@ -18,10 +19,10 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, DateTime startDate, DateTime endDate)
+        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, Period period)
         {
             var exceptions = await ScheduleExceptions
-                .Where(e => e.ScheduleId == recurringScheduleId && e.StartDate >= startDate && e.EndDate <= endDate)
+                .Where(e => e.ScheduleId == recurringScheduleId && e.StartDate >= period.StartDate && e.EndDate <= period.EndDate)
                 .ToListAsync();
 
             return exceptions.Select(e => new ScheduleExtensionProjection()
@@ -33,10 +34,10 @@ namespace Ethos.EntityFrameworkCore.Query
             }).ToList();
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Period period)
         {
             var exceptions = await ScheduleExceptions
-                .Where(e => e.StartDate >= startDate && e.EndDate <= endDate)
+                .Where(e => e.StartDate >= period.StartDate && e.EndDate <= period.EndDate)
                 .ToListAsync();
 
             return exceptions.Select(e => new ScheduleExtensionProjection()

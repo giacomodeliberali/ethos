@@ -79,8 +79,18 @@ namespace Ethos.Domain.Entities
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
+                Guard.Against.NullOrEmpty(recurringExpression, nameof(recurringExpression));
                 Guard.Against.NegativeOrZero(duration, nameof(duration));
                 Guard.Against.Null(period, nameof(period));
+
+                try
+                {
+                    CronExpression.Parse(recurringExpression);
+                }
+                catch (Exception ex)
+                {
+                    throw new BusinessException($"Invalid CRON expression '{recurringExpression}'. {ex.Message}", ex);
+                }
 
                 return new RecurringSchedule()
                 {

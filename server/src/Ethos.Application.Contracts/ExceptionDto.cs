@@ -13,11 +13,6 @@ namespace Ethos.Application.Contracts
         public string Message { get; set; }
 
         /// <summary>
-        /// Visible only during development.
-        /// </summary>
-        public string StackTrace { get; set; }
-
-        /// <summary>
         /// Optional inner exception.
         /// </summary>
         public ExceptionDto InnerException { get; set; }

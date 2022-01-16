@@ -155,6 +155,6 @@ export class CreateEditScheduleModalComponent implements OnInit {
     const timeString = new Date(time);
     const hour = timeString.getHours();
     const minute = timeString.getMinutes();
-    return `0 ${minute} ${hour} ? * ${daysString} *`;
+    return `${minute} ${hour} ? * ${daysString}`;
   }
 }

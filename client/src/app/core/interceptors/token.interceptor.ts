@@ -1,18 +1,20 @@
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from '@core/services/user.service';
-import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 // Intercetta tutte le chiamate http e ci aggiunge il jwt e il token per il websocket
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(public userSvc: UserService) {}
+  constructor(private userSvc: UserService, private router: Router) {}
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -26,7 +28,26 @@ export class TokenInterceptor implements HttpInterceptor {
             },
           });
         }
-        return next.handle(request);
+        return next.handle(request).pipe(
+          catchError((error: HttpErrorResponse) => {
+            console.log(
+              error,
+              window.location.pathname.split('/')[1],
+              this.userSvc.getUser().roles
+            );
+            if (
+              this.userSvc
+                .getUser()
+                .roles.includes(window.location.pathname.split('/')[1]) &&
+              error.status === 401
+            ) {
+              this.userSvc.removeOldAuthentication();
+              this.router.navigate(['auth', 'login']);
+              return of(null);
+            }
+            return of(error);
+          })
+        );
       })
     );
   }

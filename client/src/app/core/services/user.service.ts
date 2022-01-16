@@ -16,6 +16,11 @@ export class UserService {
     this.setToken(token);
   }
 
+  removeOldAuthentication() {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+  }
+
   setToken(token: string) {
     localStorage.setItem(this.tokenKey, token);
   }

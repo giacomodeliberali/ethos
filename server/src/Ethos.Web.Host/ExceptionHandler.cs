@@ -40,7 +40,15 @@ namespace Ethos.Web.Host
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Empty);
+                if (ex is BusinessException)
+                {
+                    _logger.LogWarning(ex, ex.Message);
+                }
+                else
+                {
+                    _logger.LogError(ex, ex.Message);
+                }
+
                 await HandleExceptionAsync(context, ex);
             }
         }

@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts;
-using Ethos.Domain;
 using Ethos.Domain.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Ethos.Web.Host
@@ -16,6 +16,13 @@ namespace Ethos.Web.Host
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandler> _logger;
+
+        private readonly Dictionary<Type, HttpStatusCode> _httpStatusCodes = new ()
+        {
+            { typeof(BusinessException), HttpStatusCode.BadRequest },
+            { typeof(ValidationException), HttpStatusCode.BadRequest },
+            { typeof(AuthenticationException), HttpStatusCode.Unauthorized },
+        };
 
         public ExceptionHandler(
             RequestDelegate next,
@@ -31,54 +38,37 @@ namespace Ethos.Web.Host
             {
                 await _next(context);
             }
-            catch (BusinessException businessException)
-            {
-                await HandleExceptionAsync(context, env, businessException);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "CaughtException");
-                await HandleExceptionAsync(context, env, ex);
+                _logger.LogError(ex, string.Empty);
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, IWebHostEnvironment env, Exception exception)
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            string result;
-
-            if (env.IsDevelopment())
+            var errorMessage = new ExceptionDto()
             {
-                var errorMessage = new ExceptionDto()
-                {
-                    Message = exception.Message,
-                    InnerException = exception.InnerException != null ? new ExceptionDto()
-                    {
-                        Message = exception.InnerException.Message,
-                    }
-                        : null,
-                };
+                Message = exception.Message,
+            };
 
-                result = JsonSerializer.Serialize(errorMessage, new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                });
+            var result = JsonSerializer.Serialize(errorMessage, new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
+
+            context.Response.ContentType = "application/json";
+
+            if (_httpStatusCodes.TryGetValue(exception.GetType(), out var responseStatus))
+            {
+                context.Response.StatusCode = (int)responseStatus;
             }
             else
             {
-                var errorMessage = new ExceptionDto
-                {
-                    Message = exception.Message,
-                };
-
-                result = JsonSerializer.Serialize(errorMessage, new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                });
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
 
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(result);
         }
     }
 }

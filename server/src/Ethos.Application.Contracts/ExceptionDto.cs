@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ethos.Application.Contracts
@@ -11,10 +10,5 @@ namespace Ethos.Application.Contracts
     {
         [Required]
         public string Message { get; set; }
-
-        /// <summary>
-        /// Optional inner exception.
-        /// </summary>
-        public ExceptionDto InnerException { get; set; }
     }
 }

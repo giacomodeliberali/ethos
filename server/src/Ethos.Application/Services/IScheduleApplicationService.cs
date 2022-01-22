@@ -15,7 +15,7 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Update an existing schedule.
         /// </summary>
-        Task UpdateAsync(UpdateScheduleRequestDto input);
+        Task UpdateAsync(UpdateSingleScheduleRequestDto input);
 
         /// <summary>
         /// Delete an existing schedule.

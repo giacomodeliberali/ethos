@@ -41,25 +41,17 @@ namespace Ethos.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task UpdateAsync(UpdateScheduleRequestDto input)
+        public async Task UpdateAsync(UpdateSingleScheduleRequestDto input)
         {
-            await Mediator.Send(new UpdateScheduleCommand()
+            await Mediator.Send(new UpdateSingleScheduleCommand()
             {
                 Id = input.Id,
-                InstanceStartDate = input.InstanceStartDate,
-                InstanceEndDate = input.InstanceEndDate,
-                RecurringScheduleOperationType = input.RecurringScheduleOperationType,
-                UpdatedSchedule = new UpdateScheduleCommand.Schedule()
-                {
-                    Name = input.Schedule.Name,
-                    Description = input.Schedule.Description,
-                    StartDate = input.Schedule.StartDate,
-                    EndDate = input.Schedule.EndDate,
-                    OrganizerId = input.Schedule.OrganizerId,
-                    DurationInMinutes = input.Schedule.DurationInMinutes,
-                    ParticipantsMaxNumber = input.Schedule.ParticipantsMaxNumber,
-                    RecurringCronExpression = input.Schedule.RecurringCronExpression,
-                },
+                Name = input.Name,
+                Description = input.Description,
+                StartDate = input.StartDate,
+                DurationInMinutes = input.DurationInMinutes,
+                OrganizerId = input.OrganizerId,
+                ParticipantsMaxNumber = input.ParticipantsMaxNumber,
             });
         }
 

@@ -47,7 +47,7 @@ namespace Ethos.Web.Controllers
         /// Update an existing schedule.
         /// </summary>
         [HttpPut]
-        public async Task UpdateScheduleAsync([Required] UpdateScheduleRequestDto input)
+        public async Task UpdateScheduleAsync([Required] UpdateSingleScheduleRequestDto input)
         {
             await _scheduleApplicationService.UpdateAsync(input);
         }

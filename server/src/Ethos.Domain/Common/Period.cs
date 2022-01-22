@@ -29,6 +29,11 @@ namespace Ethos.Domain.Common
             EndDate = endDate;
         }
 
+        public Period(DateTime startDate, int durationInMinutes)
+            : this(startDate, startDate.AddMinutes(durationInMinutes))
+        {
+        }
+
         public bool Overlaps(Period period)
         {
             return StartDate < period.EndDate && period.StartDate < EndDate;

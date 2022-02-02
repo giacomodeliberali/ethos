@@ -33,8 +33,9 @@ ion-card {
   }
   .action-buttons-container {
     position: absolute;
-    right: -0.25rem;
-    top: -0.5rem;
+    z-index: 100;
+    left: -0.5rem;
+    bottom: -0.25rem;
     .delete-button {
       @include ion-button-style('danger', 'fill');
     }

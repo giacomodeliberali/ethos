@@ -49,6 +49,7 @@ export class ScheduleCardComponent {
 
   editClicked(ev: Event) {
     ev.stopImmediatePropagation();
+    console.log(this.schedule);
     this.editClick.emit(this.schedule);
   }
 }

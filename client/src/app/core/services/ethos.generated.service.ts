@@ -287,7 +287,7 @@ export class SchedulesService extends NswagBaseClass {
      * Update an existing schedule.
      * @return Success
      */
-    updateSchedule(body: UpdateScheduleRequestDto): Observable<void> {
+    updateSchedule(body: UpdateSingleScheduleRequestDto): Observable<void> {
         let url_ = this.baseUrl + "/api/schedules";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -371,11 +371,10 @@ export interface CreateScheduleRequestDto {
     name: string;
     description: string;
     startDate: string;
-    endDate: string;
-    /** If not recurring this must be EndDate - StartDate.
-If recurring it represent the duration of the schedule. */
-    durationInMinutes?: number;
-    /** A CRON expression to indicate this schedule is recurring. */
+    durationInMinutes: number;
+    /** Populated only if recurring. */
+    endDate?: string | null;
+    /** Populated only if recurring. A CRON expression to indicate this schedule is recurring. */
     recurringCronExpression?: string | null;
     /** Defaults to zero if no limit is required. */
     participantsMaxNumber: number;
@@ -394,10 +393,6 @@ export interface DeleteScheduleRequestDto {
 /** Every exception will be serialized to the client wrapped in this class. */
 export interface ExceptionDto {
     message: string;
-    /** Visible only during development. */
-    stackTrace?: string | null;
-    /** Optional inner exception. */
-    innerException?: ExceptionDto | null;
 }
 
 export interface GeneratedScheduleDto {
@@ -465,26 +460,12 @@ export interface ResetPasswordRequestDto {
     resetToken: string;
 }
 
-export interface UpdateScheduleRequestDto {
+export interface UpdateSingleScheduleRequestDto {
     id: string;
-    /** The start date of the selected schedule instance to update. */
-    instanceStartDate: string;
-    /** The end date of the selected schedule instance to update. */
-    instanceEndDate: string;
-    schedule: UpdateScheduleRequestDto_ScheduleDto;
-    /** Required only if the schedule is recurring. */
-    recurringScheduleOperationType?: RecurringScheduleOperationType | null;
-}
-
-export interface UpdateScheduleRequestDto_ScheduleDto {
     name: string;
     description: string;
     startDate: string;
-    endDate: string;
-    /** If not recurring this must be EndDate - StartDate.
-If recurring it represent the duration of the schedule. */
     durationInMinutes: number;
-    recurringCronExpression?: string | null;
     participantsMaxNumber: number;
     organizerId: string;
 }

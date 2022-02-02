@@ -9,6 +9,7 @@ import {
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CreateScheduleRequestDto,
+  GeneratedScheduleDto,
   UserDto,
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
@@ -36,6 +37,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
   currentDate: string;
   @Input()
   trainers: UserDto[];
+  @Input()
+  schedule: GeneratedScheduleDto;
   @ViewChild('generalContainer', { read: ElementRef })
   generalContainer: ElementRef;
   _showTrainersSearch = false;
@@ -150,6 +153,13 @@ export class CreateEditScheduleModalComponent implements OnInit {
     this.isRecurrent = !this.isRecurrent;
   }
 
+  /**
+   * Create a CRON expression from given days and a time
+   *
+   * @param days the week days to use
+   * @param time the time to use
+   * @returns The CRON expression
+   */
   private createCronExpression(days: string[], time: Date) {
     const daysString = days.map((x) => x.toUpperCase()).join(',');
     const timeString = new Date(time);

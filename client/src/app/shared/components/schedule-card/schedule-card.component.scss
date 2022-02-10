@@ -33,14 +33,39 @@ ion-card {
   }
   .action-buttons-container {
     position: absolute;
+    display: flex;
     z-index: 100;
-    left: -0.5rem;
-    bottom: -0.25rem;
-    .delete-button {
-      @include ion-button-style('danger', 'fill');
-    }
-    .edit-button {
-      @include ion-button-style('primary', 'fill');
+    width: 100%;
+    top: 0;
+    left: 0;
+    div {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      margin: 0;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      font-size: 1.25rem;
+      justify-content: center;
+      align-items: center;
+      &.edit-button {
+        border-radius: 8px 0 0 0;
+        color: var(--ion-color-primary-contrast);
+        @include default-gradient(
+          'background',
+          var(--ion-color-primary-tint),
+          var(--ion-color-primary-shade)
+        );
+      }
+      &.delete-button {
+        border-radius: 0 8px 0 0;
+        color: var(--ion-color-danger-contrast);
+        @include default-gradient(
+          'background',
+          var(--ion-color-danger-tint),
+          var(--ion-color-danger-shade)
+        );
+      }
     }
   }
   h4 {

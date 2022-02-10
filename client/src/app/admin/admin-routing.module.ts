@@ -6,7 +6,11 @@ const routes: Routes = [
   {
     path: '',
     component: AdminPageComponent,
+  },  {
+    path: 'user-settings',
+    loadChildren: () => import('./pages/user-settings/user-settings.module').then( m => m.UserSettingsPageModule)
   },
+
 ];
 
 @NgModule({

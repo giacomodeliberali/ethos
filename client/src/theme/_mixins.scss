@@ -63,7 +63,7 @@ $breakpoints: (
     @include default-gradient(
       '--background',
       var(--ion-color-#{$color}-tint),
-      var(--ion-color-#{$color})
+      var(--ion-color-#{$color}-shade)
     );
   } @else if $type == 'shade' {
     --background: white;

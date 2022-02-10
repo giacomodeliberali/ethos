@@ -1,4 +1,4 @@
-<ion-card>
+<ion-card (click)="showActionButtons = !showActionButtons">
   <div
     class="time-and-people"
     *ngIf="(freeSpots > 0 && isValidDate) || mode === 'admin'"
@@ -7,6 +7,17 @@
     <div class="time-value">{{ time }}</div>
     <ion-icon class="partecipants-icon" name="person-circle-outline"></ion-icon>
     <div class="partecipants-value">x{{ schedule.participantsMaxNumber }}</div>
+  </div>
+  <div
+    class="action-buttons-container"
+    *ngIf="showActionButtons && mode === 'admin'"
+  >
+    <div class="edit-button" mode="md" (click)="editClicked($event)">
+      <ion-icon name="pencil-outline"></ion-icon><span>Modifica</span>
+    </div>
+    <div class="delete-button" (click)="deleteClicked($event)">
+      <ion-icon name="trash-outline"></ion-icon><span>Elimina</span>
+    </div>
   </div>
   <h4>{{ schedule.name }}</h4>
   <div>{{ schedule.description }}</div>

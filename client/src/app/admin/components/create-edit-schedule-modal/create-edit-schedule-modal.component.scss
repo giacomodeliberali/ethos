@@ -1,31 +1,41 @@
 @import 'mixins';
 :host {
-  padding: 2rem 0 2rem 0;
   .form-container {
+    padding-bottom: 2rem;
     .section {
       padding: 0 3rem 0 3rem;
       margin-bottom: 2rem;
-      &.title-section {
-        display: flex;
-        h2 {
-          flex: 1;
-          margin: 0;
-        }
-        .recurrent-container {
-          display: flex;
-          align-items: center;
-          margin-top: -0.2rem;
-          ion-toggle {
-            padding-right: 0;
-          }
-        }
-      }
       .row {
         display: flex;
         gap: 2rem;
         & > * {
           flex: 1;
           width: 0;
+        }
+      }
+    }
+    .title-section {
+      padding-top: 2rem;
+      margin-bottom: 2rem;
+      @include default-gradient(
+        'background',
+        var(--ion-color-primary),
+        var(--ion-color-primary-tint)
+      );
+      h2 {
+        margin-top: 0;
+        padding-top: 2rem;
+        padding-left: 3rem;
+        padding: 0 0 1rem 2rem;
+        color: var(--ion-color-primary-contrast);
+      }
+      ion-segment {
+        ion-segment-button {
+          --indicator-transform: translateY(calc(2px - 3rem));
+          text-transform: none;
+          font-weight: bold;
+          --color: var(--ion-color-medium);
+          --color-checked: var(--ion-color-tertiary);
         }
       }
     }

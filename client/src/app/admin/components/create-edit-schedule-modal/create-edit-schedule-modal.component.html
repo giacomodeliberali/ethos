@@ -17,8 +17,21 @@
     (closeModalEvent)="closeModal($event)"
     *ngIf="!showTrainersSearch"
   >
-    <div class="section title-section">
-      <h2>Crea un corso</h2>
+    <div class="title-section">
+      <h2>{{ schedule ? 'Modifica' : 'Crea' }} un corso</h2>
+      <ion-segment
+        (ionChange)="toggleClicked($event)"
+        mode="md"
+        [value]="isRecurrent"
+        *ngIf="!schedule"
+      >
+        <ion-segment-button [value]="false">
+          <ion-label>Singolo</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="true">
+          <ion-label>Ricorrente</ion-label>
+        </ion-segment-button>
+      </ion-segment>
     </div>
     <div class="section">
       <app-form-field
@@ -76,17 +89,6 @@
           }"
           icon="time-outline"
         ></app-form-field>
-        <div class="recurrent-container">
-          <ion-button
-            mode="md"
-            [ngClass]="{ 'recurrent-button': true, selected: isRecurrent }"
-            (click)="toggleClicked($event)"
-            >Ricorrente
-          </ion-button>
-          <div class="check-container" *ngIf="isRecurrent">
-            <ion-icon name="checkmark-outline"></ion-icon>
-          </div>
-        </div>
       </div>
       <div class="row">
         <app-form-field

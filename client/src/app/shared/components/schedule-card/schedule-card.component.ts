@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { GeneratedScheduleDto } from '@core/services/ethos.generated.service';
 import moment from 'moment';
 
@@ -12,6 +12,12 @@ export class ScheduleCardComponent {
   schedule: GeneratedScheduleDto;
   @Input()
   mode: 'user' | 'admin' = 'user';
+  @Output()
+  deleteClick = new EventEmitter<GeneratedScheduleDto>();
+  @Output()
+  editClick = new EventEmitter<GeneratedScheduleDto>();
+
+  showActionButtons = false;
 
   get time() {
     if (this.schedule) {
@@ -29,4 +35,15 @@ export class ScheduleCardComponent {
   }
 
   constructor() {}
+
+  deleteClicked(ev: Event) {
+    ev.stopImmediatePropagation();
+    this.deleteClick.emit(this.schedule);
+  }
+
+  editClicked(ev: Event) {
+    ev.stopImmediatePropagation();
+    console.log(this.schedule);
+    this.editClick.emit(this.schedule);
+  }
 }

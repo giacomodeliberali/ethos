@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserDto } from '@core/services/ethos.generated.service';
+import { UserService } from '@core/services/user.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -6,10 +9,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-settings.page.scss'],
 })
 export class UserSettingsPage implements OnInit {
-
-  constructor() { }
+  currentUser: UserDto;
+  constructor(private router: Router, private userSvc: UserService) {}
 
   ngOnInit() {
+    this.currentUser = this.userSvc.getUser();
   }
 
+  goToSchedulePage() {
+    this.router.navigate(['admin']);
+  }
 }

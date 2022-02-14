@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import {
   CreateScheduleRequestDto,
@@ -49,7 +50,8 @@ export class AdminPageComponent extends BaseDirective {
     private settingsSvc: SettingsService,
     private identitySvc: IdentityService,
     private modalCtrl: ModalController,
-    private toastSvc: ToastService
+    private toastSvc: ToastService,
+    private router: Router
   ) {
     super();
     this.currentDate = moment().toDate().toISOString();
@@ -187,6 +189,10 @@ export class AdminPageComponent extends BaseDirective {
   addButtonClicked(e: MouseEvent) {
     e?.stopImmediatePropagation();
     this.enterEditMode();
+  }
+
+  goToUserSettings() {
+    this.router.navigate(['admin', 'user-settings']);
   }
 
   private enterEditMode(schedule?: GeneratedScheduleDto) {

@@ -1,0 +1,19 @@
+.image-and-info-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  .user-image {
+    position: absolute;
+    border-radius: 0.5rem;
+    border: 2px solid var(--ion-color-tertiary);
+    z-index: 10;
+    width: 80px;
+  }
+  .info {
+    padding: 3rem 2rem 2rem 1rem;
+    margin-top: 3.5rem;
+    h3 {
+      margin: auto;
+    }
+  }
+}

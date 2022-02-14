@@ -14,6 +14,7 @@ import { LogoutModalComponent } from './components/logout-modal/logout-modal.com
 import { ModalDefaultContentComponent } from './components/modal-default-content/modal-default-content.component';
 import { ScheduleCardComponent } from './components/schedule-card/schedule-card.component';
 import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-changes.component';
+import { UserCardComponent } from './components/user-card/user-card.component';
 import { UserSelectorComponent } from './components/user-selector/user-selector.component';
 import { WeekDaySelectorComponent } from './components/week-day-selector/week-day-selector.component';
 
@@ -33,6 +34,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
     TextareaInputComponent,
     DateTimeInputComponent,
     InfoInputComponent,
+    UserCardComponent,
   ],
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [
@@ -44,6 +46,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
     ScheduleCardComponent,
     WeekDaySelectorComponent,
     UserSelectorComponent,
+    UserCardComponent,
   ],
 })
 export class SharedModule {}

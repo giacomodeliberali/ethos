@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="content-container">
-      <ion-card>TEST!!!!</ion-card>
+      <app-user-card [user]="currentUser"></app-user-card>
     </div>
   </div>
 </ion-content>
@@ -15,11 +15,8 @@
     <ion-icon name="menu-outline"></ion-icon>
   </ion-fab-button>
   <ion-fab-list side="end">
-    <ion-fab-button color="light" (click)="addButtonClicked($event)">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
     <ion-fab-button color="light">
-      <ion-icon name="person-outline"></ion-icon>
+      <ion-icon name="today-outline" (click)="goToSchedulePage()"></ion-icon>
     </ion-fab-button>
   </ion-fab-list>
 </ion-fab>

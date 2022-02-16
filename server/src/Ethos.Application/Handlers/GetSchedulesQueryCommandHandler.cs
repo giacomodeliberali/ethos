@@ -98,7 +98,7 @@ namespace Ethos.Application.Handlers
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            User = isAdmin
+                            User = isAdmin || b.UserId == _currentUser.GetCurrentUserId()
                                 ? new GeneratedScheduleDto.UserDto()
                                 {
                                     Id = b.UserId,
@@ -146,7 +146,7 @@ namespace Ethos.Application.Handlers
                     Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                     {
                         Id = b.Id,
-                        User = isAdmin
+                        User = isAdmin || b.UserId == _currentUser.GetCurrentUserId()
                             ? new GeneratedScheduleDto.UserDto()
                             {
                                 Id = b.UserId,

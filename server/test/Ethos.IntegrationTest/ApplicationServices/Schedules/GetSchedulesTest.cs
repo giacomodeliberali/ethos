@@ -52,11 +52,13 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     StartDate = DateTime.Parse("2021-10-01T07:00:00Z").ToUniversalTime(),
                     EndDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
                 });
+            }
 
+            using (await Scope.WithNewUser("userDemo2", fullName: "User Demo 2"))
+            {
                 var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();
                 var booking = generatedSchedule.Bookings.Single();
-
-                booking.User.ShouldBeNull(); // should not include user data
+                booking.User.ShouldBeNull(); // should not include user data of userDemo
             }
         }
 

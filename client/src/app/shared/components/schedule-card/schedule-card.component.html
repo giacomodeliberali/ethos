@@ -9,14 +9,48 @@
     <div class="partecipants-value">x{{ schedule.participantsMaxNumber }}</div>
   </div>
   <div
-    class="action-buttons-container"
-    *ngIf="showActionButtons && mode === 'admin'"
+    class="is-booked top-label"
+    *ngIf="isValidDate && mode === 'user' && isBooked"
   >
-    <div class="edit-button" mode="md" (click)="editClicked($event)">
+    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    <div>Prenotato</div>
+  </div>
+  <div class="booked-places top-label" *ngIf="isValidDate && !isBooked">
+    <div>{{ schedule.bookings.length }} iscritti</div>
+  </div>
+  <div
+    class="action-buttons-container"
+    *ngIf="showActionButtons && isValidDate"
+  >
+    <div
+      class="edit-button"
+      mode="md"
+      (click)="editClicked($event)"
+      *ngIf="mode === 'admin'"
+    >
       <ion-icon name="pencil-outline"></ion-icon><span>Modifica</span>
     </div>
-    <div class="delete-button" (click)="deleteClicked($event)">
+    <div
+      class="delete-button"
+      (click)="deleteClicked($event)"
+      *ngIf="mode === 'admin'"
+    >
       <ion-icon name="trash-outline"></ion-icon><span>Elimina</span>
+    </div>
+    <div
+      class="book-button"
+      (click)="bookClicked($event)"
+      *ngIf="mode === 'user' && !isBooked"
+    >
+      <ion-icon name="clipboard-outline"></ion-icon><span>Prenota</span>
+    </div>
+    <div
+      class="unbook-button"
+      (click)="unbookClicked($event)"
+      *ngIf="mode === 'user' && isBooked"
+    >
+      <ion-icon name="close-outline"></ion-icon
+      ><span>Rimuovi prenotazione</span>
     </div>
   </div>
   <h4>{{ schedule.name }}</h4>

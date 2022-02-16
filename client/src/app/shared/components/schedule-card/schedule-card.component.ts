@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { GeneratedScheduleDto } from '@core/services/ethos.generated.service';
+import {
+  GeneratedScheduleDto,
+  UserDto,
+} from '@core/services/ethos.generated.service';
 import moment from 'moment';
 
 @Component({
@@ -11,11 +14,17 @@ export class ScheduleCardComponent {
   @Input()
   schedule: GeneratedScheduleDto;
   @Input()
+  currentUser: UserDto;
+  @Input()
   mode: 'user' | 'admin' = 'user';
   @Output()
   deleteClick = new EventEmitter<GeneratedScheduleDto>();
   @Output()
   editClick = new EventEmitter<GeneratedScheduleDto>();
+  @Output()
+  bookClick = new EventEmitter<GeneratedScheduleDto>();
+  @Output()
+  unbookClick = new EventEmitter<GeneratedScheduleDto>();
 
   showActionButtons = false;
 
@@ -34,6 +43,13 @@ export class ScheduleCardComponent {
     return new Date(this.schedule.startDate) > new Date();
   }
 
+  get isBooked() {
+    console.log(this.schedule);
+    return this.schedule.bookings
+      .map((x) => x.user?.id)
+      .includes(this.currentUser.id);
+  }
+
   constructor() {}
 
   deleteClicked(ev: Event) {
@@ -43,7 +59,16 @@ export class ScheduleCardComponent {
 
   editClicked(ev: Event) {
     ev.stopImmediatePropagation();
-    console.log(this.schedule);
     this.editClick.emit(this.schedule);
+  }
+
+  bookClicked(ev: Event) {
+    ev.stopImmediatePropagation();
+    this.bookClick.emit(this.schedule);
+  }
+
+  unbookClicked(ev: Event) {
+    ev.stopImmediatePropagation();
+    this.unbookClick.emit(this.schedule);
   }
 }

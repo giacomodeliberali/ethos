@@ -31,6 +31,27 @@ ion-card {
       margin-top: 1px;
     }
   }
+  .top-label {
+    right: -0.25rem;
+    top: 0.25rem;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    ion-icon {
+      margin-right: 0.25rem;
+      margin-top: -2px;
+    }
+    &.booked-places {
+      background-color: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+    }
+    &.is-booked {
+      background-color: var(--ion-color-success);
+      color: var(--ion-color-success-contrast);
+    }
+  }
   .action-buttons-container {
     position: absolute;
     display: flex;
@@ -59,6 +80,24 @@ ion-card {
       }
       &.delete-button {
         border-radius: 0 8px 0 0;
+        color: var(--ion-color-danger-contrast);
+        @include default-gradient(
+          'background',
+          var(--ion-color-danger-tint),
+          var(--ion-color-danger-shade)
+        );
+      }
+      &.book-button {
+        border-radius: 8px 8px 0 0;
+        color: var(--ion-color-primary-contrast);
+        @include default-gradient(
+          'background',
+          var(--ion-color-primary-tint),
+          var(--ion-color-primary-shade)
+        );
+      }
+      &.unbook-button {
+        border-radius: 8px 8px 0 0;
         color: var(--ion-color-danger-contrast);
         @include default-gradient(
           'background',

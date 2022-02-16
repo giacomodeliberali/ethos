@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import { BaseDirective } from '@core/directives';
 import {
+  BookingsService,
   GeneratedScheduleDto,
   SchedulesService,
+  UserDto,
 } from '@core/services/ethos.generated.service';
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
+import { UserService } from '@core/services/user.service';
 import { LoadingService } from '@shared/services/loading.service';
+import { ToastService } from '@shared/services/toast.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -16,6 +20,7 @@ import { map } from 'rxjs/operators';
 })
 export class UserPageComponent extends BaseDirective {
   currentDate: string = new Date().toISOString();
+  user: UserDto;
 
   get dateLimits() {
     const lowerLimit = new Date();
@@ -47,13 +52,14 @@ export class UserPageComponent extends BaseDirective {
     public mediaSvc: MediaService,
     private schedulesSvc: SchedulesService,
     private loadingSvc: LoadingService,
-    private settingsSvc: SettingsService
+    private settingsSvc: SettingsService,
+    private bookingsSvc: BookingsService,
+    private toastSvc: ToastService,
+    private userSvc: UserService
   ) {
     super();
-    // let nextWeek = new Date();
-    // nextWeek.setDate(new Date().getDate() + 7);
-    // this.schedulesSvc.getAllSchedulesInRange(new Date().toISOString(), nextWeek.toISOString()).subscribe(result => console.log(result));
     this.dateChanged(this.currentDate);
+    this.user = this.userSvc.getUser();
   }
   dateChanged(date: string) {
     const startDate = new Date(date);
@@ -103,5 +109,51 @@ export class UserPageComponent extends BaseDirective {
         })
       )
       .subscribe((schedules) => (this.schedules = schedules));
+  }
+
+  bookCourse(schedule: GeneratedScheduleDto) {
+    this.loadingSvc
+      .startLoading(
+        this,
+        'BOOK_COURSE',
+        this.bookingsSvc.createBooking(schedule)
+      )
+      .subscribe({
+        next: (course) => {
+          this.toastSvc.addSuccessToast({
+            header: 'Corso prenotato!',
+            message: 'Hai prenotato il corso correttamente.',
+          });
+          this.dateChanged(this.currentDate);
+        },
+        error: () => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la prenotazione.',
+          });
+        },
+      });
+  }
+
+  unbookCourse(schedule: GeneratedScheduleDto) {
+    this.loadingSvc
+      .startLoading(
+        this,
+        'BOOK_COURSE',
+        this.bookingsSvc.deleteBooking(schedule.scheduleId)
+      )
+      .subscribe({
+        next: (course) => {
+          this.toastSvc.addSuccessToast({
+            header: 'Prenotazione rimossa!',
+            message: 'Hai rimosso la prenotazione.',
+          });
+          this.dateChanged(this.currentDate);
+        },
+        error: () => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la rimozione della prenotazione.',
+          });
+        },
+      });
   }
 }

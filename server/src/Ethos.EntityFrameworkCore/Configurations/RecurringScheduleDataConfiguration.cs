@@ -23,7 +23,7 @@ namespace Ethos.EntityFrameworkCore.Configurations
                 .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
                 .IsRequired();
 
-            builder.Property(s => s.RecurringExpression).HasMaxLength(32).IsRequired();
+            builder.Property(s => s.RecurringExpression).HasMaxLength(256).IsRequired();
         }
     }
 }

@@ -19,6 +19,9 @@ namespace Ethos.Application.Contracts.Schedule
         public DateTime EndDate { get; set; }
 
         [Required]
+        public double DurationInMinutes => EndDate.Subtract(StartDate).TotalMinutes;
+
+        [Required]
         public string Name { get; set; }
 
         [Required]

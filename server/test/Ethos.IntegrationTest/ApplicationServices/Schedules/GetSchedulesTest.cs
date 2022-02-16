@@ -127,6 +127,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
             generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
+            generatedSchedules.Single().DurationInMinutes.ShouldBe(120);
 
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
@@ -135,7 +136,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
             generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
-
+            generatedSchedules.Single().DurationInMinutes.ShouldBe(120);
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
                 DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime(),
@@ -145,6 +146,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             generatedSchedules.First().EndDate.ShouldBe(DateTime.Parse("2021-10-15T11:00:00Z").ToUniversalTime());
             generatedSchedules.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-29T09:00:00Z").ToUniversalTime());
             generatedSchedules.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-29T11:00:00Z").ToUniversalTime());
+            generatedSchedules.Last().DurationInMinutes.ShouldBe(120);
         }
     }
 }

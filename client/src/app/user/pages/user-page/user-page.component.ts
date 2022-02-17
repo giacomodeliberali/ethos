@@ -40,9 +40,9 @@ export class UserPageComponent extends BaseDirective {
   }
 
   get dateLimits() {
-    const nextDate = moment(this.currentDate).add(5, 'days');
+    const nextDate = moment(new Date()).add(5, 'days');
     return {
-      lowerLimit: this.currentDate,
+      lowerLimit: new Date().toISOString(),
       upperLimit: nextDate.toISOString(),
     };
   }

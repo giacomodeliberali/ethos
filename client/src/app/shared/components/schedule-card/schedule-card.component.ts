@@ -44,9 +44,12 @@ export class ScheduleCardComponent {
   }
 
   get isBooked() {
-    return this.schedule.bookings
-      .map((x) => x.user?.id)
-      .includes(this.currentUser.id);
+    return (
+      this.mode === 'user' &&
+      this.schedule.bookings
+        .map((x) => x.user?.id)
+        .includes(this.currentUser?.id)
+    );
   }
 
   constructor() {}

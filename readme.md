@@ -1,6 +1,6 @@
 # Ethos Training
 
-This application for [Ethos Training](https://ethostraining.it) ([Instagram](https://www.instagram.com/ethos.training)) allow trainers to create schedules (single or recurring) that will be later booked by customers. 
+This application for [Ethos Training](https://ethostraining.it) ([Instagram](https://www.instagram.com/ethostrainingmirano/)) allow trainers to create schedules (single or recurring) that will be later booked by customers. 
 
 ## Use cases for v1
 

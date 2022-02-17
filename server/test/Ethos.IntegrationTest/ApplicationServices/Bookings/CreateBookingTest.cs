@@ -303,7 +303,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
 
             generatedSchedules.Count().ShouldBe(1);
             generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
-            generatedSchedules.Single().Bookings.Single().User.ShouldBeNull();
+            generatedSchedules.Single().Bookings.Single().User.UserName.ShouldBe("userDemo");
         }
     }
 }

@@ -122,7 +122,8 @@ export class LoadingService {
         this.loadingHost.createComponent<LoadingToastComponent>(
           componentFactory
         );
-      loading.toast.instance.message = loading.options.message;
+      loading.toast.instance.message =
+        loading.options?.message ?? 'Caricamento';
     }
   }
 

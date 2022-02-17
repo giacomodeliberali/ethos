@@ -24,7 +24,7 @@ export class ScheduleCardComponent {
   @Output()
   bookClick = new EventEmitter<GeneratedScheduleDto>();
   @Output()
-  unbookClick = new EventEmitter<GeneratedScheduleDto>();
+  unbookClick = new EventEmitter<string>();
 
   showActionButtons = false;
 
@@ -44,7 +44,6 @@ export class ScheduleCardComponent {
   }
 
   get isBooked() {
-    console.log(this.schedule);
     return this.schedule.bookings
       .map((x) => x.user?.id)
       .includes(this.currentUser.id);
@@ -69,6 +68,8 @@ export class ScheduleCardComponent {
 
   unbookClicked(ev: Event) {
     ev.stopImmediatePropagation();
-    this.unbookClick.emit(this.schedule);
+    this.unbookClick.emit(
+      this.schedule.bookings.find((x) => x.user.id === this.currentUser.id).id
+    );
   }
 }

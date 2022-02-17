@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import {
   BookingsService,
@@ -11,7 +12,9 @@ import { SettingsService } from '@core/services/settings.service';
 import { UserService } from '@core/services/user.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
-import { map } from 'rxjs/operators';
+import moment from 'moment';
+import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-page',
@@ -19,28 +22,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./user-page.component.scss'],
 })
 export class UserPageComponent extends BaseDirective {
-  currentDate: string = new Date().toISOString();
   user: UserDto;
-
-  get dateLimits() {
-    const lowerLimit = new Date();
-    const upperLimit = new Date();
-    upperLimit.setDate(lowerLimit.getDate() + 5);
-    return {
-      lowerLimit:
-        lowerLimit.getFullYear() +
-        '-' +
-        (lowerLimit.getMonth() + 1) +
-        '-' +
-        lowerLimit.getDate(),
-      upperLimit:
-        upperLimit.getFullYear() +
-        '-' +
-        (upperLimit.getMonth() + 1) +
-        '-' +
-        upperLimit.getDate(),
-    };
-  }
 
   schedules: {
     morning: Array<GeneratedScheduleDto>;
@@ -48,24 +30,53 @@ export class UserPageComponent extends BaseDirective {
     evening: Array<GeneratedScheduleDto>;
   };
 
+  private _currentDate: string;
+  set currentDate(date: string) {
+    this._currentDate = date;
+    this.loadSchedules(date);
+  }
+  get currentDate() {
+    return this._currentDate;
+  }
+
+  get dateLimits() {
+    const nextDate = moment(this.currentDate).add(5, 'days');
+    return {
+      lowerLimit: this.currentDate,
+      upperLimit: nextDate.toISOString(),
+    };
+  }
+
   constructor(
     public mediaSvc: MediaService,
     private schedulesSvc: SchedulesService,
     private loadingSvc: LoadingService,
     private settingsSvc: SettingsService,
-    private bookingsSvc: BookingsService,
+    private userSvc: UserService,
     private toastSvc: ToastService,
-    private userSvc: UserService
+    private router: Router,
+    private bookingsSvc: BookingsService
   ) {
     super();
-    this.dateChanged(this.currentDate);
+    this.currentDate = moment().toDate().toISOString();
     this.user = this.userSvc.getUser();
   }
-  dateChanged(date: string) {
-    const startDate = new Date(date);
-    const endDate = new Date(date);
-    startDate.setHours(0, 0, 0);
-    endDate.setHours(23, 59, 59);
+
+  loadSchedules(date: string) {
+    const startDate = moment(date);
+    const endDate = moment(date);
+    startDate.set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+    endDate.set({
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 0,
+    });
     this.loadingSvc
       .startLoading(
         this,
@@ -79,36 +90,48 @@ export class UserPageComponent extends BaseDirective {
         }
       )
       .pipe(
-        map((schedules) => {
-          const schedulesByDayPortion = {
-            morning: [],
-            afternoon: [],
-            evening: [],
-          };
-          for (const schedule of schedules) {
-            const currentDate = new Date(schedule.startDate);
-            const hour = currentDate.getHours();
-            const minutes = currentDate.getMinutes();
-            if (
-              hour >= this.settingsSvc.eveningStart.hour &&
-              minutes >= this.settingsSvc.eveningStart.minutes
-            ) {
-              schedulesByDayPortion.evening.push(schedule);
-              continue;
-            }
-            if (
-              hour >= this.settingsSvc.afternoonStart.hour &&
-              minutes >= this.settingsSvc.afternoonStart.minutes
-            ) {
-              schedulesByDayPortion.afternoon.push(schedule);
-              continue;
-            }
-            schedulesByDayPortion.morning.push(schedule);
-          }
-          return schedulesByDayPortion;
-        })
+        catchError((error) => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la richiesta dei corsi',
+          });
+          return of([]);
+        }),
+        map((schedules) => this.divideScheduleByDayPeriod(schedules))
       )
       .subscribe((schedules) => (this.schedules = schedules));
+  }
+
+  divideScheduleByDayPeriod(schedules: GeneratedScheduleDto[]) {
+    const schedulesByDayPortion = {
+      morning: [],
+      afternoon: [],
+      evening: [],
+    };
+    for (const schedule of schedules) {
+      const currentDate = new Date(schedule.startDate);
+      const hour = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      if (
+        hour >= this.settingsSvc.eveningStart.hour &&
+        minutes >= this.settingsSvc.eveningStart.minutes
+      ) {
+        schedulesByDayPortion.evening.push(schedule);
+        continue;
+      }
+      if (
+        hour >= this.settingsSvc.afternoonStart.hour &&
+        minutes >= this.settingsSvc.afternoonStart.minutes
+      ) {
+        schedulesByDayPortion.afternoon.push(schedule);
+        continue;
+      }
+      schedulesByDayPortion.morning.push(schedule);
+    }
+    return schedulesByDayPortion;
+  }
+
+  goToUserSettings() {
+    this.router.navigate(['admin', 'user-settings']);
   }
 
   bookCourse(schedule: GeneratedScheduleDto) {
@@ -124,7 +147,7 @@ export class UserPageComponent extends BaseDirective {
             header: 'Corso prenotato!',
             message: 'Hai prenotato il corso correttamente.',
           });
-          this.dateChanged(this.currentDate);
+          this.loadSchedules(this.currentDate);
         },
         error: () => {
           this.toastSvc.addErrorToast({
@@ -134,12 +157,15 @@ export class UserPageComponent extends BaseDirective {
       });
   }
 
-  unbookCourse(schedule: GeneratedScheduleDto) {
+  unbookCourse(bookingId: string) {
     this.loadingSvc
       .startLoading(
         this,
-        'BOOK_COURSE',
-        this.bookingsSvc.deleteBooking(schedule.scheduleId)
+        'UNBOOK_COURSE',
+        this.bookingsSvc.deleteBooking(bookingId),
+        {
+          message: 'Sto rimuovendo la prenotazione',
+        }
       )
       .subscribe({
         next: (course) => {
@@ -147,7 +173,7 @@ export class UserPageComponent extends BaseDirective {
             header: 'Prenotazione rimossa!',
             message: 'Hai rimosso la prenotazione.',
           });
-          this.dateChanged(this.currentDate);
+          this.loadSchedules(this.currentDate);
         },
         error: () => {
           this.toastSvc.addErrorToast({

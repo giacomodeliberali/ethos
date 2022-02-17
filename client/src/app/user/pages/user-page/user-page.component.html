@@ -28,7 +28,7 @@
               'Nov',
               'Dic'
             ]"
-            (ionChange)="dateChanged($event.detail.value)"
+            (ionChange)="currentDate = $event.detail.value"
             placeholder="Select Date"
           ></ion-datetime>
         </ion-item>
@@ -44,6 +44,7 @@
               <div class="course" *ngFor="let schedule of schedules.morning">
                 <app-schedule-card
                   (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
                   [currentUser]="user"
                   [schedule]="schedule"
                 ></app-schedule-card>
@@ -61,6 +62,7 @@
               <div class="course" *ngFor="let schedule of schedules.afternoon">
                 <app-schedule-card
                   (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
                   [currentUser]="user"
                   [schedule]="schedule"
                 ></app-schedule-card>
@@ -78,6 +80,7 @@
               <div class="course" *ngFor="let schedule of schedules.evening">
                 <app-schedule-card
                   (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
                   [currentUser]="user"
                   [schedule]="schedule"
                 ></app-schedule-card>

@@ -4,6 +4,7 @@ import { BaseDirective } from '@core/directives';
 import {
   CreateScheduleRequestDto,
   GeneratedScheduleDto,
+  GeneratedScheduleDto_BookingDto,
   IdentityService,
   SchedulesService,
   UpdateSingleScheduleRequestDto,
@@ -18,6 +19,7 @@ import moment from 'moment';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
+import { ShowBookingModalComponent } from '../../components/show-booking-modal/show-booking-modal.component';
 
 @Component({
   selector: 'app-admin-page',
@@ -25,7 +27,6 @@ import { CreateEditScheduleModalComponent } from '../../components/create-edit-s
   styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent extends BaseDirective {
-  editModal: HTMLIonModalElement;
   trainers: UserDto[];
 
   schedules: {
@@ -100,15 +101,15 @@ export class AdminPageComponent extends BaseDirective {
     trainers: UserDto[],
     schedule?: GeneratedScheduleDto
   ) {
-    this.editModal = await this.modalCtrl.create({
+    const editModal = await this.modalCtrl.create({
       component: CreateEditScheduleModalComponent,
       componentProps: { currentDate: this.currentDate, trainers, schedule },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
       mode: 'ios',
     });
-    await this.editModal.present();
-    const { data } = await this.editModal.onWillDismiss();
+    await editModal.present();
+    const { data } = await editModal.onWillDismiss();
     if (data) {
       if (schedule) {
         this.callUpdateSchedule(data);
@@ -188,6 +189,17 @@ export class AdminPageComponent extends BaseDirective {
   addButtonClicked(e: MouseEvent) {
     e?.stopImmediatePropagation();
     this.enterEditMode();
+  }
+
+  async showBookingsClick(bookings: GeneratedScheduleDto_BookingDto[]) {
+    const showBookingsModal = await this.modalCtrl.create({
+      component: ShowBookingModalComponent,
+      componentProps: { bookings },
+      cssClass: MediaService.isSmartphone ? 'bottom' : '',
+      swipeToClose: true,
+      mode: 'ios',
+    });
+    await showBookingsModal.present();
   }
 
   goToUserSettings() {

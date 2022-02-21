@@ -1,4 +1,8 @@
-<ion-card (click)="showActionButtons = !showActionButtons">
+<ion-card
+  class="ion-activatable"
+  (click)="showActionButtons = !showActionButtons"
+>
+  <ion-ripple-effect></ion-ripple-effect>
   <div class="time-and-people" *ngIf="freeSpots > 0 && isValidDate">
     <ion-icon class="time-icon" name="time-outline"></ion-icon>
     <div class="time-value">{{ time }}</div>
@@ -13,9 +17,11 @@
     <div>Prenotato</div>
   </div>
   <div
-    class="booked-places top-label"
+    class="booked-places top-label ion-activatable"
     *ngIf="(!isBooked && mode === 'user') || mode === 'admin'"
+    (click)="showBookingsClicked($event)"
   >
+    <ion-ripple-effect></ion-ripple-effect>
     <div>{{ schedule.bookings.length }} iscritti</div>
   </div>
   <div
@@ -23,18 +29,20 @@
     *ngIf="showActionButtons && isValidDate"
   >
     <div
-      class="edit-button"
+      class="edit-button ion-activatable"
       mode="md"
       (click)="editClicked($event)"
       *ngIf="mode === 'admin'"
     >
+      <ion-ripple-effect></ion-ripple-effect>
       <ion-icon name="pencil-outline"></ion-icon><span>Modifica</span>
     </div>
     <div
-      class="delete-button"
+      class="delete-button ion-activatable"
       (click)="deleteClicked($event)"
       *ngIf="mode === 'admin'"
     >
+      <ion-ripple-effect></ion-ripple-effect>
       <ion-icon name="trash-outline"></ion-icon><span>Elimina</span>
     </div>
     <div
@@ -57,7 +65,7 @@
   <div>{{ schedule.description }}</div>
   <ion-chip class="ion-margin-start">
     <ion-avatar>
-      <img src="../../../../assets/icon/favicon.png" />
+      <img src="../../../../assets/images/no-user.jpg" />
     </ion-avatar>
     <ion-label>{{ schedule.organizer.userName }}</ion-label>
   </ion-chip>

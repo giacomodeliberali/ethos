@@ -44,6 +44,7 @@ ion-card {
       margin-top: -2px;
     }
     &.booked-places {
+      overflow: hidden;
       background-color: var(--ion-color-primary);
       color: var(--ion-color-primary-contrast);
       z-index: 100;
@@ -62,6 +63,8 @@ ion-card {
     left: 0;
     div {
       display: flex;
+      position: relative;
+      overflow: hidden;
       flex-direction: column;
       flex: 1;
       margin: 0;
@@ -115,6 +118,9 @@ ion-card {
     margin: 1rem 0 0 -6px;
     cursor: default;
     --background: transparent;
+    ion-avatar {
+      border: 1px solid var(--ion-color-tertiary);
+    }
   }
   .overlay {
     position: absolute;

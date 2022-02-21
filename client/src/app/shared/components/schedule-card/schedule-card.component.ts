@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   GeneratedScheduleDto,
+  GeneratedScheduleDto_BookingDto,
   UserDto,
 } from '@core/services/ethos.generated.service';
 import moment from 'moment';
@@ -25,6 +26,8 @@ export class ScheduleCardComponent {
   bookClick = new EventEmitter<GeneratedScheduleDto>();
   @Output()
   unbookClick = new EventEmitter<string>();
+  @Output()
+  showBookingsClick = new EventEmitter<GeneratedScheduleDto_BookingDto[]>();
 
   showActionButtons = false;
 
@@ -74,5 +77,10 @@ export class ScheduleCardComponent {
     this.unbookClick.emit(
       this.schedule.bookings.find((x) => x.user.id === this.currentUser.id).id
     );
+  }
+
+  showBookingsClicked(ev: Event) {
+    ev.stopImmediatePropagation();
+    this.showBookingsClick.emit(this.schedule.bookings);
   }
 }

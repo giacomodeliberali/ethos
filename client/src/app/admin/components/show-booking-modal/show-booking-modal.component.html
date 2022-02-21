@@ -1,0 +1,31 @@
+<div
+  class="form-container"
+  modal-default-content
+  [cancelButton]="{
+    title: 'Chiudi',
+    fill: false,
+    type: 'tertiary'
+  }"
+  (closeModalEvent)="closeModal($event)"
+>
+  <div class="title-section">
+    <h2>Iscritti al corso</h2>
+  </div>
+  <div class="section">
+    <ion-list *ngIf="bookings && bookings.length > 0; else noBookings">
+      <ion-item *ngFor="let booking of bookings">
+        <ion-avatar slot="start">
+          <img src="../../../../assets/images/no-user.jpg" />
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ booking.user?.fullName }}</h2>
+          <h3>{{ booking.user?.userName }}</h3>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</div>
+
+<ng-template #noBookings>
+  <div>Attualmente questo corso non ha iscritti.</div>
+</ng-template>

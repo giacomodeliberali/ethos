@@ -1,8 +1,5 @@
 <ion-card (click)="showActionButtons = !showActionButtons">
-  <div
-    class="time-and-people"
-    *ngIf="(freeSpots > 0 && isValidDate) || mode === 'admin'"
-  >
+  <div class="time-and-people" *ngIf="freeSpots > 0 && isValidDate">
     <ion-icon class="time-icon" name="time-outline"></ion-icon>
     <div class="time-value">{{ time }}</div>
     <ion-icon class="partecipants-icon" name="person-circle-outline"></ion-icon>
@@ -15,7 +12,10 @@
     <ion-icon name="checkmark-circle-outline"></ion-icon>
     <div>Prenotato</div>
   </div>
-  <div class="booked-places top-label" *ngIf="isValidDate && !isBooked">
+  <div
+    class="booked-places top-label"
+    *ngIf="(!isBooked && mode === 'user') || mode === 'admin'"
+  >
     <div>{{ schedule.bookings.length }} iscritti</div>
   </div>
   <div
@@ -66,13 +66,10 @@
     *ngIf="freeSpots <= 0 && isValidDate && mode === 'user'"
   >
     <h2>Oh no!</h2>
-    <span>Non ci sono più posti disponibili per questo corso</span>
+    <span>Non ci sono più posti disponibili per questo corso.</span>
   </div>
-  <div
-    class="overlay invalid-date-overlay"
-    *ngIf="!isValidDate && mode === 'user'"
-  >
+  <div class="overlay invalid-date-overlay" *ngIf="!isValidDate">
     <h2>Oh no!</h2>
-    <span>Non puoi iscriverti ad un allenamento già concluso ;)</span>
+    <span>Il corso non è più disponibile.</span>
   </div>
 </ion-card>

@@ -171,7 +171,7 @@ export class FormFieldComponent
   }
 
   writeValue(value: string): void {
-    this.value = value;
+    this.valueChange.next(value);
   }
 
   setDisabledState?(isDisabled: boolean): void {

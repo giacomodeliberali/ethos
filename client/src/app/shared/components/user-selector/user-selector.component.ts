@@ -15,8 +15,8 @@ import { UserDto } from '@core/services/ethos.generated.service';
   styleUrls: ['./user-selector.component.scss'],
   providers: [
     {
-      provide: NG_VALUE_ACCESSOR, // Is an InjectionToken required by the ControlValueAccessor interface to provide a form value
-      useExisting: forwardRef(() => UserSelectorComponent), // tells Angular to use the existing instance
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => UserSelectorComponent),
       multi: true,
     },
   ],
@@ -57,6 +57,7 @@ export class UserSelectorComponent implements ControlValueAccessor, OnChanges {
   }
 
   writeValue(value: string[] | string): void {
+    console.log(value);
     this.value = value;
   }
 

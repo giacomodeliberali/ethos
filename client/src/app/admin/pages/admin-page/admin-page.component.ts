@@ -182,7 +182,6 @@ export class AdminPageComponent extends BaseDirective {
   }
 
   editButtonClicked(schedule: GeneratedScheduleDto) {
-    console.log(schedule);
     this.enterEditMode(schedule);
   }
 

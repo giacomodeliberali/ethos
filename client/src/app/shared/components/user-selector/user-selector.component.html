@@ -1,7 +1,7 @@
 <div class="avatars-container" *ngFor="let user of users">
   <ion-avatar color="tertiary" (click)="changeValue(user)">
     <img src="../../../../assets/images/no-user.jpg" />
-    <div *ngIf="user.selected" class="selection-overlay">
+    <div *ngIf="user.selected || user.id === value" class="selection-overlay">
       <ion-icon name="checkmark-outline" color="primary"></ion-icon>
     </div>
   </ion-avatar>

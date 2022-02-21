@@ -139,7 +139,10 @@ export class UserPageComponent extends BaseDirective {
       .startLoading(
         this,
         'BOOK_COURSE',
-        this.bookingsSvc.createBooking(schedule)
+        this.bookingsSvc.createBooking(schedule),
+        {
+          message: 'Sto prenotando il corso.',
+        }
       )
       .subscribe({
         next: (course) => {

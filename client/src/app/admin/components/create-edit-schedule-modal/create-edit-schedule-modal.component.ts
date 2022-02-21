@@ -89,6 +89,12 @@ export class CreateEditScheduleModalComponent implements OnInit {
   ngOnInit() {
     this.scheduleForm.get('startDate').setValue(this.currentDate);
     this.scheduleForm.get('endDate').setValue(this.nextWeekDate);
+    this.scheduleForm.patchValue(this.schedule);
+    this.scheduleForm.get('time').patchValue(this.schedule?.startDate);
+    this.scheduleForm
+      .get('organizerId')
+      .patchValue(this.schedule?.organizer?.id);
+    console.log(this.scheduleForm.value);
   }
 
   /**
@@ -100,7 +106,6 @@ export class CreateEditScheduleModalComponent implements OnInit {
   closeModal(event: 'success' | 'cancel') {
     if (this.scheduleForm.valid && event === 'success') {
       if (this.scheduleForm.valid) {
-        console.log(this.scheduleForm.value);
         const schedule: CreateScheduleRequestDto = {
           description: this.scheduleForm.get('description').value,
           startDate: moment(this.scheduleForm.get('startDate').value)

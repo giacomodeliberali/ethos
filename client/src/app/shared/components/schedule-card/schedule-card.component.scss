@@ -46,6 +46,7 @@ ion-card {
     &.booked-places {
       background-color: var(--ion-color-primary);
       color: var(--ion-color-primary-contrast);
+      z-index: 100;
     }
     &.is-booked {
       background-color: var(--ion-color-success);

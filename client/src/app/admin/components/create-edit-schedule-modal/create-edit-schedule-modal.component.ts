@@ -10,6 +10,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CreateScheduleRequestDto,
   GeneratedScheduleDto,
+  UpdateSingleScheduleRequestDto,
   UserDto,
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
@@ -60,6 +61,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     return nextWeek.toISOString();
   }
   scheduleForm: FormGroup = new FormGroup({
+    scheduleId: new FormControl(null),
     name: new FormControl(null, [Validators.required]),
     description: new FormControl(null, [Validators.required]),
     isRecurrent: new FormControl(false),
@@ -106,7 +108,9 @@ export class CreateEditScheduleModalComponent implements OnInit {
   closeModal(event: 'success' | 'cancel') {
     if (this.scheduleForm.valid && event === 'success') {
       if (this.scheduleForm.valid) {
-        const schedule: CreateScheduleRequestDto = {
+        const schedule: CreateScheduleRequestDto &
+          UpdateSingleScheduleRequestDto = {
+          id: this.scheduleForm.get('scheduleId').value,
           description: this.scheduleForm.get('description').value,
           startDate: moment(this.scheduleForm.get('startDate').value)
             .set({

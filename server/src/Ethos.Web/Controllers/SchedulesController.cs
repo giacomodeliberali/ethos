@@ -44,12 +44,21 @@ namespace Ethos.Web.Controllers
         }
 
         /// <summary>
-        /// Update an existing schedule.
+        /// Update an existing single schedule.
         /// </summary>
-        [HttpPut]
+        [HttpPut("single")]
         public async Task UpdateScheduleAsync([Required] UpdateSingleScheduleRequestDto input)
         {
-            await _scheduleApplicationService.UpdateAsync(input);
+            await _scheduleApplicationService.UpdateSingleAsync(input);
+        }
+
+        /// <summary>
+        /// Update an existing recurring schedule instance.
+        /// </summary>
+        [HttpPut("recurring")]
+        public async Task UpdateRecurringScheduleInstanceAsync([Required] UpdateRecurringScheduleInstanceRequestDto input)
+        {
+            await _scheduleApplicationService.UpdateRecurringInstanceAsync(input);
         }
 
         /// <summary>

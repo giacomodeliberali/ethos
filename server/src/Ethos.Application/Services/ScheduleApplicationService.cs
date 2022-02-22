@@ -41,7 +41,7 @@ namespace Ethos.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task UpdateAsync(UpdateSingleScheduleRequestDto input)
+        public async Task UpdateSingleAsync(UpdateSingleScheduleRequestDto input)
         {
             await Mediator.Send(new UpdateSingleScheduleCommand()
             {
@@ -52,6 +52,23 @@ namespace Ethos.Application.Services
                 DurationInMinutes = input.DurationInMinutes,
                 OrganizerId = input.OrganizerId,
                 ParticipantsMaxNumber = input.ParticipantsMaxNumber,
+            });
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateRecurringInstanceAsync(UpdateRecurringScheduleInstanceRequestDto input)
+        {
+            await Mediator.Send(new UpdateRecurringScheduleInstanceCommand()
+            {
+                Id = input.Id,
+                Name = input.Name,
+                Description = input.Description,
+                StartDate = input.StartDate,
+                DurationInMinutes = input.DurationInMinutes,
+                OrganizerId = input.OrganizerId,
+                ParticipantsMaxNumber = input.ParticipantsMaxNumber,
+                InstanceStartDate = input.InstanceStartDate,
+                InstanceEndDate = input.InstanceEndDate,
             });
         }
 

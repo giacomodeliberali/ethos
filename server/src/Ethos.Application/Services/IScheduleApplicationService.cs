@@ -13,9 +13,14 @@ namespace Ethos.Application.Services
         Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input);
 
         /// <summary>
-        /// Update an existing schedule.
+        /// Update an existing single schedule.
         /// </summary>
-        Task UpdateAsync(UpdateSingleScheduleRequestDto input);
+        Task UpdateSingleAsync(UpdateSingleScheduleRequestDto input);
+
+        /// <summary>
+        /// Update an existing recurring schedule instance.
+        /// </summary>
+        Task UpdateRecurringInstanceAsync(UpdateRecurringScheduleInstanceRequestDto input);
 
         /// <summary>
         /// Delete an existing schedule.

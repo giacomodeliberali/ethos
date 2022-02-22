@@ -67,6 +67,16 @@ namespace Ethos.Application.Identity
                 FullName = input.FullName,
             };
 
+            if (await _userManager.FindByEmailAsync(input.Email) != null)
+            {
+                throw new BusinessException("User already existing");
+            }
+
+            if (await _userManager.FindByNameAsync(input.UserName) != null)
+            {
+                throw new BusinessException("User already existing");
+            }
+
             var result = await _userManager.CreateAsync(user, input.Password);
 
             if (!result.Succeeded)

@@ -56,9 +56,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _scheduleRepository.GetByIdAsync(singleScheduleReply.Id);
             });
 
-            (await ApplicationDbContext.Schedules.CountAsync()).ShouldBe(0);
-            (await ApplicationDbContext.SingleSchedules.CountAsync()).ShouldBe(0);
-            (await ApplicationDbContext.RecurringSchedules.CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.Schedules.AsQueryable().CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.SingleSchedules.AsQueryable().CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.RecurringSchedules.AsQueryable().CountAsync()).ShouldBe(0);
         }
 
         [Fact]
@@ -86,9 +86,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 InstanceEndDate = DateTime.Parse("2021-10-01T11:00:00Z").ToUniversalTime(),
             });
 
-            (await ApplicationDbContext.Schedules.CountAsync()).ShouldBe(0);
-            (await ApplicationDbContext.SingleSchedules.CountAsync()).ShouldBe(0);
-            (await ApplicationDbContext.RecurringSchedules.CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.Schedules.AsQueryable().CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.SingleSchedules.AsQueryable().CountAsync()).ShouldBe(0);
+            (await ApplicationDbContext.RecurringSchedules.AsQueryable().CountAsync()).ShouldBe(0);
         }
 
         [Fact]

@@ -101,7 +101,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
 
-            var schedulesCount = await ApplicationDbContext.Schedules.CountAsync();
+            var schedulesCount = await ApplicationDbContext.Schedules.AsQueryable().CountAsync();
             schedulesCount.ShouldBe(1);
         }
     }

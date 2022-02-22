@@ -46,17 +46,19 @@
       <ion-icon name="trash-outline"></ion-icon><span>Elimina</span>
     </div>
     <div
-      class="book-button"
+      class="book-button ion-activatable"
       (click)="bookClicked($event)"
       *ngIf="mode === 'user' && !isBooked"
     >
+      <ion-ripple-effect></ion-ripple-effect>
       <ion-icon name="clipboard-outline"></ion-icon><span>Prenota</span>
     </div>
     <div
-      class="unbook-button"
+      class="unbook-button ion-activatable"
       (click)="unbookClicked($event)"
       *ngIf="mode === 'user' && isBooked"
     >
+      <ion-ripple-effect></ion-ripple-effect>
       <ion-icon name="close-outline"></ion-icon
       ><span>Rimuovi prenotazione</span>
     </div>

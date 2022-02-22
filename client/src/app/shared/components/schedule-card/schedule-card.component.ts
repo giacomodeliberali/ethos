@@ -75,7 +75,7 @@ export class ScheduleCardComponent {
   unbookClicked(ev: Event) {
     ev.stopImmediatePropagation();
     this.unbookClick.emit(
-      this.schedule.bookings.find((x) => x.user.id === this.currentUser.id).id
+      this.schedule.bookings.find((x) => x.user?.id === this.currentUser.id).id
     );
   }
 

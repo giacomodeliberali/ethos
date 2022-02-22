@@ -1,0 +1,31 @@
+<div
+  class="form-container"
+  modal-default-content
+  [cancelButton]="{
+    title: 'Annulla',
+    fill: false,
+    type: 'tertiary'
+  }"
+  [successButton]="{
+    title: 'Elimina',
+    fill: true,
+    type: 'tertiary'
+  }"
+  (closeModalEvent)="closeModal($event)"
+>
+  <div class="title-section">
+    <h2>Elimina corso</h2>
+  </div>
+  <div class="section">
+    <div class="label">Puoi eliminare solo questo orario o l'intero corso.</div>
+    <ion-item lines="none">
+      <ion-label>Elimina l'intero corso</ion-label>
+      <ion-toggle
+        mode="md"
+        color="tertiary"
+        [formControl]="deleteAllSchedule"
+        slot="end"
+      ></ion-toggle>
+    </ion-item>
+  </div>
+</div>

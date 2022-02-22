@@ -45,7 +45,7 @@ export class TokenInterceptor implements HttpInterceptor {
               this.router.navigate(['auth', 'login']);
               return of(null);
             }
-            return of(error);
+            throw error;
           })
         );
       })

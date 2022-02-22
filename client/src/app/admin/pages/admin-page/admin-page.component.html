@@ -45,7 +45,9 @@
                 <app-schedule-card
                   mode="admin"
                   [schedule]="schedule"
-                  (editClick)="editButtonClicked($event)"
+                  (editClick)="enterEditMode($event)"
+                  (deleteClick)="enterDeleteMode(schedule)"
+                  (showBookingsClick)="showBookings($event)"
                 ></app-schedule-card>
               </div>
             </ng-container>
@@ -64,8 +66,9 @@
                 <app-schedule-card
                   mode="admin"
                   [schedule]="schedule"
-                  (editClick)="editButtonClicked($event)"
-                  (showBookingsClick)="showBookingsClick($event)"
+                  (editClick)="enterEditMode($event)"
+                  (deleteClick)="enterDeleteMode(schedule)"
+                  (showBookingsClick)="showBookings($event)"
                 ></app-schedule-card>
               </div>
             </ng-container>
@@ -84,7 +87,9 @@
                 <app-schedule-card
                   mode="admin"
                   [schedule]="schedule"
-                  (editClick)="editButtonClicked($event)"
+                  (editClick)="enterEditMode($event)"
+                  (deleteClick)="enterDeleteMode(schedule)"
+                  (showBookingsClick)="showBookings($event)"
                 ></app-schedule-card>
               </div>
             </ng-container>
@@ -99,7 +104,7 @@
     <ion-icon name="menu-outline"></ion-icon>
   </ion-fab-button>
   <ion-fab-list side="end">
-    <ion-fab-button color="light" (click)="addButtonClicked($event)">
+    <ion-fab-button color="light" (click)="enterAddMode($event)">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
     <ion-fab-button color="light" (click)="goToUserSettings()">

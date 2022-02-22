@@ -6,6 +6,7 @@ import {
   GeneratedScheduleDto,
   GeneratedScheduleDto_BookingDto,
   IdentityService,
+  RecurringScheduleOperationType,
   SchedulesService,
   UpdateSingleScheduleRequestDto,
   UserDto,
@@ -19,6 +20,7 @@ import moment from 'moment';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
+import { DeleteScheduleModalComponent } from '../../components/delete-schedule-modal/delete-schedule-modal.component';
 import { ShowBookingModalComponent } from '../../components/show-booking-modal/show-booking-modal.component';
 
 @Component({
@@ -182,16 +184,55 @@ export class AdminPageComponent extends BaseDirective {
     return schedulesByDayPortion;
   }
 
-  editButtonClicked(schedule: GeneratedScheduleDto) {
-    this.enterEditMode(schedule);
+  enterEditMode(schedule: GeneratedScheduleDto) {
+    this.openEditModal(schedule);
   }
 
-  addButtonClicked(e: MouseEvent) {
+  enterAddMode(e: MouseEvent) {
     e?.stopImmediatePropagation();
-    this.enterEditMode();
+    this.openEditModal();
   }
 
-  async showBookingsClick(bookings: GeneratedScheduleDto_BookingDto[]) {
+  async enterDeleteMode(schedule: GeneratedScheduleDto) {
+    const showDeleteModal = await this.modalCtrl.create({
+      component: DeleteScheduleModalComponent,
+      cssClass: MediaService.isSmartphone ? 'bottom' : '',
+      swipeToClose: true,
+      mode: 'ios',
+    });
+    await showDeleteModal.present();
+    const { data } = await showDeleteModal.onWillDismiss();
+    if (data !== null) {
+      this.loadingSvc
+        .startLoading(
+          this,
+          'DELETE_SCHEDULE',
+          this.schedulesSvc.deleteSchedule(schedule.scheduleId, {
+            id: schedule.scheduleId,
+            recurringScheduleOperationType: data
+              ? RecurringScheduleOperationType.InstanceAndFuture
+              : RecurringScheduleOperationType.Instance,
+            instanceStartDate: schedule.startDate,
+            instanceEndDate: schedule.endDate,
+          }),
+          {
+            message: 'Sto eliminando il corso.',
+          }
+        )
+        .subscribe({
+          next: () => {
+            this.loadSchedules(this.currentDate);
+          },
+          error: (result) => {
+            this.toastSvc.addErrorToast({
+              message: result.error.message,
+            });
+          },
+        });
+    }
+  }
+
+  async showBookings(bookings: GeneratedScheduleDto_BookingDto[]) {
     const showBookingsModal = await this.modalCtrl.create({
       component: ShowBookingModalComponent,
       componentProps: { bookings },
@@ -206,7 +247,7 @@ export class AdminPageComponent extends BaseDirective {
     this.router.navigate(['admin', 'user-settings']);
   }
 
-  private enterEditMode(schedule?: GeneratedScheduleDto) {
+  private openEditModal(schedule?: GeneratedScheduleDto) {
     (this.trainers
       ? of(this.trainers)
       : this.loadingSvc.startLoading(

@@ -3,9 +3,15 @@
   padding-bottom: 2rem;
   .section {
     padding: 0 2em 0 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    .label {
+      margin-bottom: 1rem;
+    }
     ion-item {
       --padding-start: 0;
+      ion-label {
+        --color: var(--ion-color-secondary);
+      }
       ion-avatar {
         border: 1px solid var(--ion-color-tertiary);
       }

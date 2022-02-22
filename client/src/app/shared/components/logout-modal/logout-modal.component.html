@@ -1,17 +1,22 @@
 <div
+  class="form-container"
   modal-default-content
-  [successButton]="{
-    type: 'danger',
-    fill: true,
-    title: 'Logout'
-  }"
   [cancelButton]="{
-    type: 'danger',
+    title: 'Annulla',
     fill: false,
-    title: 'Annulla'
+    type: 'secondary'
   }"
-  (buttonClicked)="closeModal($event)"
+  [successButton]="{
+    title: 'Logout',
+    fill: true,
+    type: 'danger'
+  }"
+  (closeModalEvent)="closeModal($event)"
 >
-  <h3 class="popup-title">Logout</h3>
-  <div class="text">Sei sicuro di voler uscire dall'applicazione?</div>
+  <div class="title-section">
+    <h2>Logout</h2>
+  </div>
+  <div class="section">
+    <div class="label">Sei sicuro di voler uscire dall'applicazione?</div>
+  </div>
 </div>

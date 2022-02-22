@@ -13,7 +13,9 @@ import {
 } from '@core/services/ethos.generated.service';
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
+import { UserService } from '@core/services/user.service';
 import { ModalController } from '@ionic/angular';
+import { LogoutModalComponent } from '@shared/components/logout-modal/logout-modal.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
@@ -54,7 +56,8 @@ export class AdminPageComponent extends BaseDirective {
     private identitySvc: IdentityService,
     private modalCtrl: ModalController,
     private toastSvc: ToastService,
-    private router: Router
+    private router: Router,
+    private userSvc: UserService
   ) {
     super();
     this.currentDate = moment().toDate().toISOString();
@@ -241,6 +244,21 @@ export class AdminPageComponent extends BaseDirective {
       mode: 'ios',
     });
     await showBookingsModal.present();
+  }
+
+  async openLogoutModal() {
+    const logoutModal = await this.modalCtrl.create({
+      component: LogoutModalComponent,
+      cssClass: MediaService.isSmartphone ? 'bottom' : '',
+      swipeToClose: true,
+      mode: 'ios',
+    });
+    await logoutModal.present();
+    const { data } = await logoutModal.onWillDismiss();
+    if (data.logout) {
+      this.userSvc.removeOldAuthentication();
+      this.router.navigate(['']);
+    }
   }
 
   goToUserSettings() {

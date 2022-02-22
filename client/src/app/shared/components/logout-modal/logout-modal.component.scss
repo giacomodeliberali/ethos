@@ -1,10 +1,36 @@
+@import 'mixins';
 :host {
-  font-size: 2rem;
-  padding: var(--space-3) var(--current-space-3) 0 var(--current-space-3);
-  div[modal-default-content] {
-    --buttons-padding: var(--space-2) 0 var(--space-3) 0;
+  padding-bottom: 2rem;
+  .section {
+    padding: 0 2em 0 2rem;
+    margin-bottom: 2rem;
+    .label {
+      margin-bottom: 1rem;
+    }
+    ion-item {
+      --padding-start: 0;
+      ion-label {
+        --color: var(--ion-color-secondary);
+      }
+      h3 {
+        color: var(--ion-color-secondary);
+      }
+    }
   }
-  h3 {
-    margin-bottom: var(--space-1);
+  .title-section {
+    padding-top: 2rem;
+    margin-bottom: 2rem;
+    @include default-gradient(
+      'background',
+      var(--ion-color-primary),
+      var(--ion-color-primary-tint)
+    );
+    h2 {
+      margin-top: 0;
+      padding-top: 2rem;
+      padding-left: 3rem;
+      padding: 0 0 1rem 2rem;
+      color: var(--ion-color-primary-contrast);
+    }
   }
 }

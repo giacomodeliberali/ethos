@@ -2,13 +2,12 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard, NoAuthGuard } from '@core/guards';
 import { AdminGuard } from './admin/admin.guard';
-import { UserGuard } from './user/user.guard';
 
 const routes: Routes = [
   {
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
-    canActivate: [AuthGuard, UserGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'admin',

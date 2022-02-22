@@ -93,5 +93,11 @@ namespace Ethos.Application.Services
                 EndDate = endDate,
             });
         }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<RecurringScheduleDto>> GetAllRecurring()
+        {
+            return await Mediator.Send(new GetAllRecurringSchedulesQuery());
+        }
     }
 }

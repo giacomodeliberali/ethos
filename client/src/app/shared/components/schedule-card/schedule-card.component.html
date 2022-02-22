@@ -21,7 +21,7 @@
     *ngIf="(!isBooked && mode === 'user') || mode === 'admin'"
     (click)="showBookingsClicked($event)"
   >
-    <ion-ripple-effect></ion-ripple-effect>
+    <ion-ripple-effect *ngIf="mode === 'admin'"></ion-ripple-effect>
     <div>{{ schedule.bookings.length }} iscritti</div>
   </div>
   <div

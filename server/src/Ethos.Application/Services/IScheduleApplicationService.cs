@@ -13,9 +13,14 @@ namespace Ethos.Application.Services
         Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input);
 
         /// <summary>
-        /// Update an existing schedule.
+        /// Update an existing single schedule.
         /// </summary>
-        Task UpdateAsync(UpdateSingleScheduleRequestDto input);
+        Task UpdateSingleAsync(UpdateSingleScheduleRequestDto input);
+
+        /// <summary>
+        /// Update an existing recurring schedule instance.
+        /// </summary>
+        Task UpdateRecurringInstanceAsync(UpdateRecurringScheduleInstanceRequestDto input);
 
         /// <summary>
         /// Delete an existing schedule.
@@ -26,5 +31,10 @@ namespace Ethos.Application.Services
         /// Generate (in memory) all the schedules that are in the given interval.
         /// </summary>
         Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// Returns the list of all recurring schedules and their next executions.
+        /// </summary>
+        Task<IEnumerable<RecurringScheduleDto>> GetAllRecurring();
     }
 }

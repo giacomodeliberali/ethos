@@ -50,7 +50,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 EndDate = DateTime.Parse("2021-10-01T12:00Z").ToUniversalTime(),
             });
 
-            var booking = await ApplicationDbContext.Bookings.SingleAsync();
+            var booking = await ApplicationDbContext.Bookings.AsQueryable().SingleAsync();
 
             booking.UserId.ShouldBe(userDemo.User.Id);
             booking.ScheduleId.ShouldBe(scheduleId);

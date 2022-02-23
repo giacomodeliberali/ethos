@@ -87,5 +87,39 @@ namespace Ethos.EntityFrameworkCore.Query
                 },
             }).ToList();
         }
+
+        /// <inheritdoc />
+        public async Task<List<RecurringScheduleProjection>> GetAllRecurringSchedulesAsync()
+        {
+            var schedules =
+                await (from schedule in ApplicationDbContext.Schedules.AsNoTracking()
+                    join recurringSchedule in ApplicationDbContext.RecurringSchedules.AsNoTracking() on schedule.Id equals recurringSchedule.ScheduleId
+                    join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
+                    select new
+                    {
+                        Schedule = schedule,
+                        RecurringSchedule = recurringSchedule,
+                        Organizer = organizer,
+                    }).ToListAsync();
+
+            return schedules.Select(item => new RecurringScheduleProjection()
+            {
+                Id = item.Schedule.Id,
+                Name = item.Schedule.Name,
+                Description = item.Schedule.Description,
+                ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
+                StartDate = item.RecurringSchedule.StartDate,
+                EndDate = item.RecurringSchedule.EndDate,
+                DurationInMinutes = item.Schedule.DurationInMinutes,
+                RecurringExpression = item.RecurringSchedule.RecurringExpression,
+                Organizer = new ScheduleProjection.OrganizerProjection()
+                {
+                    Id = item.Organizer.Id,
+                    Email = item.Organizer.Email,
+                    FullName = item.Organizer.FullName,
+                    UserName = item.Organizer.UserName,
+                },
+            }).ToList();
+        }
     }
 }

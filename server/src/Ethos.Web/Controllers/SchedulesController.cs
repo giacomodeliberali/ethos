@@ -44,12 +44,30 @@ namespace Ethos.Web.Controllers
         }
 
         /// <summary>
-        /// Update an existing schedule.
+        /// Returns the list of all returning schedules and their next executions.
         /// </summary>
-        [HttpPut]
+        [HttpGet("recurring")]
+        public async Task<IEnumerable<RecurringScheduleDto>> GetAllRecurring()
+        {
+            return await _scheduleApplicationService.GetAllRecurring();
+        }
+
+        /// <summary>
+        /// Update an existing single schedule.
+        /// </summary>
+        [HttpPut("single")]
         public async Task UpdateScheduleAsync([Required] UpdateSingleScheduleRequestDto input)
         {
-            await _scheduleApplicationService.UpdateAsync(input);
+            await _scheduleApplicationService.UpdateSingleAsync(input);
+        }
+
+        /// <summary>
+        /// Update an existing recurring schedule instance.
+        /// </summary>
+        [HttpPut("recurring")]
+        public async Task UpdateRecurringScheduleInstanceAsync([Required] UpdateRecurringScheduleInstanceRequestDto input)
+        {
+            await _scheduleApplicationService.UpdateRecurringInstanceAsync(input);
         }
 
         /// <summary>

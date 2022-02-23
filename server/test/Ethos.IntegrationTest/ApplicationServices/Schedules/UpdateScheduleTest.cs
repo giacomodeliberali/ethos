@@ -49,7 +49,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             await Should.ThrowAsync<BusinessException>(async () =>
             {
-                await _scheduleApplicationService.UpdateAsync(new UpdateSingleScheduleRequestDto()
+                await _scheduleApplicationService.UpdateSingleAsync(new UpdateSingleScheduleRequestDto()
                 {
                     Id = scheduleReplyDto.Id,
                     Name = "Test schedule up",
@@ -77,7 +77,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             var newUser = await CreateUser("admin2", role: RoleConstants.Admin);
 
-            await _scheduleApplicationService.UpdateAsync(new UpdateSingleScheduleRequestDto()
+            await _scheduleApplicationService.UpdateSingleAsync(new UpdateSingleScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
                 Name = "Name up",
@@ -101,7 +101,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
 
-            var schedulesCount = await ApplicationDbContext.Schedules.CountAsync();
+            var schedulesCount = await ApplicationDbContext.Schedules.AsQueryable().CountAsync();
             schedulesCount.ShouldBe(1);
         }
     }

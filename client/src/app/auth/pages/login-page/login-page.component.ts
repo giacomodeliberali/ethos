@@ -62,6 +62,7 @@ export class LoginPageComponent extends BaseDirective {
       component: ForgotPasswordModalComponent,
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await modal.present();

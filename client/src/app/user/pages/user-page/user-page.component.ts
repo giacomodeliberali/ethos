@@ -168,6 +168,7 @@ export class UserPageComponent extends BaseDirective {
       component: LogoutModalComponent,
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await logoutModal.present();

@@ -111,6 +111,7 @@ export class AdminPageComponent extends BaseDirective {
       componentProps: { currentDate: this.currentDate, trainers, schedule },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await editModal.present();
@@ -202,6 +203,7 @@ export class AdminPageComponent extends BaseDirective {
       componentProps: { isRecurring: schedule.isRecurring },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await showDeleteModal.present();
@@ -242,6 +244,7 @@ export class AdminPageComponent extends BaseDirective {
       componentProps: { bookings },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await showBookingsModal.present();
@@ -252,6 +255,7 @@ export class AdminPageComponent extends BaseDirective {
       component: LogoutModalComponent,
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
+      backdropDismiss: false,
       mode: 'ios',
     });
     await logoutModal.present();

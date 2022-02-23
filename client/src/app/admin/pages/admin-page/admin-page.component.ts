@@ -270,6 +270,18 @@ export class AdminPageComponent extends BaseDirective {
     this.router.navigate(['admin', 'user-settings']);
   }
 
+  goToNextDay() {
+    this.currentDate = moment(this.currentDate).add(1, 'd').toISOString();
+  }
+
+  goToPrevDay() {
+    this.currentDate = moment(this.currentDate).subtract(1, 'd').toISOString();
+  }
+
+  goToToday() {
+    this.currentDate = new Date().toISOString();
+  }
+
   private openEditModal(schedule?: GeneratedScheduleDto) {
     (this.trainers
       ? of(this.trainers)

@@ -7,6 +7,9 @@
     </div>
     <div class="content-container">
       <div class="datepicker-container">
+        <ion-button fill="clear" (click)="goToPrevDay()">
+          <ion-icon color="secondary" name="arrow-back-outline"></ion-icon>
+        </ion-button>
         <ion-item lines="none">
           <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
           <ion-datetime
@@ -30,6 +33,18 @@
             placeholder="Select Date"
           ></ion-datetime>
         </ion-item>
+        <ion-button fill="clear" (click)="goToNextDay()">
+          <ion-icon color="secondary" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="today-container">
+        <ion-button
+          size="small"
+          fill="outline"
+          color="secondary"
+          (click)="goToToday()"
+          >Vai a oggi</ion-button
+        >
       </div>
       <div class="day-periods">
         <div class="day-period">

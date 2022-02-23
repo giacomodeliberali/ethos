@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 
@@ -8,6 +8,9 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./delete-schedule-modal.component.scss'],
 })
 export class DeleteScheduleModalComponent implements OnInit {
+  @Input()
+  isRecurring: boolean;
+
   deleteAllSchedule = new FormControl(false);
   constructor(private modalCtrl: ModalController) {}
 

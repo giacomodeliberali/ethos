@@ -199,6 +199,7 @@ export class AdminPageComponent extends BaseDirective {
   async enterDeleteMode(schedule: GeneratedScheduleDto) {
     const showDeleteModal = await this.modalCtrl.create({
       component: DeleteScheduleModalComponent,
+      componentProps: { isRecurring: schedule.isRecurring },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
       swipeToClose: true,
       mode: 'ios',

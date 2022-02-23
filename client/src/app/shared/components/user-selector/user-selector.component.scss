@@ -1,5 +1,6 @@
 :host {
   display: inline-flex;
+  gap: 1rem;
   margin: 0 2rem 0 2rem;
   .avatars-container {
     display: flex;
@@ -29,6 +30,11 @@
     }
     span {
       color: var(--ion-color-primary-contrast);
+      max-width: 80px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
     }
   }
 }

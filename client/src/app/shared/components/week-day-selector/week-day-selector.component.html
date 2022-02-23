@@ -1,13 +1,10 @@
-<div
-  class="chip-container"
-  *ngFor="let day of weekDaysLocalization || weekDays"
->
+<div class="chip-container" *ngFor="let day of weekDays | keyvalue: daysOrder">
   <ion-chip
-    [ngClass]="{ selected: value?.includes(day) }"
+    [ngClass]="{ selected: value?.includes(day.value) }"
     color="tertiary"
-    (click)="changeValue(day)"
-    [outline]="!value?.includes(day)"
+    (click)="changeValue(day.value)"
+    [outline]="!value?.includes(day.value)"
   >
-    <ion-label color="dark">{{ day | titlecase }}</ion-label>
+    <ion-label color="dark">{{ day.key | titlecase }}</ion-label>
   </ion-chip>
 </div>

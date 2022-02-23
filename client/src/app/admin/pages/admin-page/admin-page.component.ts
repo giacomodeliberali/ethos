@@ -41,8 +41,10 @@ export class AdminPageComponent extends BaseDirective {
 
   private _currentDate: string;
   set currentDate(date: string) {
+    if (this.currentDate !== date || !this.currentDate) {
+      this.loadSchedules(date);
+    }
     this._currentDate = date;
-    this.loadSchedules(date);
   }
   get currentDate() {
     return this._currentDate;

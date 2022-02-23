@@ -7,7 +7,7 @@
     </div>
     <div class="content-container">
       <div class="datepicker-container">
-        <ion-button fill="clear" (click)="goToPrevDay()">
+        <ion-button mode="ios" fill="clear" (click)="goToPrevDay()">
           <ion-icon color="secondary" name="arrow-back-outline"></ion-icon>
         </ion-button>
         <ion-item lines="none">
@@ -33,7 +33,7 @@
             placeholder="Select Date"
           ></ion-datetime>
         </ion-item>
-        <ion-button fill="clear" (click)="goToNextDay()">
+        <ion-button mode="ios" fill="clear" (click)="goToNextDay()">
           <ion-icon color="secondary" name="arrow-forward-outline"></ion-icon>
         </ion-button>
       </div>
@@ -42,6 +42,7 @@
           size="small"
           fill="outline"
           color="secondary"
+          mode="ios"
           (click)="goToToday()"
           >Vai a oggi</ion-button
         >

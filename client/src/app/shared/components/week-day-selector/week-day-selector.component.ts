@@ -1,4 +1,11 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { KeyValue } from '@angular/common';
+import {
+  Component,
+  forwardRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -13,11 +20,23 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class WeekDaySelectorComponent implements ControlValueAccessor {
+export class WeekDaySelectorComponent
+  implements OnChanges, ControlValueAccessor
+{
   @Input()
-  weekDaysLocalization;
+  weekDaysLocalization = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
-  weekDays = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
+  weekDays: {
+    [key: string]: 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+  } = {
+    mon: 'mon',
+    tue: 'tue',
+    wed: 'wed',
+    thu: 'thu',
+    fri: 'fri',
+    sat: 'sat',
+    sun: 'sun',
+  };
 
   private _value: string[];
   @Input()
@@ -31,6 +50,28 @@ export class WeekDaySelectorComponent implements ControlValueAccessor {
   }
 
   constructor() {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.weekDaysLocalization) {
+      this.weekDays = {};
+      this.weekDays[this.weekDaysLocalization[0]] = 'mon';
+      this.weekDays[this.weekDaysLocalization[1]] = 'tue';
+      this.weekDays[this.weekDaysLocalization[2]] = 'wed';
+      this.weekDays[this.weekDaysLocalization[3]] = 'thu';
+      this.weekDays[this.weekDaysLocalization[4]] = 'fri';
+      this.weekDays[this.weekDaysLocalization[5]] = 'sat';
+      this.weekDays[this.weekDaysLocalization[6]] = 'sun';
+    }
+  }
+
+  daysOrder = (
+    a: KeyValue<string, string>,
+    b: KeyValue<string, string>
+  ): number =>
+    this.weekDaysLocalization.findIndex((x) => x === a.key) <
+    this.weekDaysLocalization.findIndex((y) => y === b.key)
+      ? -1
+      : 1;
 
   onChange = (_: any) => {}; // Called on a value change
   onTouched = () => {}; // Called if you care if the form was touched

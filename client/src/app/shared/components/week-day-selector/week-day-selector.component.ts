@@ -17,7 +17,7 @@ export class WeekDaySelectorComponent implements ControlValueAccessor {
   @Input()
   weekDaysLocalization;
 
-  weekDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  weekDays = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
 
   private _value: string[];
   @Input()

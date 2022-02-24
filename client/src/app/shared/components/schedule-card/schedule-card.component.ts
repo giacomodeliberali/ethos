@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   GeneratedScheduleDto,
   GeneratedScheduleDto_BookingDto,
@@ -11,7 +11,7 @@ import moment from 'moment';
   templateUrl: './schedule-card.component.html',
   styleUrls: ['./schedule-card.component.scss'],
 })
-export class ScheduleCardComponent {
+export class ScheduleCardComponent implements OnInit {
   @Input()
   schedule: GeneratedScheduleDto;
   @Input()
@@ -30,6 +30,10 @@ export class ScheduleCardComponent {
   showBookingsClick = new EventEmitter<GeneratedScheduleDto_BookingDto[]>();
 
   showActionButtons = false;
+
+  ngOnInit(): void {
+    console.log(this.schedule);
+  }
 
   get time() {
     if (this.schedule) {

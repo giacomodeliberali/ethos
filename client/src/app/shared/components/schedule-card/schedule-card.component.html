@@ -6,7 +6,12 @@
 >
   <ion-ripple-effect></ion-ripple-effect>
   <div class="time-and-people" *ngIf="freeSpots > 0 && isValidDate">
-    <ion-icon class="time-icon" name="time-outline"></ion-icon>
+    <ion-icon
+      class="time-icon"
+      name="{{
+        schedule.isRecurring && mode === 'admin' ? 'infinite' : 'time'
+      }}-outline"
+    ></ion-icon>
     <div class="time-value">{{ time }}</div>
     <ion-icon class="partecipants-icon" name="person-circle-outline"></ion-icon>
     <div class="partecipants-value">x{{ schedule.participantsMaxNumber }}</div>

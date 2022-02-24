@@ -17,6 +17,7 @@ import { UnsavedChangesComponent } from './components/unsaved-changes/unsaved-ch
 import { UserCardComponent } from './components/user-card/user-card.component';
 import { UserSelectorComponent } from './components/user-selector/user-selector.component';
 import { WeekDaySelectorComponent } from './components/week-day-selector/week-day-selector.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { WeekDaySelectorComponent } from './components/week-day-selector/week-da
     DateTimeInputComponent,
     InfoInputComponent,
     UserCardComponent,
+    ClickOutsideDirective,
   ],
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
   exports: [

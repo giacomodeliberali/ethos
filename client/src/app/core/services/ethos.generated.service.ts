@@ -7,24 +7,10 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { Observable, throwError as _observableThrow } from 'rxjs';
 import { NswagBaseClass } from '../nswag/nswag-base-class';
-import {
-  mergeMap as _observableMergeMap,
-  catchError as _observableCatch,
-} from 'rxjs/operators';
-import {
-  Observable,
-  from as _observableFrom,
-  throwError as _observableThrow,
-  of as _observableOf,
-} from 'rxjs';
-import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
-import {
-  HttpClient,
-  HttpHeaders,
-  HttpResponse,
-  HttpResponseBase,
-} from '@angular/common/http';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
@@ -316,11 +302,54 @@ export class SchedulesService extends NswagBaseClass {
   }
 
   /**
-   * Update an existing schedule.
+   * Returns the list of all returning schedules and their next executions.
+   * @return Success
+   */
+  getAllRecurring(): Observable<RecurringScheduleDto[]> {
+    let url_ = this.baseUrl + '/api/schedules/recurring';
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: any = {
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        Accept: 'text/plain',
+      }),
+    };
+
+    return this.processRequest('get', url_, options_, false);
+  }
+
+  /**
+   * Update an existing recurring schedule instance.
+   * @return Success
+   */
+  updateRecurringScheduleInstance(
+    body: UpdateRecurringScheduleInstanceRequestDto
+  ): Observable<void> {
+    let url_ = this.baseUrl + '/api/schedules/recurring';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(body);
+
+    let options_: any = {
+      body: content_,
+      observe: 'response',
+      responseType: 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.processRequest('put', url_, options_, false);
+  }
+
+  /**
+   * Update an existing single schedule.
    * @return Success
    */
   updateSchedule(body: UpdateSingleScheduleRequestDto): Observable<void> {
-    let url_ = this.baseUrl + '/api/schedules';
+    let url_ = this.baseUrl + '/api/schedules/single';
     url_ = url_.replace(/[?&]$/, '');
 
     const content_ = JSON.stringify(body);
@@ -432,6 +461,7 @@ export interface GeneratedScheduleDto {
   organizer: GeneratedScheduleDto_UserDto;
   startDate: string;
   endDate: string;
+  readonly durationInMinutes: number;
   name: string;
   description: string;
   bookings: GeneratedScheduleDto_BookingDto[];
@@ -468,6 +498,26 @@ export interface LoginResponseDto {
   user: UserDto;
 }
 
+export interface RecurringScheduleDto {
+  id: string;
+  organizer: RecurringScheduleDto_UserDto;
+  startDate: string;
+  endDate?: string | null;
+  durationInMinutes: number;
+  name: string;
+  description: string;
+  participantsMaxNumber: number;
+  recurringCronExpression: string;
+  nextOccurrences: string[];
+}
+
+export interface RecurringScheduleDto_UserDto {
+  id: string;
+  email: string;
+  userName: string;
+  fullName: string;
+}
+
 /** Describe how to handle operations on recurring schedules. */
 export enum RecurringScheduleOperationType {
   Instance = 'Instance',
@@ -490,6 +540,18 @@ export interface ResetPasswordRequestDto {
   email: string;
   newPassword: string;
   resetToken: string;
+}
+
+export interface UpdateRecurringScheduleInstanceRequestDto {
+  id: string;
+  name: string;
+  description: string;
+  instanceStartDate: string;
+  instanceEndDate: string;
+  startDate: string;
+  durationInMinutes: number;
+  participantsMaxNumber: number;
+  organizerId: string;
 }
 
 export interface UpdateSingleScheduleRequestDto {

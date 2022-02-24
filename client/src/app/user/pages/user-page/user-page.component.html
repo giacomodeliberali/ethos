@@ -7,6 +7,14 @@
     </div>
     <div class="content-container">
       <div class="datepicker-container">
+        <ion-button
+          *ngIf="!hideLeftArrow; else arrowReplace"
+          mode="ios"
+          fill="clear"
+          (click)="goToPrevDay()"
+        >
+          <ion-icon color="secondary" name="arrow-back-outline"></ion-icon>
+        </ion-button>
         <ion-item lines="none">
           <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
           <ion-datetime
@@ -32,6 +40,24 @@
             placeholder="Select Date"
           ></ion-datetime>
         </ion-item>
+        <ion-button
+          *ngIf="!hideRightArrow; else arrowReplace"
+          mode="ios"
+          fill="clear"
+          (click)="goToNextDay()"
+        >
+          <ion-icon color="secondary" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="today-container">
+        <ion-button
+          size="small"
+          fill="outline"
+          color="secondary"
+          mode="ios"
+          (click)="goToToday()"
+          >Vai a oggi</ion-button
+        >
       </div>
       <div class="day-periods">
         <div class="day-period">
@@ -97,3 +123,5 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
+
+<ng-template #arrowReplace><div class="arrow-replace"></div></ng-template>

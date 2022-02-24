@@ -49,6 +49,19 @@ export class UserPageComponent extends BaseDirective {
     };
   }
 
+  get hideLeftArrow() {
+    return (
+      moment(this.currentDate).subtract(1, 'd') <
+      moment(this.dateLimits.lowerLimit)
+    );
+  }
+
+  get hideRightArrow() {
+    return (
+      moment(this.currentDate).add(1, 'd') > moment(this.dateLimits.upperLimit)
+    );
+  }
+
   constructor(
     public mediaSvc: MediaService,
     private schedulesSvc: SchedulesService,
@@ -161,6 +174,18 @@ export class UserPageComponent extends BaseDirective {
           });
         },
       });
+  }
+
+  goToNextDay() {
+    this.currentDate = moment(this.currentDate).add(1, 'd').toISOString();
+  }
+
+  goToPrevDay() {
+    this.currentDate = moment(this.currentDate).subtract(1, 'd').toISOString();
+  }
+
+  goToToday() {
+    this.currentDate = new Date().toISOString();
   }
 
   async openLogoutModal() {

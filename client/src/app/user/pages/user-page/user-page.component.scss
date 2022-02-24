@@ -35,6 +35,15 @@ ion-content {
             color: var(--ion-color-light);
           }
         }
+        ion-button {
+          margin: 0;
+        }
+      }
+      .today-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.5rem;
       }
       .day-periods {
         display: grid;
@@ -66,4 +75,9 @@ ion-content {
       }
     }
   }
+}
+
+.arrow-replace {
+  width: 58px;
+  height: 48px;
 }

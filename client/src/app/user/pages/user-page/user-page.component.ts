@@ -42,7 +42,7 @@ export class UserPageComponent extends BaseDirective {
   }
 
   get dateLimits() {
-    const nextDate = moment(new Date()).add(5, 'days');
+    const nextDate = moment(new Date()).add(14, 'days');
     return {
       lowerLimit: moment(new Date()).format('YYYY-MM-DD'),
       upperLimit: nextDate.format('YYYY-MM-DD'),
@@ -198,7 +198,7 @@ export class UserPageComponent extends BaseDirective {
     });
     await logoutModal.present();
     const { data } = await logoutModal.onWillDismiss();
-    if (data.logout) {
+    if (data?.logout) {
       this.userSvc.removeOldAuthentication();
       this.router.navigate(['']);
     }

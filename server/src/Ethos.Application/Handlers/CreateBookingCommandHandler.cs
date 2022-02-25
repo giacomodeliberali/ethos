@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,6 +41,11 @@ namespace Ethos.Application.Handlers
 
         public async Task<CreateBookingReplyDto> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
+            if (request.StartDate < DateTime.UtcNow)
+            {
+                throw new BusinessException("You can not book in the past");
+            }
+
             var schedule = await _scheduleRepository.GetByIdAsync(request.ScheduleId);
 
             if (schedule is RecurringSchedule recurringSchedule)

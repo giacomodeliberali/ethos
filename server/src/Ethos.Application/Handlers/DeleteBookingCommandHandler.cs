@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Ethos.Application.Commands;
@@ -28,6 +29,11 @@ namespace Ethos.Application.Handlers
         protected override async Task Handle(DeleteBookingCommand request, CancellationToken cancellationToken)
         {
             var booking = await _bookingRepository.GetByIdAsync(request.Id);
+
+            if (booking.StartDate < DateTime.UtcNow)
+            {
+                throw new BusinessException("You can not delete a booking in the past");
+            }
 
             if (booking.User.Id != _currentUser.GetCurrentUserId() &&
                 !await _currentUser.IsInRole(RoleConstants.Admin))

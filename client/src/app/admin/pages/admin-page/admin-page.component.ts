@@ -210,7 +210,7 @@ export class AdminPageComponent extends BaseDirective {
     });
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();
-    if (data !== null) {
+    if (data != null) {
       this.loadingSvc
         .startLoading(
           this,
@@ -262,7 +262,7 @@ export class AdminPageComponent extends BaseDirective {
     });
     await logoutModal.present();
     const { data } = await logoutModal.onWillDismiss();
-    if (data.logout) {
+    if (data?.logout) {
       this.userSvc.removeOldAuthentication();
       this.router.navigate(['']);
     }

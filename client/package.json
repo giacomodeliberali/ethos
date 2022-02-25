@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ionic build --prod",
+    "build": "npx ionic build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "nswag": "npx nswag run ./src/app/core/nswag/nswag.json",

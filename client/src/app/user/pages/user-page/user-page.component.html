@@ -36,7 +36,7 @@
               'Nov',
               'Dic'
             ]"
-            (ionChange)="currentDate = $event.detail.value"
+            (ionChange)="currentDate = $any($event).detail.value"
             placeholder="Select Date"
           ></ion-datetime>
         </ion-item>

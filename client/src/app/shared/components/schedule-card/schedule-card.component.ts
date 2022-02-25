@@ -59,8 +59,6 @@ export class ScheduleCardComponent implements OnInit {
     );
   }
 
-  constructor() {}
-
   deleteClicked(ev: Event) {
     ev.stopImmediatePropagation();
     this.deleteClick.emit(this.schedule);

@@ -27,8 +27,19 @@ namespace Ethos.Domain.Entities
         /// </summary>
         public CronExpression RecurringCronExpression => CronExpression.Parse(RecurringCronExpressionString);
 
-        private RecurringSchedule()
+        private RecurringSchedule(
+            Guid id,
+            ApplicationUser organizer,
+            Period period,
+            string recurringExpression,
+            int duration,
+            string name,
+            string description,
+            int participantsMaxNumber)
+            : base(id, organizer, name, description, participantsMaxNumber, duration)
         {
+            Period = period;
+            RecurringCronExpressionString = recurringExpression;
         }
 
         public void UpdateDate(Period period, int durationInMinutes, string recurringExpression)
@@ -91,18 +102,15 @@ namespace Ethos.Domain.Entities
                     throw new BusinessException($"Invalid CRON expression '{recurringExpression}'. {ex.Message}", ex);
                 }
 
-                return new RecurringSchedule()
-                {
-                    Id = guid,
-                    Organizer = organizer,
-                    Name = name,
-                    Description = description,
-                    ParticipantsMaxNumber = participantsMaxNumber,
-                    // do not consider time
-                    Period = new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)),
-                    DurationInMinutes = duration,
-                    RecurringCronExpressionString = recurringExpression,
-                };
+                return new RecurringSchedule(
+                    guid,
+                    organizer,
+                    new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)), // do not consider time
+                    recurringExpression,
+                    duration,
+                    name,
+                    description,
+                    participantsMaxNumber);
             }
 
             public static RecurringSchedule FromSnapshot(
@@ -116,17 +124,15 @@ namespace Ethos.Domain.Entities
                 string description,
                 int participantsMaxNumber)
             {
-                return new RecurringSchedule()
-                {
-                    Id = id,
-                    Organizer = organizer,
-                    Period = new Period(startDate, endDate),
-                    RecurringCronExpressionString = recurringExpression,
-                    DurationInMinutes = duration,
-                    Name = name,
-                    Description = description,
-                    ParticipantsMaxNumber = participantsMaxNumber,
-                };
+                return new RecurringSchedule(
+                    id,
+                    organizer,
+                    new Period(startDate, endDate),
+                    recurringExpression,
+                    duration,
+                    name,
+                    description,
+                    participantsMaxNumber);
             }
         }
     }

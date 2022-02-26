@@ -25,13 +25,7 @@ namespace Ethos.IntegrationTest.Setup
 
             var guid = Guid.NewGuid();
 
-            var user = new ApplicationUser()
-            {
-                Id = id ?? guid,
-                Email = $"{guid}@ethos.test.it",
-                FullName = fullName ?? $"Utente demo {guid}",
-                UserName = userName,
-            };
+            var user = new ApplicationUser(id ?? guid, $"{guid}@ethos.test.it", userName, fullName ?? $"Utente demo {guid}");
 
             await userManager.CreateAsync(user, "P2ssw0rd!");
 

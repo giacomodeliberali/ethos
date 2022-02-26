@@ -42,7 +42,7 @@ namespace Ethos.Application.Handlers.Schedule.Single
                 throw new BusinessException("Non è possibile aggiornare un corso ricorrente");
             }
 
-            await UpdateSchedule(schedule as SingleSchedule, request);
+            await UpdateSchedule((schedule as SingleSchedule) !, request);
         }
 
         private async Task UpdateSchedule(SingleSchedule schedule, UpdateSingleScheduleCommand request)

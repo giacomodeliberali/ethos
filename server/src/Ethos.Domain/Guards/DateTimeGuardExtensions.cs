@@ -10,7 +10,7 @@ namespace Ethos.Domain.Guards
             [NotNull] this IGuardClause guardClause,
             DateTime input,
             [NotNull] string parameterName,
-            string message = null)
+            string? message = null)
         {
             if (input.Kind != DateTimeKind.Utc)
             {
@@ -24,7 +24,7 @@ namespace Ethos.Domain.Guards
             [NotNull] this IGuardClause guardClause,
             DateTime? input,
             [NotNull] string parameterName,
-            string message = null)
+            string? message = null)
         {
             if (input.HasValue && input.Value.Kind != DateTimeKind.Utc)
             {

@@ -48,7 +48,7 @@ namespace Ethos.Application.Handlers.Schedule.Recurring
                 throw new BusinessException("Non è possibile aggiornare un corso singolo");
             }
 
-            await UpdateRecurringScheduleInstance(schedule as RecurringSchedule, request);
+            await UpdateRecurringScheduleInstance((schedule as RecurringSchedule) !, request);
         }
 
         /// <summary>

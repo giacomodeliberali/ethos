@@ -11,6 +11,7 @@ using System.Web;
 using AutoMapper;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Email;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Query.Services;
@@ -29,6 +30,7 @@ namespace Ethos.Application.Identity
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IUserQueryService _userQueryService;
+        private readonly IGuidGenerator _guidGenerator;
         private readonly IMapper _mapper;
         private readonly JwtConfig _jwtConfig;
         private readonly AppSettings _appSettings;
@@ -43,6 +45,7 @@ namespace Ethos.Application.Identity
             IOptions<JwtConfig> jwtConfigOptions,
             IEmailSender emailSender,
             IUserQueryService userQueryService,
+            IGuidGenerator guidGenerator,
             IOptions<AppSettings> appSettingOptions,
             IMapper mapper)
         {
@@ -51,6 +54,7 @@ namespace Ethos.Application.Identity
             _signInManager = signInManager;
             _emailSender = emailSender;
             _userQueryService = userQueryService;
+            _guidGenerator = guidGenerator;
             _mapper = mapper;
             _jwtConfig = jwtConfigOptions.Value;
             _appSettings = appSettingOptions.Value;
@@ -59,13 +63,6 @@ namespace Ethos.Application.Identity
         /// <inheritdoc />
         public async Task CreateUserAsync(RegisterRequestDto input, string roleName)
         {
-            var user = new ApplicationUser()
-            {
-                Email = input.Email,
-                UserName = input.UserName,
-                FullName = input.FullName,
-            };
-
             if (await _userManager.FindByEmailAsync(input.Email) != null)
             {
                 throw new BusinessException("User already existing");
@@ -76,6 +73,7 @@ namespace Ethos.Application.Identity
                 throw new BusinessException("User already existing");
             }
 
+            var user = new ApplicationUser(_guidGenerator.Create(), input.Email, input.UserName, input.FullName);
             var result = await _userManager.CreateAsync(user, input.Password);
 
             if (!result.Succeeded)

@@ -6,11 +6,23 @@ namespace Ethos.Domain.Entities
 {
     public class ScheduleException : Entity
     {
-        public RecurringSchedule Schedule { get; private set; }
+        private ScheduleException(
+            Guid id,
+            RecurringSchedule schedule,
+            DateTime startDate,
+            DateTime endDate)
+        {
+            Id = id;
+            Schedule = schedule;
+            StartDate = startDate;
+            EndDate = endDate;
+        }
 
-        public DateTime StartDate { get; private set; }
+        public RecurringSchedule Schedule { get; }
 
-        public DateTime EndDate { get; private set; }
+        public DateTime StartDate { get; }
+
+        public DateTime EndDate { get; }
 
         public static class Factory
         {
@@ -25,13 +37,7 @@ namespace Ethos.Domain.Entities
                 Guard.Against.Default(startDate, nameof(startDate));
                 Guard.Against.Default(endDate, nameof(endDate));
 
-                return new ScheduleException()
-                {
-                    Id = id,
-                    Schedule = schedule,
-                    EndDate = endDate,
-                    StartDate = startDate,
-                };
+                return new ScheduleException(id, schedule, startDate, endDate);
             }
 
             public static ScheduleException FromSnapshot(
@@ -40,13 +46,7 @@ namespace Ethos.Domain.Entities
                 DateTime startDate,
                 DateTime endDate)
             {
-                return new ScheduleException()
-                {
-                    Id = id,
-                    Schedule = schedule,
-                    EndDate = endDate,
-                    StartDate = startDate,
-                };
+                return new ScheduleException(id, schedule, startDate, endDate);
             }
         }
     }

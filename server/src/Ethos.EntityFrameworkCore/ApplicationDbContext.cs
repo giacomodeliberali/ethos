@@ -12,15 +12,15 @@ namespace Ethos.EntityFrameworkCore
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
-        public DbSet<ScheduleData> Schedules { get; set; }
+        public DbSet<ScheduleData> Schedules { get; set; } = null!;
 
-        public DbSet<SingleScheduleData> SingleSchedules { get; set; }
+        public DbSet<SingleScheduleData> SingleSchedules { get; set; } = null!;
 
-        public DbSet<RecurringScheduleData> RecurringSchedules { get; set; }
+        public DbSet<RecurringScheduleData> RecurringSchedules { get; set; } = null!;
 
-        public DbSet<ScheduleExceptionData> ScheduleExceptions { get; set; }
+        public DbSet<ScheduleExceptionData> ScheduleExceptions { get; set; } = null!;
 
-        public DbSet<BookingData> Bookings { get; set; }
+        public DbSet<BookingData> Bookings { get; set; } = null!;
 
         /// <inheritdoc />
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

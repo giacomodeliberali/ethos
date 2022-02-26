@@ -1,3 +1,4 @@
+using System;
 using Ardalis.GuardClauses;
 using Ethos.Domain.Common;
 
@@ -27,8 +28,20 @@ namespace Ethos.Domain.Entities
 
         public int DurationInMinutes { get; protected set; }
 
-        protected Schedule()
+        protected Schedule(
+            Guid id,
+            ApplicationUser organizer,
+            string name,
+            string description,
+            int participantsMaxNumber,
+            int durationInMinutes)
         {
+            Id = id;
+            Organizer = organizer;
+            Name = name;
+            Description = description;
+            ParticipantsMaxNumber = participantsMaxNumber;
+            DurationInMinutes = durationInMinutes;
         }
 
         public virtual void UpdateOrganizer(ApplicationUser organizer)

@@ -12,10 +12,7 @@ namespace Ethos.Domain.UnitTest
         [Fact]
         public void ShouldCreate_NonRecurring_Schedule()
         {
-            var user = new ApplicationUser()
-            {
-                Id = GuidGenerator.Create(),
-            };
+            var user = new ApplicationUser(GuidGenerator.Create(), "ShouldCreate_NonRecurring_Schedule@test.com", "username", "Full Name");
 
             var startDate = DateTime.UtcNow;
             var endDate = startDate.AddMonths(1);
@@ -42,10 +39,7 @@ namespace Ethos.Domain.UnitTest
         [Fact]
         public void ShouldCreate_Recurring_Schedule()
         {
-            var user = new ApplicationUser()
-            {
-                Id = GuidGenerator.Create(),
-            };
+            var user = new ApplicationUser(GuidGenerator.Create(), "ShouldCreate_Recurring_Schedule@test.com", "username", "Full Name");
 
             var startDate = DateTime.UtcNow;
 
@@ -74,10 +68,7 @@ namespace Ethos.Domain.UnitTest
         {
             Should.Throw<BusinessException>(() =>
             {
-                var user = new ApplicationUser()
-                {
-                    Id = GuidGenerator.Create(),
-                };
+                var user = new ApplicationUser(GuidGenerator.Create(), "Should_Throw_WhenInvalidCron@test.com", "username", "Full Name");
 
                 var startDate = DateTime.UtcNow;
 
@@ -97,10 +88,7 @@ namespace Ethos.Domain.UnitTest
         public void ShouldCreate_FromSnapshot()
         {
             var guid = GuidGenerator.Create();
-            var user = new ApplicationUser()
-            {
-                Id = GuidGenerator.Create(),
-            };
+            var user = new ApplicationUser(GuidGenerator.Create(), "ShouldCreate_FromSnapshot@test.com", "username", "Full Name");
 
             var startDate = DateTime.UtcNow;
             var endDate = startDate.AddMonths(2);

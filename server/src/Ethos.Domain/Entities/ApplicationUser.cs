@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Ethos.Domain.Entities
@@ -8,6 +9,14 @@ namespace Ethos.Domain.Entities
     /// </summary>
     public class ApplicationUser : IdentityUser<Guid>
     {
+        public ApplicationUser(Guid id, string email, string userName, string fullName)
+        {
+            Id = id;
+            Email = email;
+            UserName = userName;
+            FullName = fullName;
+        }
+
         public string FullName { get; set; }
     }
 }

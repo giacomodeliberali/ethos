@@ -46,7 +46,7 @@ namespace Ethos.Application.Contracts.Schedule
             /// <summary>
             /// Populated only if the caller is admin.
             /// </summary>
-            public UserDto User { get; set; }
+            public UserDto? User { get; set; }
         }
 
         public class UserDto

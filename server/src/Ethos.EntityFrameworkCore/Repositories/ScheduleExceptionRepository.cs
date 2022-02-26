@@ -56,7 +56,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
 
             return ScheduleException.Factory.FromSnapshot(
                 scheduleExceptionData.Id,
-                recurringSchedule as RecurringSchedule,
+                (recurringSchedule as RecurringSchedule) !,
                 scheduleExceptionData.StartDate,
                 scheduleExceptionData.EndDate);
         }

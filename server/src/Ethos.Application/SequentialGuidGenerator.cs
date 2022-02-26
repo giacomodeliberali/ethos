@@ -13,11 +13,6 @@ namespace Ethos.Application
     public class SequentialGuidGenerator : IGuidGenerator
     {
         /// <summary>
-        /// Provides cryptographically strong random data for GUID creation.
-        /// </summary>
-        private static readonly RNGCryptoServiceProvider RandomGenerator = new RNGCryptoServiceProvider();
-
-        /// <summary>
         /// Returns a new GUID value which is sequentially ordered when formatted as
         /// a string, a byte array, or ordered by the least significant six bytes of the
         /// Data4 block, as specified by <paramref name="guidType" />.
@@ -70,7 +65,7 @@ namespace Ethos.Application
         {
             // We start with 16 bytes of cryptographically strong random data.
             byte[] randomBytes = new byte[10];
-            RandomGenerator.GetBytes(randomBytes);
+            RandomNumberGenerator.Create().GetBytes(randomBytes);
 
             // An alternate method: use a normally-created GUID to get our initial
             // random data:

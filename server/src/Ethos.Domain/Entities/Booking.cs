@@ -13,8 +13,18 @@ namespace Ethos.Domain.Entities
 
         public Schedule Schedule { get; private set; }
 
-        private Booking()
+        private Booking(
+            Guid id,
+            Schedule schedule,
+            ApplicationUser user,
+            DateTime startDate,
+            DateTime endDate)
         {
+            Id = id;
+            User = user;
+            StartDate = startDate;
+            EndDate = endDate;
+            Schedule = schedule;
         }
 
         public static class Factory
@@ -26,14 +36,7 @@ namespace Ethos.Domain.Entities
                 DateTime startDate,
                 DateTime endDate)
             {
-                return new Booking()
-                {
-                    Id = guid,
-                    User = user,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Schedule = schedule,
-                };
+                return new Booking(guid, schedule, user, startDate, endDate);
             }
 
             public static Booking CreateFromSnapshot(
@@ -43,14 +46,7 @@ namespace Ethos.Domain.Entities
                 DateTime startDate,
                 DateTime endDate)
             {
-                return new Booking()
-                {
-                    Id = id,
-                    User = user,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Schedule = schedule,
-                };
+                return new Booking(id, schedule, user, startDate, endDate);
             }
         }
     }

@@ -27,7 +27,7 @@ namespace Ethos.Application.Identity
 
         public Guid GetCurrentUserId()
         {
-            var claimsPrincipal = _httpContextAccessor.HttpContext.User;
+            var claimsPrincipal = _httpContextAccessor.HttpContext!.User;
 
             var claim = claimsPrincipal.FindFirst(c =>
             {

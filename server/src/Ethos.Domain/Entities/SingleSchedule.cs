@@ -8,8 +8,17 @@ namespace Ethos.Domain.Entities
     {
         public Period Period { get; private set; }
 
-        private SingleSchedule()
+        private SingleSchedule(
+            Guid id,
+            ApplicationUser organizer,
+            Period period,
+            int duration,
+            string name,
+            string description,
+            int participantsMaxNumber)
+            : base(id, organizer, name, description, participantsMaxNumber, duration)
         {
+            Period = period;
         }
 
         public void UpdatePeriod(Period period)
@@ -34,16 +43,14 @@ namespace Ethos.Domain.Entities
                 Guard.Against.NullOrEmpty(description, nameof(description));
                 Guard.Against.Null(period, nameof(period));
 
-                return new SingleSchedule()
-                {
-                    Id = guid,
-                    Organizer = organizer,
-                    Name = name,
-                    Description = description,
-                    ParticipantsMaxNumber = participantsMaxNumber,
-                    Period = period,
-                    DurationInMinutes = period.DurationInMinutes,
-                };
+                return new SingleSchedule(
+                    guid,
+                    organizer,
+                    period,
+                    period.DurationInMinutes,
+                    name,
+                    description,
+                    participantsMaxNumber);
             }
 
             public static SingleSchedule FromSnapshot(
@@ -56,16 +63,14 @@ namespace Ethos.Domain.Entities
                 string description,
                 int participantsMaxNumber)
             {
-                return new SingleSchedule()
-                {
-                    Id = id,
-                    Organizer = organizer,
-                    Period = new Period(startDate, endDate),
-                    DurationInMinutes = duration,
-                    Name = name,
-                    Description = description,
-                    ParticipantsMaxNumber = participantsMaxNumber,
-                };
+                return new SingleSchedule(
+                    id,
+                    organizer,
+                    new Period(startDate, endDate),
+                    duration,
+                    name,
+                    description,
+                    participantsMaxNumber);
             }
         }
     }

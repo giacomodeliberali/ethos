@@ -22,7 +22,7 @@ namespace Ethos.Web.Host
                     options.InvalidModelStateResponseFactory = context =>
                     {
                         var errors = context.ModelState.Keys
-                            .SelectMany(k => context.ModelState[k].Errors)
+                            .SelectMany(k => context.ModelState[k] !.Errors)
                             .Select(e => e.ErrorMessage);
 
                         var exception = new ExceptionDto()

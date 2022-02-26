@@ -42,7 +42,7 @@ namespace Ethos.Web.Host.Swagger
                     Title = "Ethos",
                     Version = "v1",
                 });
-                var path = Path.Combine(Path.GetDirectoryName(AppContext.BaseDirectory));
+                var path = Path.Combine(Path.GetDirectoryName(AppContext.BaseDirectory) !);
                 foreach (var filePath in Directory.GetFiles(path, "*.xml"))
                 {
                     c.IncludeXmlComments(filePath);

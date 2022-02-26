@@ -10,7 +10,9 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Create a new Schedule for the currently logged in organizer.
         /// </summary>
-        Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input);
+        Task<CreateScheduleReplyDto> CreateAsync(CreateSingleScheduleRequestDto input);
+
+        Task<CreateScheduleReplyDto> CreateRecurringAsync(CreateRecurringScheduleRequestDto input);
 
         /// <summary>
         /// Update an existing single schedule.
@@ -25,7 +27,9 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Delete an existing schedule.
         /// </summary>
-        Task DeleteAsync(DeleteScheduleRequestDto input);
+        Task DeleteAsync(DeleteSingleScheduleRequestDto input);
+
+        Task DeleteRecurringAsync(DeleteRecurringScheduleRequestDto input);
 
         /// <summary>
         /// Generate (in memory) all the schedules that are in the given interval.

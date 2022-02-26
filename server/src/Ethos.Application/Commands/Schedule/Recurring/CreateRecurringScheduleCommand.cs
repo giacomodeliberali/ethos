@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
 
-namespace Ethos.Application.Commands
+namespace Ethos.Application.Commands.Schedule.Recurring
 {
-    public class CreateScheduleCommand : IRequest<Guid>
+    public class CreateRecurringScheduleCommand : IRequest<Guid>
     {
         public string Name { get; }
 
@@ -12,7 +12,7 @@ namespace Ethos.Application.Commands
 
         public DateTime StartDate { get; }
 
-        public DateTime? EndDate { get; }
+        public DateTime EndDate { get; }
 
         [Required]
         public int DurationInMinutes { get; }
@@ -32,11 +32,11 @@ namespace Ethos.Application.Commands
         /// </summary>
         public Guid OrganizerId { get; }
 
-        public CreateScheduleCommand(
+        public CreateRecurringScheduleCommand(
             string name,
             string description,
             DateTime startDate,
-            DateTime? endDate,
+            DateTime endDate,
             int durationInMinutes,
             string recurringCronExpression,
             int participantsMaxNumber,

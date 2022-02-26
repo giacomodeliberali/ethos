@@ -1,7 +1,7 @@
 using System;
 using MediatR;
 
-namespace Ethos.Application.Commands
+namespace Ethos.Application.Commands.Schedule.Single
 {
     public class UpdateSingleScheduleCommand : IRequest
     {

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Domain.Common;
-using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
 using Microsoft.EntityFrameworkCore;

@@ -2,7 +2,7 @@ using System;
 using Ethos.Application.Contracts.Booking;
 using MediatR;
 
-namespace Ethos.Application.Commands
+namespace Ethos.Application.Commands.Booking
 {
     public class CreateBookingCommand : IRequest<CreateBookingReplyDto>
     {

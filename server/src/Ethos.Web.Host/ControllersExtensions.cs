@@ -5,7 +5,6 @@ using Ethos.Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Converters;
 
 namespace Ethos.Web.Host
 {

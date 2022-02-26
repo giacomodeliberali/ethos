@@ -29,7 +29,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         public async Task Should_SaveOrganizer()
         {
             var admin = await Scope.WithUser("admin");
-            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",
@@ -52,7 +52,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             await Should.ThrowAsync<BusinessException>(async () =>
             {
-                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -71,7 +71,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             await Should.ThrowAsync<BusinessException>(async () =>
             {
-                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -86,7 +86,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             await Should.ThrowAsync<BusinessException>(async () =>
             {
-                await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -101,7 +101,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         public async Task Should_CreateSingleSchedule()
         {
             var admin = await Scope.WithUser("admin");
-            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",
@@ -118,7 +118,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         public async Task Should_CreateRecurringSchedule()
         {
             var admin = await Scope.WithUser("admin");
-            var scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleId = (await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",

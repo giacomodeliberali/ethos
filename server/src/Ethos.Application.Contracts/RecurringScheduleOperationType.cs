@@ -1,4 +1,4 @@
-namespace Ethos.Application.Contracts.Schedule
+namespace Ethos.Application.Contracts
 {
     /// <summary>
     /// Describe how to handle operations on recurring schedules.

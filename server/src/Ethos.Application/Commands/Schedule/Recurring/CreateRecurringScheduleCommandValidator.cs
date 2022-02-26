@@ -1,14 +1,16 @@
+using Ethos.Application.Commands.Validators;
 using FluentValidation;
 
-namespace Ethos.Application.Commands.Validators
+namespace Ethos.Application.Commands.Schedule.Recurring
 {
-    public class CreateScheduleCommandValidator : EthosAbstractValidator<CreateScheduleCommand>
+    public class CreateRecurringScheduleCommandValidator : EthosAbstractValidator<CreateRecurringScheduleCommand>
     {
-        public CreateScheduleCommandValidator()
+        public CreateRecurringScheduleCommandValidator()
         {
             RuleFor(command => command.Name).NotEmpty();
             RuleFor(command => command.Description).NotEmpty();
             RuleFor(command => command.OrganizerId).NotEmpty();
+            RuleFor(command => command.RecurringCronExpression).NotEmpty();
             RuleFor(command => command.DurationInMinutes).GreaterThan(0);
             RuleFor(command => command.StartDate)
                 .Must(BeUtc)

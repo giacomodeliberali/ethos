@@ -1,14 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Ethos.Application.Contracts.Booking;
+using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
-using Ethos.Domain.Entities;
-using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
-using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +32,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         {
             using var admin = await Scope.WithUser("admin");
 
-            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Single schedule",
                 Description = "Schedule",
@@ -44,11 +41,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 OrganizerId = admin.User.Id,
             });
 
-            await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+            await _scheduleApplicationService.DeleteAsync(new DeleteSingleScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
-                InstanceStartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-01T09:00Z").ToUniversalTime(),
             });
 
             await Should.ThrowAsync<Exception>(async () =>
@@ -66,7 +61,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         {
             using var admin = await Scope.WithUser("admin");
 
-            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var singleScheduleReply = await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
             {
                 Name = "Recurring schedule",
                 Description = "Schedule",
@@ -78,7 +73,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 OrganizerId = admin.User.Id,
             });
 
-            await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+            await _scheduleApplicationService.DeleteRecurringAsync(new DeleteRecurringScheduleRequestDto()
             {
                 Id = singleScheduleReply.Id,
                 RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
@@ -98,7 +93,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var lastOctober = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime();
 
             using var admin = await Scope.WithUser("admin");
-            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleReplyDto = await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
             {
                 Name = "Test recurring schedule",
                 Description = "Recurring schedule every weekday at 9am",
@@ -111,7 +106,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             await Scope.WithUser("admin");
 
-            await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+            await _scheduleApplicationService.DeleteRecurringAsync(new DeleteRecurringScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
                 InstanceStartDate = DateTime.Parse("2021-10-07T09:00:00Z").ToUniversalTime(),
@@ -133,7 +128,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         public async Task Should_ThrowError_When_InstanceDateTimeAreNotProvided()
         {
             using var admin = await Scope.WithUser("admin");
-            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var singleScheduleReply = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Single schedule",
                 Description = "Schedule",
@@ -145,7 +140,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await Should.ThrowAsync<Exception>(async () =>
             {
                 // missing instance info
-                await _scheduleApplicationService.DeleteAsync(new DeleteScheduleRequestDto()
+                await _scheduleApplicationService.DeleteAsync(new DeleteSingleScheduleRequestDto()
                 {
                     Id = singleScheduleReply.Id,
                 });

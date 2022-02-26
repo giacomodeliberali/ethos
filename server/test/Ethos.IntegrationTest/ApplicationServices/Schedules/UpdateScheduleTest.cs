@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
 using Ethos.Domain.Common;
@@ -38,7 +36,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var startDate = DateTime.UtcNow;
             var endDate = startDate.AddHours(2);
 
-            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Test schedule",
                 Description = "Description",
@@ -66,7 +64,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         {
             using var admin = await Scope.WithUser("admin");
 
-            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
                 Name = "Single schedule",
                 Description = "Schedule every weekday at 9am",

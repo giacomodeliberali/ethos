@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using Ethos.Application.Commands;
+using Ethos.Application.Commands.Schedule.Recurring;
+using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Schedule;
+using Ethos.Application.Exceptions;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
@@ -13,9 +15,9 @@ using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using MediatR;
 
-namespace Ethos.Application.Handlers
+namespace Ethos.Application.Handlers.Schedule.Recurring
 {
-    public class DeleteScheduleCommandHandler : IRequestHandler<DeleteScheduleCommand, DeleteScheduleReplyDto>
+    public class DeleteRecurringScheduleCommandHandler : IRequestHandler<DeleteRecurringScheduleCommand, DeleteScheduleReplyDto>
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -23,7 +25,7 @@ namespace Ethos.Application.Handlers
         private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
         private readonly IGuidGenerator _guidGenerator;
 
-        public DeleteScheduleCommandHandler(
+        public DeleteRecurringScheduleCommandHandler(
             IScheduleRepository scheduleRepository,
             IUnitOfWork unitOfWork,
             IBookingQueryService bookingQueryService,
@@ -37,7 +39,7 @@ namespace Ethos.Application.Handlers
             _guidGenerator = guidGenerator;
         }
 
-        public async Task<DeleteScheduleReplyDto> Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteScheduleReplyDto> Handle(DeleteRecurringScheduleCommand request, CancellationToken cancellationToken)
         {
             var result = new DeleteScheduleReplyDto
             {
@@ -46,13 +48,14 @@ namespace Ethos.Application.Handlers
 
             var schedule = await _scheduleRepository.GetByIdAsync(request.Id);
 
+            if (schedule is SingleSchedule singleSchedule)
+            {
+                throw new BusinessException("Can not delete single schedule");
+            }
+
             if (schedule is RecurringSchedule recurringSchedule)
             {
                 await DeleteSchedule(recurringSchedule, request);
-            }
-            else if (schedule is SingleSchedule singleSchedule)
-            {
-                await DeleteSchedule(singleSchedule, request);
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -60,7 +63,7 @@ namespace Ethos.Application.Handlers
             return result;
         }
 
-        private async Task DeleteSchedule(RecurringSchedule schedule, DeleteScheduleCommand request)
+        private async Task DeleteSchedule(RecurringSchedule schedule, DeleteRecurringScheduleCommand request)
         {
             Guard.Against.Null(request.RecurringScheduleOperationType, nameof(request.RecurringScheduleOperationType));
 
@@ -139,8 +142,7 @@ namespace Ethos.Application.Handlers
 
             if (existingBookings.Any())
             {
-                throw new BusinessException(
-                    $"Non è possibile eliminare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
+                throw new CanNotDeleteScheduleWithExistingBookingsException(existingBookings.Count);
             }
 
             var scheduleException = ScheduleException.Factory.Create(
@@ -150,21 +152,6 @@ namespace Ethos.Application.Handlers
                 instanceEndDate);
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
-        }
-
-        private async Task DeleteSchedule(SingleSchedule schedule, DeleteScheduleCommand request)
-        {
-            var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
-                schedule.Id,
-                schedule.Period.StartDate,
-                schedule.Period.EndDate);
-
-            if (existingBookings.Any())
-            {
-                throw new BusinessException($"Non è possibile eliminare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
-            }
-
-            await _scheduleRepository.DeleteAsync(schedule);
         }
     }
 }

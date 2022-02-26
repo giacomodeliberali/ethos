@@ -1,7 +1,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ethos.Application.Commands;
+using Ethos.Application.Commands.Schedule.Recurring;
+using Ethos.Application.Exceptions;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
@@ -11,7 +12,7 @@ using Ethos.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Ethos.Application.Handlers
+namespace Ethos.Application.Handlers.Schedule.Recurring
 {
     public class UpdateRecurringScheduleInstanceCommandHandler : AsyncRequestHandler<UpdateRecurringScheduleInstanceCommand>
     {
@@ -69,8 +70,7 @@ namespace Ethos.Application.Handlers
 
             if (existingBookings.Any())
             {
-                throw new BusinessException(
-                    $"Non è possibile modificare la schedulazione, sono presenti {existingBookings.Count} prenotazioni");
+                throw new CanNotEditScheduleWithExistingBookingsException(existingBookings.Count);
             }
 
             var scheduleException = ScheduleException.Factory.Create(

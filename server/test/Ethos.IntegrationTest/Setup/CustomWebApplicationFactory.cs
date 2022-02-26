@@ -1,19 +1,13 @@
-using System;
 using System.Data.Common;
-using System.Linq;
 using Ethos.Application.Identity;
-using Ethos.Application.Seed;
-using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.EntityFrameworkCore;
-using Ethos.Web.Host;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 

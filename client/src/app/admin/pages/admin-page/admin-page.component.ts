@@ -2,12 +2,16 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import {
-  CreateScheduleRequestDto,
+  CreateRecurringScheduleRequestDto,
+  CreateSingleScheduleRequestDto,
   GeneratedScheduleDto,
   GeneratedScheduleDto_BookingDto,
   IdentityService,
   RecurringScheduleOperationType,
+  RecurringSchedulesService,
   SchedulesService,
+  SingleSchedulesService,
+  UpdateRecurringScheduleInstanceRequestDto,
   UpdateSingleScheduleRequestDto,
   UserDto,
 } from '@core/services/ethos.generated.service';
@@ -19,7 +23,7 @@ import { LogoutModalComponent } from '@shared/components/logout-modal/logout-mod
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
 import { DeleteScheduleModalComponent } from '../../components/delete-schedule-modal/delete-schedule-modal.component';
@@ -53,6 +57,8 @@ export class AdminPageComponent extends BaseDirective {
   constructor(
     public mediaSvc: MediaService,
     private schedulesSvc: SchedulesService,
+    private singleScheduleSvc: SingleSchedulesService,
+    private recurringScheduleSvc: RecurringSchedulesService,
     private loadingSvc: LoadingService,
     private settingsSvc: SettingsService,
     private identitySvc: IdentityService,
@@ -117,18 +123,31 @@ export class AdminPageComponent extends BaseDirective {
       mode: 'ios',
     });
     await editModal.present();
-    const { data } = await editModal.onWillDismiss();
+
+    const { data } = await editModal.onWillDismiss<{
+      schedule: any;
+      isRecurrent: boolean;
+    }>();
+
     if (data) {
       if (schedule) {
-        this.callUpdateSchedule(data);
+        this.callUpdateSchedule(data.schedule, schedule.isRecurring);
       } else {
-        this.callCreateSchedule(data);
+        this.callCreateSchedule(data.schedule, data.isRecurrent);
       }
     }
   }
 
-  callCreateSchedule(schedule: CreateScheduleRequestDto) {
-    this.schedulesSvc.createSchedule(schedule).subscribe({
+  callCreateSchedule(
+    schedule: CreateSingleScheduleRequestDto &
+      CreateRecurringScheduleRequestDto,
+    isRecurrent: boolean
+  ) {
+    const createSchedule = isRecurrent
+      ? this.recurringScheduleSvc.createRecurringSchedule(schedule)
+      : this.singleScheduleSvc.createSingleSchedule(schedule);
+
+    createSchedule.subscribe({
       next: (result) => {
         this.toastSvc.addSuccessToast({
           header: 'Corso creato!',
@@ -144,9 +163,17 @@ export class AdminPageComponent extends BaseDirective {
     });
   }
 
-  callUpdateSchedule(schedule: UpdateSingleScheduleRequestDto) {
-    this.schedulesSvc.updateSchedule(schedule).subscribe({
-      next: (result) => {
+  callUpdateSchedule(
+    schedule: UpdateSingleScheduleRequestDto &
+      UpdateRecurringScheduleInstanceRequestDto,
+    isRecurrent: boolean
+  ) {
+    const updateSchedule = isRecurrent
+      ? this.recurringScheduleSvc.updateRecurringScheduleInstance(schedule)
+      : this.singleScheduleSvc.updateSingleSchedule(schedule);
+
+    updateSchedule.subscribe({
+      next: () => {
         this.toastSvc.addSuccessToast({
           header: 'Corso modificato!',
           message: 'Il corso è stato modificato con successo',
@@ -211,22 +238,26 @@ export class AdminPageComponent extends BaseDirective {
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();
     if (data != null) {
-      this.loadingSvc
-        .startLoading(
-          this,
-          'DELETE_SCHEDULE',
-          this.schedulesSvc.deleteSchedule(schedule.scheduleId, {
+      const deleteSchedule = schedule.isRecurring
+        ? this.recurringScheduleSvc.deleteRecurringSchedule(
+            schedule.scheduleId,
+            {
+              id: schedule.scheduleId,
+              recurringScheduleOperationType: data
+                ? RecurringScheduleOperationType.InstanceAndFuture
+                : RecurringScheduleOperationType.Instance,
+              instanceStartDate: schedule.startDate,
+              instanceEndDate: schedule.endDate,
+            }
+          )
+        : this.singleScheduleSvc.deleteSingleSchedule(schedule.scheduleId, {
             id: schedule.scheduleId,
-            recurringScheduleOperationType: data
-              ? RecurringScheduleOperationType.InstanceAndFuture
-              : RecurringScheduleOperationType.Instance,
-            instanceStartDate: schedule.startDate,
-            instanceEndDate: schedule.endDate,
-          }),
-          {
-            message: 'Sto eliminando il corso.',
-          }
-        )
+          });
+
+      this.loadingSvc
+        .startLoading(this, 'DELETE_SCHEDULE', deleteSchedule, {
+          message: 'Sto eliminando il corso.',
+        })
         .subscribe({
           next: () => {
             this.loadSchedules(this.currentDate);

@@ -1,4 +1,3 @@
-using System.ComponentModel.Design;
 using System.Text;
 using Ethos.Domain.Entities;
 using Ethos.EntityFrameworkCore;

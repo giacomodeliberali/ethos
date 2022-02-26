@@ -8,6 +8,7 @@ import { DefaultInputComponent } from '../default-input/default-input.component'
 })
 export class DateTimeInputComponent extends DefaultInputComponent {
   format: string;
+  minuteValues: string;
   constructor() {
     super();
   }

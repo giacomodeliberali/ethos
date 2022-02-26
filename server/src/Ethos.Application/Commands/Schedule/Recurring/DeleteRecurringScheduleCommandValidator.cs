@@ -1,10 +1,11 @@
+using Ethos.Application.Commands.Validators;
 using FluentValidation;
 
-namespace Ethos.Application.Commands.Validators
+namespace Ethos.Application.Commands.Schedule.Recurring
 {
-    public class DeleteScheduleCommandValidator : EthosAbstractValidator<DeleteScheduleCommand>
+    public class DeleteRecurringScheduleCommandValidator : EthosAbstractValidator<DeleteRecurringScheduleCommand>
     {
-        public DeleteScheduleCommandValidator()
+        public DeleteRecurringScheduleCommandValidator()
         {
             RuleFor(command => command.Id).NotEmpty();
 

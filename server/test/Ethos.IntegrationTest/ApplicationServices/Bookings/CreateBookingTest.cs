@@ -32,7 +32,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
-                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -65,7 +65,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
-                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -117,7 +117,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
-                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -205,7 +205,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
-                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",
@@ -280,7 +280,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
             {
-                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                scheduleId = (await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Test schedule",
                     Description = "Description",

@@ -5,7 +5,6 @@ using Ardalis.GuardClauses;
 using Cronos;
 using Ethos.Domain.Common;
 using Ethos.Domain.Exceptions;
-using Ethos.Domain.Guards;
 
 namespace Ethos.Domain.Entities
 {

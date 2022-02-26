@@ -1,6 +1,7 @@
+using Ethos.Application.Commands.Validators;
 using FluentValidation;
 
-namespace Ethos.Application.Commands.Validators
+namespace Ethos.Application.Commands.Schedule.Recurring
 {
     public class UpdateRecurringScheduleInstanceCommandValidator : EthosAbstractValidator<UpdateRecurringScheduleInstanceCommand>
     {

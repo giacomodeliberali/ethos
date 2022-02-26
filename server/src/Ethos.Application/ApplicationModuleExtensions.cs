@@ -10,7 +10,6 @@ using Ethos.Application.Services;
 using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
-using Ethos.Query.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;

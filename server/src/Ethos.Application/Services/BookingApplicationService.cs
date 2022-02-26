@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Ethos.Application.Commands;
+using Ethos.Application.Commands.Booking;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Queries;
 using Ethos.Domain.Repositories;

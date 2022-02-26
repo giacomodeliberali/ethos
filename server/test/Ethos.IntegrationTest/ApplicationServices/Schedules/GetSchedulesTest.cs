@@ -34,7 +34,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
             {
-                reply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                reply = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Name",
                     Description = "Description",
@@ -71,7 +71,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
             {
-                reply = await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+                reply = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
                 {
                     Name = "Name",
                     Description = "Description",
@@ -106,7 +106,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
             using var admin = await Scope.WithUser("admin");
 
-            await _scheduleApplicationService.CreateAsync(new CreateScheduleRequestDto()
+            await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
             {
                 Name = "Test recurring schedule",
                 Description = "Recurring schedule every weekday at 9am",

@@ -1,5 +1,3 @@
-using System;
-
 namespace Ethos.Domain.Exceptions
 {
     public class AuthenticationException : BusinessException

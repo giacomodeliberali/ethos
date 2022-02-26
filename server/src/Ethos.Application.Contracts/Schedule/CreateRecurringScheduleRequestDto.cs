@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ethos.Application.Contracts.Schedule
 {
-    public class CreateScheduleRequestDto
+    public class CreateRecurringScheduleRequestDto
     {
         [Required]
         public string Name { get; set; }
@@ -17,25 +17,15 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public int DurationInMinutes { get; set; }
 
-        /// <summary>
-        /// Populated only if recurring.
-        /// </summary>
-        public DateTime? EndDate { get; set; }
+        [Required]
+        public DateTime EndDate { get; set; }
 
-        /// <summary>
-        /// Populated only if recurring. A CRON expression to indicate this schedule is recurring.
-        /// </summary>
+        [Required]
         public string RecurringCronExpression { get; set; }
 
-        /// <summary>
-        /// Defaults to zero if no limit is required.
-        /// </summary>
         [Required]
         public int ParticipantsMaxNumber { get; set; }
 
-        /// <summary>
-        /// The id of the organizer of this schedule.
-        /// </summary>
         [Required]
         public Guid OrganizerId { get; set; }
     }

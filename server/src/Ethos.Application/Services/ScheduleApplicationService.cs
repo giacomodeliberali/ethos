@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ethos.Application.Commands;
+using Ethos.Application.Commands.Schedule.Recurring;
+using Ethos.Application.Commands.Schedule.Single;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Queries;
 using Ethos.Domain.Repositories;
@@ -22,9 +23,25 @@ namespace Ethos.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<CreateScheduleReplyDto> CreateAsync(CreateScheduleRequestDto input)
+        public async Task<CreateScheduleReplyDto> CreateAsync(CreateSingleScheduleRequestDto input)
         {
-            var scheduleId = await Mediator.Send(new CreateScheduleCommand(
+            var scheduleId = await Mediator.Send(new CreateSingleScheduleCommand(
+                input.Name,
+                input.Description,
+                input.StartDate,
+                input.DurationInMinutes,
+                input.ParticipantsMaxNumber,
+                input.OrganizerId));
+
+            return new CreateScheduleReplyDto()
+            {
+                Id = scheduleId,
+            };
+        }
+
+        public async Task<CreateScheduleReplyDto> CreateRecurringAsync(CreateRecurringScheduleRequestDto input)
+        {
+            var scheduleId = await Mediator.Send(new CreateRecurringScheduleCommand(
                 input.Name,
                 input.Description,
                 input.StartDate,
@@ -72,15 +89,23 @@ namespace Ethos.Application.Services
             });
         }
 
-        /// <inheritdoc />
-        public async Task DeleteAsync(DeleteScheduleRequestDto input)
+        public async Task DeleteRecurringAsync(DeleteRecurringScheduleRequestDto input)
         {
-            await Mediator.Send(new DeleteScheduleCommand
+            await Mediator.Send(new DeleteRecurringScheduleCommand
             {
                 Id = input.Id,
                 InstanceStartDate = input.InstanceStartDate,
                 InstanceEndDate = input.InstanceEndDate,
                 RecurringScheduleOperationType = input.RecurringScheduleOperationType,
+            });
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(DeleteSingleScheduleRequestDto input)
+        {
+            await Mediator.Send(new DeleteSingleScheduleCommand
+            {
+                Id = input.Id,
             });
         }
 

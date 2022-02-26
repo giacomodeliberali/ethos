@@ -1,7 +1,6 @@
 using System;
 using Ardalis.GuardClauses;
 using Ethos.Domain.Common;
-using Ethos.Domain.Guards;
 
 namespace Ethos.Domain.Entities
 {

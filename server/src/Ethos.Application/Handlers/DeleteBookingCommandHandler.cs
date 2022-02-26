@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Ethos.Application.Commands;
+using Ethos.Application.Commands.Booking;
 using Ethos.Application.Identity;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;

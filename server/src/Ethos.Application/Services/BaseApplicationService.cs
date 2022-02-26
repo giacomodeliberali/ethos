@@ -1,4 +1,3 @@
-using Ethos.Domain.Common;
 using Ethos.Domain.Repositories;
 using MediatR;
 

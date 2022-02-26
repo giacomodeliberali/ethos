@@ -12,7 +12,6 @@ using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Xunit;
 
 namespace Ethos.IntegrationTest.Setup

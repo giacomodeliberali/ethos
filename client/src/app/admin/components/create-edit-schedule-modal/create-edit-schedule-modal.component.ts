@@ -8,10 +8,12 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
-  CreateScheduleRequestDto,
+  CreateSingleScheduleRequestDto,
+  CreateRecurringScheduleRequestDto,
   GeneratedScheduleDto,
   UpdateSingleScheduleRequestDto,
   UserDto,
+  UpdateRecurringScheduleInstanceRequestDto,
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
 import { ToastService } from '@shared/services/toast.service';
@@ -96,7 +98,6 @@ export class CreateEditScheduleModalComponent implements OnInit {
     this.scheduleForm
       .get('organizerId')
       .patchValue(this.schedule?.organizer?.id);
-    console.log(this.scheduleForm.value);
   }
 
   /**
@@ -108,8 +109,12 @@ export class CreateEditScheduleModalComponent implements OnInit {
   closeModal(event: 'success' | 'cancel') {
     if (this.scheduleForm.valid && event === 'success') {
       if (this.scheduleForm.valid) {
-        const schedule: CreateScheduleRequestDto &
-          UpdateSingleScheduleRequestDto = {
+        const schedule: Partial<
+          CreateSingleScheduleRequestDto &
+            CreateRecurringScheduleRequestDto &
+            UpdateSingleScheduleRequestDto &
+            UpdateRecurringScheduleInstanceRequestDto
+        > = {
           id: this.scheduleForm.get('scheduleId').value,
           description: this.scheduleForm.get('description').value,
           startDate: moment(this.scheduleForm.get('startDate').value)
@@ -146,7 +151,10 @@ export class CreateEditScheduleModalComponent implements OnInit {
             this.scheduleForm.get('time').value as Date
           );
         }
-        this.modalCtrl.dismiss(schedule);
+        this.modalCtrl.dismiss({
+          schedule,
+          isRecurrent: this.scheduleForm.get('isRecurrent').value,
+        });
         return;
       }
       this.toastSvc.addErrorToast({

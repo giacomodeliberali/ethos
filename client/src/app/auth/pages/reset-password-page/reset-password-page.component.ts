@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import { IdentityService } from '@core/services/ethos.generated.service';
+import { UserService } from '@core/services/user.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import { Observable } from 'rxjs';
@@ -31,11 +32,13 @@ export class ResetPasswordPageComponent extends BaseDirective {
     private route: ActivatedRoute,
     private identityService: IdentityService,
     private loadingSvc: LoadingService,
-    private toastSvc: ToastService
+    private toastSvc: ToastService,
+    private userSvc: UserService
   ) {
     super();
     this.email = this.route.snapshot.queryParamMap.get('email');
     this.resetToken = this.route.snapshot.queryParamMap.get('resetToken');
+    this.userSvc.removeOldAuthentication();
   }
 
   resetPassword() {

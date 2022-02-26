@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Ethos.Application.Handlers
 {
-    public class GetBookingByIdCommandHandler : IRequestHandler<GetBookingByIdCommand, BookingDto>
+    public class GetBookingByIdCommandHandler : IRequestHandler<GetBookingByIdQuery, BookingDto>
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace Ethos.Application.Handlers
             _mapper = mapper;
         }
 
-        public async Task<BookingDto> Handle(GetBookingByIdCommand request, CancellationToken cancellationToken)
+        public async Task<BookingDto> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
         {
             var booking = await _bookingRepository.GetByIdAsync(request.Id);
             return _mapper.Map<BookingDto>(booking);

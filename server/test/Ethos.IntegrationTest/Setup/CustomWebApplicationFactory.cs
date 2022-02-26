@@ -37,7 +37,7 @@ namespace Ethos.IntegrationTest.Setup
                 services.RemoveAll<ICurrentUser>();
                 var icu = Substitute.For<ICurrentUser>();
                 icu.GetCurrentUser().Throws(new BusinessException("User not logged in."));
-                icu.GetCurrentUserId().Throws(new BusinessException("User not logged in."));
+                icu.UserId().Throws(new BusinessException("User not logged in."));
                 icu.IsInRole(Arg.Any<string>()).Throws(new BusinessException("User not logged in."));
 
                 services.AddTransient((_) => icu);

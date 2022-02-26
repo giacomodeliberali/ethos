@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Ethos.Application.Queries
 {
-    public class GetSchedulesQueryCommand : IRequest<IEnumerable<GeneratedScheduleDto>>
+    public class GetSchedulesQuery : IRequest<IEnumerable<GeneratedScheduleDto>>
     {
         public DateTime StartDate { get; init; }
 

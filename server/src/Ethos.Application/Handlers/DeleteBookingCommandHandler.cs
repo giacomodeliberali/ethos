@@ -35,7 +35,7 @@ namespace Ethos.Application.Handlers
                 throw new BusinessException("You can not delete a booking in the past");
             }
 
-            if (booking.User.Id != _currentUser.GetCurrentUserId() &&
+            if (booking.User.Id != _currentUser.UserId() &&
                 !await _currentUser.IsInRole(RoleConstants.Admin))
             {
                 throw new BusinessException("You can only delete your own bookings!");

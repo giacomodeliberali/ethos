@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
@@ -47,6 +48,15 @@ namespace Ethos.Web.Controllers
         public async Task<BookingDto> GetBookingByIdAsync([Required] Guid id)
         {
             return await _bookingApplicationService.GetByIdAsync(id);
+        }
+
+        /// <summary>
+        /// Return the list of future bookings for the current user.
+        /// </summary>
+        [HttpGet]
+        public async Task<IEnumerable<BookingDto>> GetFutureBookings()
+        {
+            return await _bookingApplicationService.GetFutureBookings();
         }
     }
 }

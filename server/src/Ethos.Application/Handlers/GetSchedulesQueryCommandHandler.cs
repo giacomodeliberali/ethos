@@ -14,7 +14,7 @@ using MediatR;
 
 namespace Ethos.Application.Handlers
 {
-    public class GetSchedulesQueryCommandHandler : IRequestHandler<GetSchedulesQueryCommand, IEnumerable<GeneratedScheduleDto>>
+    public class GetSchedulesQueryCommandHandler : IRequestHandler<GetSchedulesQuery, IEnumerable<GeneratedScheduleDto>>
     {
         private readonly IScheduleQueryService _scheduleQueryService;
         private readonly IBookingQueryService _bookingQueryService;
@@ -33,7 +33,7 @@ namespace Ethos.Application.Handlers
             _currentUser = currentUser;
         }
 
-        public async Task<IEnumerable<GeneratedScheduleDto>> Handle(GetSchedulesQueryCommand request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<GeneratedScheduleDto>> Handle(GetSchedulesQuery request, CancellationToken cancellationToken)
         {
             var isAdmin = await _currentUser.IsInRole(RoleConstants.Admin);
 
@@ -98,7 +98,7 @@ namespace Ethos.Application.Handlers
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
                             Id = b.Id,
-                            User = isAdmin || b.UserId == _currentUser.GetCurrentUserId()
+                            User = isAdmin || b.UserId == _currentUser.UserId()
                                 ? new GeneratedScheduleDto.UserDto()
                                 {
                                     Id = b.UserId,
@@ -146,7 +146,7 @@ namespace Ethos.Application.Handlers
                     Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                     {
                         Id = b.Id,
-                        User = isAdmin || b.UserId == _currentUser.GetCurrentUserId()
+                        User = isAdmin || b.UserId == _currentUser.UserId()
                             ? new GeneratedScheduleDto.UserDto()
                             {
                                 Id = b.UserId,

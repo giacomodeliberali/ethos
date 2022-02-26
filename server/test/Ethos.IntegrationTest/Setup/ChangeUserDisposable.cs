@@ -30,7 +30,7 @@ namespace Ethos.IntegrationTest.Setup
 
             _currentUser.ClearSubstitute();
             _currentUser.GetCurrentUser().Returns(_user);
-            _currentUser.GetCurrentUserId().Returns(_user.Id);
+            _currentUser.UserId().Returns(_user.Id);
             _currentUser.IsInRole(RoleConstants.Admin).Returns(_roles.Contains(RoleConstants.Admin));
         }
 
@@ -38,7 +38,7 @@ namespace Ethos.IntegrationTest.Setup
         {
             _currentUser.ClearSubstitute();
             _currentUser.GetCurrentUser().Throws(new BusinessException("User not logged in."));
-            _currentUser.GetCurrentUserId().Throws(new BusinessException("User not logged in."));
+            _currentUser.UserId().Throws(new BusinessException("User not logged in."));
             _currentUser.IsInRole(Arg.Any<string>()).Throws(new BusinessException("User not logged in."));
         }
     }

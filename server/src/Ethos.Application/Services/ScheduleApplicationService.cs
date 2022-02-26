@@ -112,7 +112,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate)
         {
-            return await Mediator.Send(new GetSchedulesQueryCommand()
+            return await Mediator.Send(new GetSchedulesQuery()
             {
                 StartDate = startDate,
                 EndDate = endDate,

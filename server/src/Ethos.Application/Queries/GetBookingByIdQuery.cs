@@ -4,11 +4,11 @@ using MediatR;
 
 namespace Ethos.Application.Queries
 {
-    public class GetBookingByIdCommand : IRequest<BookingDto>
+    public class GetBookingByIdQuery : IRequest<BookingDto>
     {
         public Guid Id { get; }
 
-        public GetBookingByIdCommand(Guid id)
+        public GetBookingByIdQuery(Guid id)
         {
             Id = id;
         }

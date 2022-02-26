@@ -16,6 +16,14 @@ namespace Ethos.Query.Projections
 
         public Guid ScheduleId { get; set; }
 
+        public string ScheduleName { get; set; }
+
+        public string ScheduleDescription { get; set; }
+
+        public int ScheduleDurationInMinutes { get; set; }
+
+        public string ScheduleOrganizerFullName { get; set; }
+
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }

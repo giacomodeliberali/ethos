@@ -8,7 +8,7 @@ namespace Ethos.Application.Identity
     {
         public Task<ApplicationUser> GetCurrentUser();
 
-        public Guid GetCurrentUserId();
+        public Guid UserId();
 
         public Task<bool> IsInRole(string role);
     }

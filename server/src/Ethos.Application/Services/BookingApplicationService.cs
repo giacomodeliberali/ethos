@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Commands.Booking;
 using Ethos.Application.Contracts.Booking;
+using Ethos.Application.Identity;
 using Ethos.Application.Queries;
 using Ethos.Domain.Repositories;
 using MediatR;
@@ -13,11 +15,15 @@ namespace Ethos.Application.Services
     /// </summary>
     public class BookingApplicationService : BaseApplicationService, IBookingApplicationService
     {
+        private readonly ICurrentUser _currentUser;
+
         public BookingApplicationService(
+            ICurrentUser currentUser,
             IUnitOfWork unitOfWork,
             IMediator mediator)
         : base(mediator, unitOfWork)
         {
+            _currentUser = currentUser;
         }
 
         /// <inheritdoc />
@@ -38,7 +44,12 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<BookingDto> GetByIdAsync(Guid id)
         {
-            return await Mediator.Send(new GetBookingByIdCommand(id));
+            return await Mediator.Send(new GetBookingByIdQuery(id));
+        }
+
+        public async Task<IEnumerable<BookingDto>> GetFutureBookings()
+        {
+            return await Mediator.Send(new GetFutureBookingsQuery(_currentUser.UserId()));
         }
     }
 }

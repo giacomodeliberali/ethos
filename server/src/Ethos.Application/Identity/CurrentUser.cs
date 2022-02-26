@@ -22,11 +22,11 @@ namespace Ethos.Application.Identity
 
         public async Task<ApplicationUser> GetCurrentUser()
         {
-            var currentUserId = GetCurrentUserId();
+            var currentUserId = UserId();
             return await _userManager.FindByIdAsync(currentUserId.ToString());
         }
 
-        public Guid GetCurrentUserId()
+        public Guid UserId()
         {
             var claimsPrincipal = _httpContextAccessor.HttpContext!.User;
 

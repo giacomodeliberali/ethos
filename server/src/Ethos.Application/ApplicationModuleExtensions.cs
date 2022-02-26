@@ -67,6 +67,7 @@ namespace Ethos.Application
 
         private static void AddEthosAutoMapper(this IServiceCollection serviceCollection)
         {
+            // TODO @GDL: split in differente profiles
             serviceCollection.AddAutoMapper(options =>
             {
                 options.CreateMap<Booking, BookingDto>();
@@ -75,6 +76,20 @@ namespace Ethos.Application
                 options.CreateMap<ApplicationUser, UserDto>();
                 options.CreateMap<ApplicationUser, GeneratedScheduleDto.UserDto>();
                 options.CreateMap<UserProjection, UserDto>();
+                options.CreateMap<BookingProjection, BookingDto>()
+                    .ForMember(dest => dest.User, opt => opt.MapFrom((src => new BookingDto.UserDto()
+                    {
+                        Id = src.UserId,
+                        FullName = src.UserFullName,
+                    })))
+                    .ForMember(dest => dest.Schedule, opt => opt.MapFrom(src => new BookingDto.ScheduleDto()
+                    {
+                        Id = src.ScheduleId,
+                        Name = src.ScheduleName,
+                        Description = src.ScheduleDescription,
+                        DurationInMinutes = src.ScheduleDurationInMinutes,
+                        OrganizerFullName = src.ScheduleOrganizerFullName,
+                    }));
             });
         }
     }

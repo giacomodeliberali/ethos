@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Booking;
 
@@ -14,5 +15,7 @@ namespace Ethos.Application.Services
         Task DeleteAsync(Guid id);
 
         Task<BookingDto> GetByIdAsync(Guid id);
+
+        Task<IEnumerable<BookingDto>> GetFutureBookings();
     }
 }

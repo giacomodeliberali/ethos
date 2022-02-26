@@ -1,7 +1,7 @@
 {
   "name": "Ethos Training",
   "short_name": "Ethos",
-  "theme_color": "#1976d2",
+  "theme_color": "#2d333a",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",

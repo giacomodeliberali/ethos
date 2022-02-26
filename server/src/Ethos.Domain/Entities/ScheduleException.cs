@@ -2,6 +2,8 @@ using System;
 using Ardalis.GuardClauses;
 using Ethos.Domain.Common;
 
+#pragma warning disable CA1711
+
 namespace Ethos.Domain.Entities
 {
     public class ScheduleException : Entity

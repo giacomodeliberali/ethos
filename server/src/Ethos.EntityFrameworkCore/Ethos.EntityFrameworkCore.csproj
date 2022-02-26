@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <Import Project="../../codeAnalysis.props" />
-
+    
+    <Import Project="../../common.props" />
+    
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
@@ -19,7 +15,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />
       <ProjectReference Include="..\Ethos.Query\Ethos.Query.csproj" />
-      <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
+      <ProjectReference Include="..\Ethos.Common\Ethos.Common.csproj" />
     </ItemGroup>
 
 </Project>

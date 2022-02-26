@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <Import Project="../../codeAnalysis.props" />
+    
+    <Import Project="../../common.props" />
 
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Application.Contracts\Ethos.Application.Contracts.csproj" />
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />
       <ProjectReference Include="..\Ethos.Query\Ethos.Query.csproj" />
-      <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
+      <ProjectReference Include="..\Ethos.Common\Ethos.Common.csproj" />
     </ItemGroup>
 
     <ItemGroup>

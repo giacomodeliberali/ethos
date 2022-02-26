@@ -30,13 +30,13 @@ namespace Ethos.Domain.Entities
         public static class Factory
         {
             public static Booking Create(
-                Guid guid,
+                Guid id,
                 Schedule schedule,
                 ApplicationUser user,
                 DateTime startDate,
                 DateTime endDate)
             {
-                return new Booking(guid, schedule, user, startDate, endDate);
+                return new Booking(id, schedule, user, startDate, endDate);
             }
 
             public static Booking CreateFromSnapshot(

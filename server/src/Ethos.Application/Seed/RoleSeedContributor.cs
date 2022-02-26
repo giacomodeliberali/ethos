@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
-using Ethos.Shared;
+using Ethos.Common;
 
 namespace Ethos.Application.Seed
 {

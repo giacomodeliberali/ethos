@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Ethos.Shared;
+using Ethos.Common;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -16,15 +16,15 @@ namespace Ethos.Application.Email
             _emailConfig = emailConfigOptions.Value;
         }
 
-        public async Task SendEmail(string recipient, string subject, string text)
+        public async Task SendEmail(string recipient, string subject, string message)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_emailConfig.Name, _emailConfig.UserName));
-            message.To.Add(new MailboxAddress(string.Empty, recipient));
-            message.Subject = subject;
-            message.Body = new TextPart(TextFormat.Html)
+            var mimeMessage = new MimeMessage();
+            mimeMessage.From.Add(new MailboxAddress(_emailConfig.Name, _emailConfig.UserName));
+            mimeMessage.To.Add(new MailboxAddress(string.Empty, recipient));
+            mimeMessage.Subject = subject;
+            mimeMessage.Body = new TextPart(TextFormat.Html)
             {
-                Text = text,
+                Text = message,
             };
 
             using var client = new SmtpClient();
@@ -33,7 +33,7 @@ namespace Ethos.Application.Email
 
             await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
 
-            await client.SendAsync(message);
+            await client.SendAsync(mimeMessage);
             await client.DisconnectAsync(true);
         }
     }

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Ethos.Application.Identity;
+using Ethos.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
-using Ethos.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ClearExtensions;

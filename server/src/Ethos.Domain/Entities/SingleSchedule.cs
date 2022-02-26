@@ -31,7 +31,7 @@ namespace Ethos.Domain.Entities
         public static class Factory
         {
             public static SingleSchedule Create(
-                Guid guid,
+                Guid id,
                 ApplicationUser organizer,
                 string name,
                 string description,
@@ -44,7 +44,7 @@ namespace Ethos.Domain.Entities
                 Guard.Against.Null(period, nameof(period));
 
                 return new SingleSchedule(
-                    guid,
+                    id,
                     organizer,
                     period,
                     period.DurationInMinutes,

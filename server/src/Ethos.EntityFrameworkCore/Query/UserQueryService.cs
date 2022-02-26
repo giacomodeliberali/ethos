@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ethos.Common;
 using Ethos.Domain.Entities;
 using Ethos.Query.Projections;
 using Ethos.Query.Services;
-using Ethos.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

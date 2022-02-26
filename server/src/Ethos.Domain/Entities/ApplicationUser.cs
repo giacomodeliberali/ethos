@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Ethos.Domain.Entities

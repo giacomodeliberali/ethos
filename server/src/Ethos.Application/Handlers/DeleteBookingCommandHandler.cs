@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ethos.Application.Commands.Booking;
 using Ethos.Application.Identity;
+using Ethos.Common;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
-using Ethos.Shared;
 using MediatR;
 
 namespace Ethos.Application.Handlers

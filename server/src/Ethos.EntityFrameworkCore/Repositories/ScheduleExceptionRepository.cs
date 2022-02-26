@@ -49,9 +49,9 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleExceptionData.EndDate = scheduleException.EndDate;
         }
 
-        public async Task<ScheduleException> GetByIdAsync(Guid guid)
+        public async Task<ScheduleException> GetByIdAsync(Guid id)
         {
-            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == guid);
+            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == id);
             var recurringSchedule = await _scheduleRepository.GetByIdAsync(scheduleExceptionData.ScheduleId);
 
             return ScheduleException.Factory.FromSnapshot(

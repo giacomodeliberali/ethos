@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ethos.Application.Commands.Schedule.Recurring;
-using Ethos.Application.Commands.Schedule.Single;
+using Ethos.Application.Commands.Schedules.Recurring;
+using Ethos.Application.Commands.Schedules.Single;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Queries;
 using Ethos.Domain.Repositories;

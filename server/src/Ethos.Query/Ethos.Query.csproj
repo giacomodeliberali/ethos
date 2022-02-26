@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
+    <Import Project="../../common.props" />
 
     <ItemGroup>
       <ProjectReference Include="..\Ethos.Domain\Ethos.Domain.csproj" />

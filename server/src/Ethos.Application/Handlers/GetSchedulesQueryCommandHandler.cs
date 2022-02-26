@@ -7,9 +7,9 @@ using Cronos;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Identity;
 using Ethos.Application.Queries;
+using Ethos.Common;
 using Ethos.Domain.Common;
 using Ethos.Query.Services;
-using Ethos.Shared;
 using MediatR;
 
 namespace Ethos.Application.Handlers

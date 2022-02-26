@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Ethos.Domain.Entities;
+using Ethos.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,7 +37,7 @@ namespace Ethos.Application.Identity
 
             if (claim == null)
             {
-                throw new Exception("Not authorized!");
+                throw new AuthenticationException("Not authorized!");
             }
 
             return Guid.Parse(claim.Value);

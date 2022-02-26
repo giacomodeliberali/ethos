@@ -61,7 +61,7 @@ namespace Ethos.Application
         /// with the GUID ordering on Microsoft SQL Server.
         /// </para>
         /// </remarks>
-        public Guid Create(SequentialGuidType guidType)
+        public static Guid Create(SequentialGuidType guidType)
         {
             // We start with 16 bytes of cryptographically strong random data.
             byte[] randomBytes = new byte[10];

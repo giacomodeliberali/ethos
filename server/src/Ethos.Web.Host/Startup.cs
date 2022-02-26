@@ -1,6 +1,6 @@
 using Ethos.Application;
+using Ethos.Common;
 using Ethos.EntityFrameworkCore;
-using Ethos.Shared;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

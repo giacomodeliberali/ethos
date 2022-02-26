@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Identity;
-using Ethos.Shared;
+using Ethos.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ethos.Web.Controllers

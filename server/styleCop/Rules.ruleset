@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Rules" ToolsVersion="16.0">
-  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
-  </Rules>
-</RuleSet>

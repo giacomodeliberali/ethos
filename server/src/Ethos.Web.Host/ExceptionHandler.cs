@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+# pragma warning disable CA2254
+# pragma warning disable CA1848
+
 namespace Ethos.Web.Host
 {
     public class ExceptionHandler

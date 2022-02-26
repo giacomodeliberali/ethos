@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ethos.Common;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Query.Services;
-using Ethos.Shared;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;

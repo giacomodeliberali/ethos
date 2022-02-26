@@ -77,7 +77,7 @@ namespace Ethos.Domain.Entities
         public static class Factory
         {
             public static RecurringSchedule Create(
-                Guid guid,
+                Guid id,
                 ApplicationUser organizer,
                 string name,
                 string description,
@@ -103,7 +103,7 @@ namespace Ethos.Domain.Entities
                 }
 
                 return new RecurringSchedule(
-                    guid,
+                    id,
                     organizer,
                     new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)), // do not consider time
                     recurringExpression,

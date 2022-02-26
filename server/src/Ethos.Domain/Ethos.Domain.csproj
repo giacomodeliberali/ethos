@@ -1,10 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <Import Project="../../codeAnalysis.props" />
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
+    
+    <Import Project="../../common.props" />
 
     <ItemGroup>
       <PackageReference Include="Ardalis.GuardClauses" Version="4.0.0" />

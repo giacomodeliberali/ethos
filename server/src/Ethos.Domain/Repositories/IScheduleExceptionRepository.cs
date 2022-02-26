@@ -12,6 +12,6 @@ namespace Ethos.Domain.Repositories
 
         Task UpdateAsync(ScheduleException scheduleException);
 
-        Task<ScheduleException> GetByIdAsync(Guid guid);
+        Task<ScheduleException> GetByIdAsync(Guid id);
     }
 }

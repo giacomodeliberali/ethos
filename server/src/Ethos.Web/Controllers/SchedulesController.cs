@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
-using Ethos.Shared;
+using Ethos.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ethos.Web.Controllers

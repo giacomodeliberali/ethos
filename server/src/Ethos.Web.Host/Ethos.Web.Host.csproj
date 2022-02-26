@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
-    <Import Project="../../codeAnalysis.props" />
+    <Import Project="../../common.props" />
 
     <PropertyGroup>
         <EnableDefaultContentItems>false</EnableDefaultContentItems>
@@ -33,7 +33,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Ethos.EntityFrameworkCore\Ethos.EntityFrameworkCore.csproj" />
-        <ProjectReference Include="..\Ethos.Shared\Ethos.Shared.csproj" />
+        <ProjectReference Include="..\Ethos.Common\Ethos.Common.csproj" />
         <ProjectReference Include="..\Ethos.Web\Ethos.Web.csproj" />
     </ItemGroup>
 

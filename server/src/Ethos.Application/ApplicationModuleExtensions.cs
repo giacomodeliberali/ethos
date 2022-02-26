@@ -55,7 +55,7 @@ namespace Ethos.Application
             var dataSeedContributorInterface = typeof(IDataSeedContributor);
             var types = AppDomain.CurrentDomain
                 .GetAssemblies()
-                .Where(a => a.FullName!.StartsWith("Ethos"))
+                .Where(a => a.FullName!.StartsWith("Ethos", StringComparison.InvariantCulture))
                 .SelectMany(s => s.GetTypes())
                 .Where(p => p.IsClass && !p.IsAbstract && dataSeedContributorInterface.IsAssignableFrom(p));
 

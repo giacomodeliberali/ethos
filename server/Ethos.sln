@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ethos.Domain", "src\Ethos.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ethos.EntityFrameworkCore", "src\Ethos.EntityFrameworkCore\Ethos.EntityFrameworkCore.csproj", "{C9916200-9D21-4279-A19C-2BC84E354B19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ethos.Shared", "src\Ethos.Shared\Ethos.Shared.csproj", "{801B05F6-48E7-4E75-AC69-71DC00236A27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ethos.Common", "src\Ethos.Common\Ethos.Common.csproj", "{801B05F6-48E7-4E75-AC69-71DC00236A27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{69F9F6F7-A591-464E-A505-75DD72485CDB}"
 EndProject

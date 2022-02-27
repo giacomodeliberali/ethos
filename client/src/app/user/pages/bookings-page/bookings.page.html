@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="user"
+        text="Indietro"
+        color="light"
+      ></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="page-container">
+    <div class="toolbar">
+      <div class="logo-container">
+        <img src="../../../../assets/images/ethos.svg" />
+      </div>
+    </div>
+    <div class="content-container">
+      <ion-card *ngFor="let booking of bookings$ | async">
+        <ion-card-header><h4>{{ booking.schedule.name }}</h4> </ion-card-header>
+
+        <ion-card-content>
+          <div>{{ booking.schedule.description }}</div>
+          <div>{{ booking.startDate | date:'d MMM y, H:mm'}}</div>
+          <div>{{ booking.schedule.durationInMinutes }} minuti</div>
+
+          <div>Tenuto da {{ booking.schedule.organizerFullName }}</div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

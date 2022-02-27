@@ -147,7 +147,11 @@ export class UserPageComponent extends BaseDirective {
   }
 
   goToUserSettings() {
-    this.router.navigate(['admin', 'user-settings']);
+    this.router.navigate(['user', 'settings']);
+  }
+
+  goToBookings() {
+    this.router.navigate(['user', 'bookings']);
   }
 
   bookCourse(schedule: GeneratedScheduleDto) {

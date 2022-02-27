@@ -75,6 +75,25 @@ export class BookingsService extends NswagBaseClass {
     }
 
     /**
+     * Return the list of future bookings for the current user.
+     * @return Success
+     */
+    getFutureBookings(): Observable<BookingDto[]> {
+        let url_ = this.baseUrl + "/api/bookings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.processRequest("get", url_, options_, false);
+    }
+
+    /**
      * Return the requested booking or null.
      * @return Success
      */

@@ -13,7 +13,8 @@ import { SharedModule } from '@shared/shared.module';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { ServiceWorkerModule, SwUpdate } from '@angular/service-worker';
+import { ToastService } from '@shared/services/toast.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -48,7 +49,14 @@ import { ServiceWorkerModule } from '@angular/service-worker';
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor() {
-    console.log(`Using API_BASE_URL = '${environment.baseUrl}'`);
+  constructor(updates: SwUpdate, toastService: ToastService) {
+    updates.available.subscribe(async () => {
+      toastService.addInfoToast({
+        header: 'Aggiornamento',
+        message: 'Nuova versione disponibile, la pagina verrà ricaricata',
+      });
+      await updates.activateUpdate();
+      document.location.reload();
+    });
   }
 }

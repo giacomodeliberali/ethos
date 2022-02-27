@@ -99,7 +99,6 @@ export class ToastService {
       success:
         '<ion-icon name="checkmark-circle-outline" color="success" style="font-size: 1.5rem"></ion-icon>',
     };
-    console.log(options.message);
     if (stack || this.toastQueue.length <= 0) {
       this.toastQueue.push({
         message: new IonicSafeString(

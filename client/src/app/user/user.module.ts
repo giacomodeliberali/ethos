@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '@shared/shared.module';
+import { BookingsPage } from './pages/bookings-page/bookings.page';
 import { UserPageComponent } from './pages/user-page/user-page.component';
+import { UserSettingsPage } from './pages/user-settings/user-settings.page';
 import { UserRoutingModule } from './user-routing.module';
 
 @NgModule({
-  declarations: [UserPageComponent],
+  declarations: [UserPageComponent, UserSettingsPage, BookingsPage],
   imports: [
     CommonModule,
     UserRoutingModule,

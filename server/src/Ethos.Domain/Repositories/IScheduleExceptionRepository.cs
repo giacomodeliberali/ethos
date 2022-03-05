@@ -9,6 +9,8 @@ namespace Ethos.Domain.Repositories
         Task<Guid> CreateAsync(ScheduleException scheduleException);
 
         Task DeleteAsync(ScheduleException scheduleException);
+        
+        Task DeleteAsync(Guid scheduleExceptionId);
 
         Task UpdateAsync(ScheduleException scheduleException);
 

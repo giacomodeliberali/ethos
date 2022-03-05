@@ -10,5 +10,6 @@ namespace Ethos.Query.Services
     {
         Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, Period period);
         Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Period period);
+        Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId);
     }
 }

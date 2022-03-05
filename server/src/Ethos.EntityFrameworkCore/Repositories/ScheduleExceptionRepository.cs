@@ -35,9 +35,14 @@ namespace Ethos.EntityFrameworkCore.Repositories
             return scheduleException.Id;
         }
 
-        public async Task DeleteAsync(ScheduleException scheduleException)
+        public Task DeleteAsync(ScheduleException scheduleException)
         {
-            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == scheduleException.Id);
+            return DeleteAsync(scheduleException.Id);
+        }
+
+        public async Task DeleteAsync(Guid scheduleExceptionId)
+        {
+            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == scheduleExceptionId);
             _applicationDbContext.Remove(scheduleExceptionData);
         }
 

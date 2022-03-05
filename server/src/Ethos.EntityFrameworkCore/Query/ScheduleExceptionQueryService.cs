@@ -48,5 +48,20 @@ namespace Ethos.EntityFrameworkCore.Query
                 EndDate = e.EndDate,
             }).ToList();
         }
+
+        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId)
+        {
+            var exceptions = await ScheduleExceptions
+                .Where(e => e.ScheduleId == recurringScheduleId)
+                .ToListAsync();
+
+            return exceptions.Select(e => new ScheduleExtensionProjection()
+            {
+                Id = e.Id,
+                ScheduleId = e.ScheduleId,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+            }).ToList();
+        }
     }
 }

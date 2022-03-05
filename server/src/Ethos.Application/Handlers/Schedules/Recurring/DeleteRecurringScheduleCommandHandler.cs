@@ -23,6 +23,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBookingQueryService _bookingQueryService;
         private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
+        private readonly IScheduleExceptionQueryService _scheduleExceptionQueryService;
         private readonly IGuidGenerator _guidGenerator;
 
         public DeleteRecurringScheduleCommandHandler(
@@ -30,12 +31,14 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             IUnitOfWork unitOfWork,
             IBookingQueryService bookingQueryService,
             IScheduleExceptionRepository scheduleExceptionRepository,
+            IScheduleExceptionQueryService scheduleExceptionQueryService,
             IGuidGenerator guidGenerator)
         {
             _scheduleRepository = scheduleRepository;
             _unitOfWork = unitOfWork;
             _bookingQueryService = bookingQueryService;
             _scheduleExceptionRepository = scheduleExceptionRepository;
+            _scheduleExceptionQueryService = scheduleExceptionQueryService;
             _guidGenerator = guidGenerator;
         }
 
@@ -48,15 +51,12 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
             var schedule = await _scheduleRepository.GetByIdAsync(request.Id);
 
-            if (schedule is SingleSchedule singleSchedule)
+            if (schedule is SingleSchedule)
             {
                 throw new BusinessException("Can not delete single schedule");
             }
-
-            if (schedule is RecurringSchedule recurringSchedule)
-            {
-                await DeleteSchedule(recurringSchedule, request);
-            }
+            
+            await DeleteSchedule((RecurringSchedule)schedule, request);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -96,7 +96,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             var futureBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
                 startDate: instanceStartDate,
-                endDate: DateTime.MaxValue);
+                endDate: schedule.Period.EndDate);
 
             if (futureBookings.Any())
             {
@@ -109,6 +109,11 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             {
                 // I am deleting the first occurrence, just delete everything
                 await _scheduleRepository.DeleteAsync(schedule);
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id);
+                foreach (var scheduleException in scheduleExceptions)
+                {
+                    await _scheduleExceptionRepository.DeleteAsync(scheduleException.Id);
+                }
             }
             else
             {
@@ -126,6 +131,12 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                     schedule.RecurringCronExpressionString);
 
                 await _scheduleRepository.UpdateAsync(schedule);
+                
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, new Period(schedule.Period.EndDate, DateTime.MaxValue.ToUniversalTime()));
+                foreach (var scheduleException in scheduleExceptions)
+                {
+                    await _scheduleExceptionRepository.DeleteAsync(scheduleException.Id);
+                }
             }
         }
 

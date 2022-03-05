@@ -20,13 +20,13 @@ import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
 
 const daysValidator = (control: FormControl) => {
-  const isRecurrent = control.parent?.get('isRecurrent').value;
-  return isRecurrent && control.value.length <= 0 ? { required: false } : null;
+  const isRecurring = control.parent?.get('isRecurring').value;
+  return isRecurring && control.value.length <= 0 ? { required: false } : null;
 };
 
 const endDateValidator = (control: FormControl) => {
-  const isRecurrent = control.parent?.get('isRecurrent').value;
-  return isRecurrent ? Validators.required(control) : null;
+  const isRecurring = control.parent?.get('isRecurring').value;
+  return isRecurring ? Validators.required(control) : null;
 };
 
 @Component({
@@ -66,7 +66,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     scheduleId: new FormControl(null),
     name: new FormControl(null, [Validators.required]),
     description: new FormControl(null, [Validators.required]),
-    isRecurrent: new FormControl(false),
+    isRecurring: new FormControl(false),
     startDate: new FormControl(null, [Validators.required]),
     endDate: new FormControl(null, [endDateValidator]),
     time: new FormControl(null, [Validators.required]),
@@ -76,13 +76,13 @@ export class CreateEditScheduleModalComponent implements OnInit {
     durationInMinutes: new FormControl(null, [Validators.required]),
   });
 
-  set isRecurrent(val: boolean) {
-    this.scheduleForm.get('isRecurrent').setValue(val);
+  set isRecurring(val: boolean) {
+    this.scheduleForm.get('isRecurring').setValue(val);
     this.scheduleForm.get('days').updateValueAndValidity();
   }
 
-  get isRecurrent(): boolean {
-    return this.scheduleForm.get('isRecurrent').value;
+  get isRecurring(): boolean {
+    return this.scheduleForm.get('isRecurring').value;
   }
 
   constructor(
@@ -119,10 +119,10 @@ export class CreateEditScheduleModalComponent implements OnInit {
           description: this.scheduleForm.get('description').value,
           startDate: moment(this.scheduleForm.get('startDate').value)
             .set({
-              hour: this.isRecurrent
+              hour: this.isRecurring
                 ? 0
                 : new Date(this.scheduleForm.get('time').value).getHours(),
-              minute: this.isRecurrent
+              minute: this.isRecurring
                 ? 0
                 : new Date(this.scheduleForm.get('time').value).getMinutes(),
               second: 0,
@@ -136,7 +136,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
           durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
           endDate: null,
         };
-        if (this.scheduleForm.get('isRecurrent').value) {
+        if (this.scheduleForm.get('isRecurring').value) {
           schedule.endDate = moment(this.scheduleForm.get('endDate').value)
             .set({
               hour: 23,
@@ -153,7 +153,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
         }
         this.modalCtrl.dismiss({
           schedule,
-          isRecurrent: this.scheduleForm.get('isRecurrent').value,
+          isRecurring: this.scheduleForm.get('isRecurring').value,
         });
         return;
       }
@@ -167,7 +167,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
 
   toggleClicked(event: Event) {
     event.stopPropagation();
-    this.isRecurrent = !this.isRecurrent;
+    this.isRecurring = !this.isRecurring;
   }
 
   /**

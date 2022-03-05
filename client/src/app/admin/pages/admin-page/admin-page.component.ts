@@ -126,14 +126,14 @@ export class AdminPageComponent extends BaseDirective {
 
     const { data } = await editModal.onWillDismiss<{
       schedule: any;
-      isRecurrent: boolean;
+      isRecurring: boolean;
     }>();
 
     if (data) {
       if (schedule) {
         this.callUpdateSchedule(data.schedule, schedule.isRecurring);
       } else {
-        this.callCreateSchedule(data.schedule, data.isRecurrent);
+        this.callCreateSchedule(data.schedule, data.isRecurring);
       }
     }
   }
@@ -141,9 +141,9 @@ export class AdminPageComponent extends BaseDirective {
   callCreateSchedule(
     schedule: CreateSingleScheduleRequestDto &
       CreateRecurringScheduleRequestDto,
-    isRecurrent: boolean
+    isRecurring: boolean
   ) {
-    const createSchedule = isRecurrent
+    const createSchedule = isRecurring
       ? this.recurringScheduleSvc.createRecurringSchedule(schedule)
       : this.singleScheduleSvc.createSingleSchedule(schedule);
 
@@ -166,9 +166,9 @@ export class AdminPageComponent extends BaseDirective {
   callUpdateSchedule(
     schedule: UpdateSingleScheduleRequestDto &
       UpdateRecurringScheduleInstanceRequestDto,
-    isRecurrent: boolean
+    isRecurring: boolean
   ) {
-    const updateSchedule = isRecurrent
+    const updateSchedule = isRecurring
       ? this.recurringScheduleSvc.updateRecurringScheduleInstance(schedule)
       : this.singleScheduleSvc.updateSingleSchedule(schedule);
 

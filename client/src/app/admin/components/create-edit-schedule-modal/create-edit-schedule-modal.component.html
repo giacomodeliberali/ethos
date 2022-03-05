@@ -22,7 +22,7 @@
       <ion-segment
         (ionChange)="toggleClicked($event)"
         mode="md"
-        [value]="isRecurrent"
+        [value]="isRecurring"
         *ngIf="!schedule"
       >
         <ion-segment-button [value]="false">
@@ -53,7 +53,7 @@
       <div class="row">
         <app-form-field
           formControlName="startDate"
-          [label]="isRecurrent ? 'Dal' : 'Data'"
+          [label]="isRecurring ? 'Dal' : 'Data'"
           placeholder="dd/MM/yyyy"
           [value]="currentDate"
           name="startDate"
@@ -64,7 +64,7 @@
           icon="calendar-outline"
         ></app-form-field>
         <app-form-field
-          *ngIf="isRecurrent"
+          *ngIf="isRecurring"
           formControlName="endDate"
           label="Al"
           placeholder="DD/MM/YYYY"
@@ -115,7 +115,7 @@
       </div>
     </div>
     <div class="other-info-container">
-      <ng-container *ngIf="isRecurrent">
+      <ng-container *ngIf="isRecurring">
         <h5>Giorni</h5>
         <div class="scroll-container">
           <app-week-day-selector

@@ -1,26 +1,22 @@
 using System;
+using Ethos.Application.Contracts;
 using MediatR;
 
 namespace Ethos.Application.Commands.Schedules.Recurring
 {
-    public class UpdateRecurringScheduleInstanceCommand : IRequest
+    public record UpdateRecurringScheduleInstanceCommand(
+        Guid Id, 
+        string Name, 
+        string Description,
+        DateTime StartDate, 
+        DateTime EndDate,
+        int DurationInMinutes,
+        string RecurringCronExpression,
+        Guid OrganizerId, 
+        int ParticipantsMaxNumber, 
+        DateTime InstanceStartDate, 
+        DateTime InstanceEndDate,
+        RecurringScheduleOperationType RecurringScheduleOperationType) : IRequest
     {
-        public Guid Id { get; init; }
-
-        public string Name { get; init; }
-
-        public string Description { get; init; }
-
-        public DateTime InstanceStartDate { get; set; }
-
-        public DateTime InstanceEndDate { get; set; }
-
-        public DateTime StartDate { get; init; }
-
-        public int DurationInMinutes { get; init; }
-
-        public int ParticipantsMaxNumber { get; init; }
-
-        public Guid OrganizerId { get; init; }
     }
 }

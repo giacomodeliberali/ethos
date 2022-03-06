@@ -47,9 +47,9 @@ namespace Ethos.Web.Controllers
         /// Update an existing recurring schedule instance.
         /// </summary>
         [HttpPut]
-        public async Task UpdateRecurringScheduleInstanceAsync([Required] UpdateRecurringScheduleInstanceRequestDto input)
+        public async Task UpdateRecurringScheduleInstanceAsync([Required] UpdateRecurringScheduleRequestDto input)
         {
-            await _scheduleApplicationService.UpdateRecurringInstanceAsync(input);
+            await _scheduleApplicationService.UpdateRecurringAsync(input);
         }
 
         /// <summary>

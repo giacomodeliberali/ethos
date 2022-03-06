@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Identity;
 using Ethos.Application.Contracts.Schedule;
@@ -37,7 +38,7 @@ namespace Ethos.Application
             // add guid generator
             serviceCollection.AddSingleton<IGuidGenerator, SequentialGuidGenerator>();
 
-            serviceCollection.AddEthosAutoMapper();
+            serviceCollection.AddEApplicationAutoMapper();
 
             serviceCollection.AddDataSeedContributors();
 
@@ -65,31 +66,11 @@ namespace Ethos.Application
             }
         }
 
-        private static void AddEthosAutoMapper(this IServiceCollection serviceCollection)
+        private static void AddEApplicationAutoMapper(this IServiceCollection serviceCollection)
         {
-            // TODO @GDL: split in differente profiles
             serviceCollection.AddAutoMapper(options =>
             {
-                options.CreateMap<Booking, BookingDto>();
-                options.CreateMap<Schedule, BookingDto.ScheduleDto>();
-                options.CreateMap<ApplicationUser, BookingDto.UserDto>();
-                options.CreateMap<ApplicationUser, UserDto>();
-                options.CreateMap<ApplicationUser, GeneratedScheduleDto.UserDto>();
-                options.CreateMap<UserProjection, UserDto>();
-                options.CreateMap<BookingProjection, BookingDto>()
-                    .ForMember(dest => dest.User, opt => opt.MapFrom((src => new BookingDto.UserDto()
-                    {
-                        Id = src.UserId,
-                        FullName = src.UserFullName,
-                    })))
-                    .ForMember(dest => dest.Schedule, opt => opt.MapFrom(src => new BookingDto.ScheduleDto()
-                    {
-                        Id = src.ScheduleId,
-                        Name = src.ScheduleName,
-                        Description = src.ScheduleDescription,
-                        DurationInMinutes = src.ScheduleDurationInMinutes,
-                        OrganizerFullName = src.ScheduleOrganizerFullName,
-                    }));
+                options.AddMaps(Assembly.GetExecutingAssembly());
             });
         }
     }

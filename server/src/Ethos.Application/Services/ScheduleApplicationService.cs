@@ -5,7 +5,6 @@ using Ethos.Application.Commands.Schedules.Recurring;
 using Ethos.Application.Commands.Schedules.Single;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Queries;
-using Ethos.Domain.Repositories;
 using MediatR;
 
 namespace Ethos.Application.Services
@@ -13,19 +12,20 @@ namespace Ethos.Application.Services
     /// <summary>
     /// Contains the use cases for the web UI.
     /// </summary>
-    public class ScheduleApplicationService : BaseApplicationService, IScheduleApplicationService
+    public class ScheduleApplicationService : IScheduleApplicationService
     {
+        private readonly IMediator _mediator;
+
         public ScheduleApplicationService(
-            IMediator mediator,
-            IUnitOfWork unitOfWork)
-            : base(mediator, unitOfWork)
+            IMediator mediator)
         {
+            _mediator = mediator;
         }
 
         /// <inheritdoc />
         public async Task<CreateScheduleReplyDto> CreateAsync(CreateSingleScheduleRequestDto input)
         {
-            var scheduleId = await Mediator.Send(new CreateSingleScheduleCommand(
+            var scheduleId = await _mediator.Send(new CreateSingleScheduleCommand(
                 input.Name,
                 input.Description,
                 input.StartDate,
@@ -41,7 +41,7 @@ namespace Ethos.Application.Services
 
         public async Task<CreateScheduleReplyDto> CreateRecurringAsync(CreateRecurringScheduleRequestDto input)
         {
-            var scheduleId = await Mediator.Send(new CreateRecurringScheduleCommand(
+            var scheduleId = await _mediator.Send(new CreateRecurringScheduleCommand(
                 input.Name,
                 input.Description,
                 input.StartDate,
@@ -60,7 +60,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task UpdateSingleAsync(UpdateSingleScheduleRequestDto input)
         {
-            await Mediator.Send(new UpdateSingleScheduleCommand()
+            await _mediator.Send(new UpdateSingleScheduleCommand()
             {
                 Id = input.Id,
                 Name = input.Name,
@@ -73,25 +73,26 @@ namespace Ethos.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task UpdateRecurringInstanceAsync(UpdateRecurringScheduleInstanceRequestDto input)
+        public async Task UpdateRecurringAsync(UpdateRecurringScheduleRequestDto input)
         {
-            await Mediator.Send(new UpdateRecurringScheduleInstanceCommand()
-            {
-                Id = input.Id,
-                Name = input.Name,
-                Description = input.Description,
-                StartDate = input.StartDate,
-                DurationInMinutes = input.DurationInMinutes,
-                OrganizerId = input.OrganizerId,
-                ParticipantsMaxNumber = input.ParticipantsMaxNumber,
-                InstanceStartDate = input.InstanceStartDate,
-                InstanceEndDate = input.InstanceEndDate,
-            });
+            await _mediator.Send(new UpdateRecurringScheduleInstanceCommand(
+                input.Id,
+                input.Name,
+                input.Description,
+                input.StartDate,
+                input.EndDate,
+                input.DurationInMinutes,
+                input.RecurringCronExpression,
+                input.OrganizerId,
+                input.ParticipantsMaxNumber,
+                input.InstanceStartDate,
+                input.InstanceEndDate,
+                input.RecurringScheduleOperationType));
         }
 
         public async Task DeleteRecurringAsync(DeleteRecurringScheduleRequestDto input)
         {
-            await Mediator.Send(new DeleteRecurringScheduleCommand
+            await _mediator.Send(new DeleteRecurringScheduleCommand
             {
                 Id = input.Id,
                 InstanceStartDate = input.InstanceStartDate,
@@ -103,7 +104,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task DeleteAsync(DeleteSingleScheduleRequestDto input)
         {
-            await Mediator.Send(new DeleteSingleScheduleCommand
+            await _mediator.Send(new DeleteSingleScheduleCommand
             {
                 Id = input.Id,
             });
@@ -112,7 +113,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate)
         {
-            return await Mediator.Send(new GetSchedulesQuery()
+            return await _mediator.Send(new GetSchedulesQuery()
             {
                 StartDate = startDate,
                 EndDate = endDate,
@@ -122,7 +123,7 @@ namespace Ethos.Application.Services
         /// <inheritdoc />
         public async Task<IEnumerable<RecurringScheduleDto>> GetAllRecurring()
         {
-            return await Mediator.Send(new GetAllRecurringSchedulesQuery());
+            return await _mediator.Send(new GetAllRecurringSchedulesQuery());
         }
     }
 }

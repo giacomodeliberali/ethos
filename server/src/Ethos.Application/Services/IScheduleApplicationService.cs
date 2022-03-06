@@ -22,7 +22,7 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Update an existing recurring schedule instance.
         /// </summary>
-        Task UpdateRecurringInstanceAsync(UpdateRecurringScheduleInstanceRequestDto input);
+        Task UpdateRecurringAsync(UpdateRecurringScheduleRequestDto input);
 
         /// <summary>
         /// Delete an existing schedule.

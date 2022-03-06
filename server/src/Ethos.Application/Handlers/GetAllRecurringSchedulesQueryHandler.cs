@@ -38,7 +38,7 @@ namespace Ethos.Application.Handlers
 
             foreach (var recurringSchedule in recurringSchedules)
             {
-                var nextOccurrences = await GetNextOccurrences(recurringSchedule).ToListAsync(cancellationToken);
+                // var nextOccurrences = await GetNextOccurrences(recurringSchedule).ToListAsync(cancellationToken);
                 result.Add(new RecurringScheduleDto()
                 {
                     Id = recurringSchedule.Id,
@@ -56,7 +56,7 @@ namespace Ethos.Application.Handlers
                     RecurringCronExpression = recurringSchedule.RecurringExpression,
                     StartDate = recurringSchedule.StartDate,
                     EndDate = recurringSchedule.EndDate,
-                    NextOccurrences = nextOccurrences,
+                    NextOccurrences = Enumerable.Empty<DateTime>(), // TODO: split in separate call
                 });
             }
 

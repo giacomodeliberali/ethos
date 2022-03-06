@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ethos.Application.Commands.Schedules.Recurring;
+using Ethos.Application.Contracts;
 using Ethos.Application.Exceptions;
 using Ethos.Common;
 using Ethos.Domain.Common;
@@ -48,21 +50,38 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 throw new BusinessException("Non è possibile aggiornare un corso singolo");
             }
 
-            await UpdateRecurringScheduleInstance((schedule as RecurringSchedule) !, request);
+            var recurringSchedule = (RecurringSchedule)schedule;
+            
+            var occurrences = recurringSchedule.RecurringCronExpression.GetOccurrences(
+                request.InstanceStartDate,
+                request.InstanceEndDate,
+                fromInclusive: true,
+                toInclusive: true);
+
+            if (occurrences.Count() != 1)
+            {
+                throw new InvalidScheduleInstancePeriodException(request.InstanceStartDate, request.InstanceEndDate, occurrences.Count());
+            }
+
+            if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.Instance)
+            {
+                await UpdateRecurringScheduleInstance(recurringSchedule, request);    
+            }
+            else if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.InstanceAndFuture)
+            {
+                await UpdateRecurringScheduleInstanceAndFuture(recurringSchedule, request);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
         }
 
         /// <summary>
         /// Create a new exception for the modified instance and create a new single instance.
         /// </summary>
-        private async Task UpdateRecurringScheduleInstance(RecurringSchedule schedule, UpdateRecurringScheduleInstanceCommand request)
+        private async Task UpdateRecurringScheduleInstance(
+            RecurringSchedule schedule, 
+            UpdateRecurringScheduleInstanceCommand request)
         {
-            var organizer = await _userManager.FindByIdAsync(request.OrganizerId.ToString());
-
-            if (organizer == null || !await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
-            {
-                throw new BusinessException("Invalid organizer id");
-            }
-
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
                 request.InstanceStartDate,
@@ -81,6 +100,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
 
+            var organizer = await GetOrganizer(request.OrganizerId);
+            
             var newSingleInstance = SingleSchedule.Factory.Create(
                 _guidGenerator.Create(),
                 organizer,
@@ -90,8 +111,56 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 new Period(request.StartDate, request.DurationInMinutes));
 
             await _scheduleRepository.CreateAsync(newSingleInstance);
+        }
 
-            await _unitOfWork.SaveChangesAsync();
+        private async Task UpdateRecurringScheduleInstanceAndFuture(
+            RecurringSchedule schedule, 
+            UpdateRecurringScheduleInstanceCommand request)
+        {
+            var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
+                schedule.Id,
+                request.InstanceStartDate,
+                schedule.Period.EndDate);
+
+            if (existingBookings.Any())
+            {
+                throw new CanNotEditScheduleWithExistingBookingsException(existingBookings.Count);
+            }
+            
+            // update past
+            schedule.UpdateDate(
+                new Period(schedule.Period.StartDate, request.InstanceStartDate), 
+                schedule.DurationInMinutes, 
+                schedule.RecurringCronExpressionString);
+
+            await _scheduleRepository.UpdateAsync(schedule);
+            
+            // create new future recurring with new info
+            var organizer = await GetOrganizer(request.OrganizerId);
+
+            var newRecurring = RecurringSchedule.Factory.Create(
+                _guidGenerator.Create(),
+                organizer,
+                request.Name,
+                request.Description,
+                request.ParticipantsMaxNumber,
+                new Period(request.StartDate, request.EndDate),
+                request.DurationInMinutes,
+                request.RecurringCronExpression);
+
+            await _scheduleRepository.CreateAsync(newRecurring);
+        }
+
+        private async Task<ApplicationUser> GetOrganizer(Guid organizerId)
+        {
+            var organizer = await _userManager.FindByIdAsync(organizerId.ToString());
+
+            if (organizer == null || !await _userManager.IsInRoleAsync(organizer, RoleConstants.Admin))
+            {
+                throw new BusinessException("Invalid organizer id");
+            }
+
+            return organizer;
         }
     }
 }

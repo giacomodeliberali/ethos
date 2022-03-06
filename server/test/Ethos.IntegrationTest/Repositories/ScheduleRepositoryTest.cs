@@ -79,8 +79,8 @@ namespace Ethos.IntegrationTest.Repositories
             var expected = RecurringSchedule.Factory.FromSnapshot(
                 scheduleId,
                 organizer,
-                newStartDate,
-                newEndDate,
+                newStartDate.Date,
+                newEndDate.Date.AddDays(1).AddTicks(-1),
                 "0 09 * * MON-FRI",
                 60,
                 "New name",

@@ -57,7 +57,7 @@ namespace Ethos.Domain.Entities
                 throw new BusinessException($"Invalid CRON expression '{recurringExpression}'", ex);
             }
 
-            Period = period;
+            Period = new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)); // do not consider time;
             DurationInMinutes = durationInMinutes;
             RecurringCronExpressionString = recurringExpression;
         }

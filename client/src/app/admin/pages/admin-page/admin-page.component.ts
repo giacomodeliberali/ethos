@@ -11,7 +11,7 @@ import {
   RecurringSchedulesService,
   SchedulesService,
   SingleSchedulesService,
-  UpdateRecurringScheduleInstanceRequestDto,
+  UpdateRecurringScheduleRequestDto,
   UpdateSingleScheduleRequestDto,
   UserDto,
 } from '@core/services/ethos.generated.service';
@@ -165,11 +165,11 @@ export class AdminPageComponent extends BaseDirective {
 
   callUpdateSchedule(
     schedule: UpdateSingleScheduleRequestDto &
-      UpdateRecurringScheduleInstanceRequestDto,
+      UpdateRecurringScheduleRequestDto,
     isRecurring: boolean
   ) {
     const updateSchedule = isRecurring
-      ? this.recurringScheduleSvc.updateRecurringScheduleInstance(schedule)
+      ? this.recurringScheduleSvc.updateRecurringSchedule(schedule)
       : this.singleScheduleSvc.updateSingleSchedule(schedule);
 
     updateSchedule.subscribe({

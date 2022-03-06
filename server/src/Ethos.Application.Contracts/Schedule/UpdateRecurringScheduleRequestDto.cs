@@ -23,6 +23,7 @@ namespace Ethos.Application.Contracts.Schedule
         [Required]
         public DateTime StartDate { get; init; }
         
+        [Required]
         public DateTime EndDate { get; init; }
 
         [Required]

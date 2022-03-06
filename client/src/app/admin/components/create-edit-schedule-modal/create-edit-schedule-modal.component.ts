@@ -13,7 +13,7 @@ import {
   GeneratedScheduleDto,
   UpdateSingleScheduleRequestDto,
   UserDto,
-  UpdateRecurringScheduleInstanceRequestDto,
+  UpdateRecurringScheduleRequestDto,
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
 import { ToastService } from '@shared/services/toast.service';
@@ -113,7 +113,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
           CreateSingleScheduleRequestDto &
             CreateRecurringScheduleRequestDto &
             UpdateSingleScheduleRequestDto &
-            UpdateRecurringScheduleInstanceRequestDto
+            UpdateRecurringScheduleRequestDto
         > = {
           id: this.scheduleForm.get('scheduleId').value,
           description: this.scheduleForm.get('description').value,

@@ -299,7 +299,7 @@ export class RecurringSchedulesService extends NswagBaseClass {
      * Update an existing recurring schedule instance.
      * @return Success
      */
-    updateRecurringScheduleInstance(body: UpdateRecurringScheduleInstanceRequestDto): Observable<void> {
+    updateRecurringSchedule(body: UpdateRecurringScheduleRequestDto): Observable<void> {
         let url_ = this.baseUrl + "/api/schedules/recurring";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -629,16 +629,20 @@ export interface ResetPasswordRequestDto {
     resetToken: string;
 }
 
-export interface UpdateRecurringScheduleInstanceRequestDto {
+export interface UpdateRecurringScheduleRequestDto {
     id: string;
     name: string;
     description: string;
     instanceStartDate: string;
     instanceEndDate: string;
     startDate: string;
+    endDate: string;
     durationInMinutes: number;
     participantsMaxNumber: number;
+    recurringCronExpression: string;
     organizerId: string;
+    /** Describe how to handle operations on recurring schedules. */
+    recurringScheduleOperationType: RecurringScheduleOperationType;
 }
 
 export interface UpdateSingleScheduleRequestDto {

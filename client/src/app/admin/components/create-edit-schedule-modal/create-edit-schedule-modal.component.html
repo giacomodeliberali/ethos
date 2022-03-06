@@ -34,6 +34,15 @@
       </ion-segment>
     </div>
     <div class="section">
+      <ion-item lines="none" *ngIf="schedule && isRecurring">
+        <ion-label>Modifica anche tutte le future riccorrenze</ion-label>
+        <ion-toggle
+          mode="md"
+          color="tertiary"
+          formControlName="updateInstanceAndFuture"
+          slot="end"
+        ></ion-toggle>
+      </ion-item>
       <app-form-field
         formControlName="name"
         type="text"

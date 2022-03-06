@@ -8,12 +8,13 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
-  CreateSingleScheduleRequestDto,
   CreateRecurringScheduleRequestDto,
+  CreateSingleScheduleRequestDto,
   GeneratedScheduleDto,
+  RecurringScheduleOperationType,
+  UpdateRecurringScheduleRequestDto,
   UpdateSingleScheduleRequestDto,
   UserDto,
-  UpdateRecurringScheduleRequestDto,
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
 import { ToastService } from '@shared/services/toast.service';
@@ -48,6 +49,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
   get showTrainersSearch() {
     return this._showTrainersSearch;
   }
+
   set showTrainersSearch(value: boolean) {
     if (this.generalContainer) {
       this.generalContainer.nativeElement.style.height =
@@ -55,6 +57,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     }
     this._showTrainersSearch = value;
   }
+
   trainerSearchInput: FormControl = new FormControl(null);
 
   get nextWeekDate(): string {
@@ -62,6 +65,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     nextWeek.setDate(nextWeek.getDate() + 7);
     return nextWeek.toISOString();
   }
+
   scheduleForm: FormGroup = new FormGroup({
     scheduleId: new FormControl(null),
     name: new FormControl(null, [Validators.required]),
@@ -74,6 +78,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
     organizerId: new FormControl(null, [Validators.required]),
     participantsMaxNumber: new FormControl(null, [Validators.required]),
     durationInMinutes: new FormControl(null, [Validators.required]),
+    updateInstanceAndFuture: new FormControl(false),
   });
 
   set isRecurring(val: boolean) {
@@ -107,67 +112,133 @@ export class CreateEditScheduleModalComponent implements OnInit {
    * @returns nothing
    */
   closeModal(event: 'success' | 'cancel') {
-    if (this.scheduleForm.valid && event === 'success') {
-      if (this.scheduleForm.valid) {
-        const schedule: Partial<
-          CreateSingleScheduleRequestDto &
-            CreateRecurringScheduleRequestDto &
-            UpdateSingleScheduleRequestDto &
-            UpdateRecurringScheduleRequestDto
-        > = {
-          id: this.scheduleForm.get('scheduleId').value,
-          description: this.scheduleForm.get('description').value,
-          startDate: moment(this.scheduleForm.get('startDate').value)
-            .set({
-              hour: this.isRecurring
-                ? 0
-                : new Date(this.scheduleForm.get('time').value).getHours(),
-              minute: this.isRecurring
-                ? 0
-                : new Date(this.scheduleForm.get('time').value).getMinutes(),
-              second: 0,
-              millisecond: 0,
-            })
-            .toISOString(),
-          name: this.scheduleForm.get('name').value,
-          organizerId: this.scheduleForm.get('organizerId').value,
-          participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
-            .value,
-          durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
-          endDate: null,
-        };
-        if (this.scheduleForm.get('isRecurring').value) {
-          schedule.endDate = moment(this.scheduleForm.get('endDate').value)
-            .set({
-              hour: 23,
-              minute: 59,
-              second: 59,
-              millisecond: 0,
-            })
-            .toISOString();
+    if (event === 'cancel') {
+      this.modalCtrl.dismiss();
+      return;
+    }
 
-          schedule.recurringCronExpression = this.createCronExpression(
-            this.scheduleForm.get('days').value as string[],
-            this.scheduleForm.get('time').value as Date
-          );
-        }
-        this.modalCtrl.dismiss({
-          schedule,
-          isRecurring: this.scheduleForm.get('isRecurring').value,
-        });
-        return;
-      }
+    if (!this.scheduleForm.valid) {
       this.toastSvc.addErrorToast({
         message: 'Controlla di avere compilato correttamente i campi',
       });
-    } else if (event === 'cancel') {
-      this.modalCtrl.dismiss();
+      return;
     }
+
+    const isRecurring = this.scheduleForm.get('isRecurring').value;
+
+    let schedule:
+      | CreateSingleScheduleRequestDto
+      | CreateRecurringScheduleRequestDto
+      | UpdateSingleScheduleRequestDto
+      | UpdateRecurringScheduleRequestDto = null;
+
+    if (isRecurring) {
+      if (this.schedule) {
+        // update
+        schedule = this.updateRecurringSchedule();
+      } else {
+        schedule = this.createRecurringSchedule();
+      }
+    } else {
+      if (this.schedule) {
+        // update
+        schedule = this.updateSingleSchedule();
+      } else {
+        schedule = this.createSingleSchedule();
+      }
+    }
+    this.modalCtrl.dismiss({
+      schedule,
+      isRecurring,
+    });
   }
 
   toggleClicked(event: Event) {
     event.stopPropagation();
     this.isRecurring = !this.isRecurring;
+  }
+
+  private createSingleSchedule(): CreateSingleScheduleRequestDto {
+    return {
+      description: this.scheduleForm.get('description').value,
+      startDate: moment(this.scheduleForm.get('startDate').value)
+        .set({
+          hour: new Date(this.scheduleForm.get('time').value).getHours(),
+          minute: new Date(this.scheduleForm.get('time').value).getMinutes(),
+          second: 0,
+          millisecond: 0,
+        })
+        .toISOString(),
+      name: this.scheduleForm.get('name').value,
+      organizerId: this.scheduleForm.get('organizerId').value,
+      participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
+        .value,
+      durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+    };
+  }
+
+  private updateSingleSchedule(): UpdateSingleScheduleRequestDto {
+    return {
+      id: this.scheduleForm.get('scheduleId').value,
+      description: this.scheduleForm.get('description').value,
+      startDate: moment(this.scheduleForm.get('startDate').value)
+        .set({
+          hour: new Date(this.scheduleForm.get('time').value).getHours(),
+          minute: new Date(this.scheduleForm.get('time').value).getMinutes(),
+          second: 0,
+          millisecond: 0,
+        })
+        .toISOString(),
+      name: this.scheduleForm.get('name').value,
+      organizerId: this.scheduleForm.get('organizerId').value,
+      participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
+        .value,
+      durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+    };
+  }
+
+  private createRecurringSchedule(): CreateRecurringScheduleRequestDto {
+    return {
+      description: this.scheduleForm.get('description').value,
+      startDate: moment(this.scheduleForm.get('startDate').value).toISOString(),
+      endDate: moment(this.scheduleForm.get('endDate').value).toISOString(),
+      name: this.scheduleForm.get('name').value,
+      organizerId: this.scheduleForm.get('organizerId').value,
+      participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
+        .value,
+      durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+      recurringCronExpression: this.createCronExpression(
+        this.scheduleForm.get('days').value as string[],
+        this.scheduleForm.get('time').value as Date
+      ),
+    };
+  }
+
+  private updateRecurringSchedule(): UpdateRecurringScheduleRequestDto {
+    const updateInstanceAndFuture = this.scheduleForm.get(
+      'updateInstanceAndFuture'
+    ).value as boolean;
+
+    return {
+      id: this.scheduleForm.get('scheduleId').value,
+      description: this.scheduleForm.get('description').value,
+      startDate: moment(this.scheduleForm.get('startDate').value).toISOString(),
+      endDate: moment(this.scheduleForm.get('endDate').value).toISOString(),
+      name: this.scheduleForm.get('name').value,
+      organizerId: this.scheduleForm.get('organizerId').value,
+      participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
+        .value,
+      durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+      recurringCronExpression: this.createCronExpression(
+        this.scheduleForm.get('days').value as string[],
+        this.scheduleForm.get('time').value as Date
+      ),
+      instanceEndDate: this.schedule.startDate,
+      instanceStartDate: this.schedule.endDate,
+      recurringScheduleOperationType: updateInstanceAndFuture
+        ? RecurringScheduleOperationType.InstanceAndFuture
+        : RecurringScheduleOperationType.Instance,
+    };
   }
 
   /**

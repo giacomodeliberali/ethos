@@ -1,6 +1,7 @@
 using Ethos.Application;
 using Ethos.Common;
 using Ethos.EntityFrameworkCore;
+using Ethos.Web.Host.Serilog;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -82,7 +83,8 @@ namespace Ethos.Web.Host
                 });
             }
 
-            app.UseSerilogRequestLogging();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+            app.UseSerilogRequestLogging(opts => opts.EnrichDiagnosticContext = LogHelper.EnrichFromRequest);
 
             app.UseCors("AllowCorsPolicy");
 

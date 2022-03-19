@@ -8,6 +8,7 @@ on:
 
 jobs:
   build_server:
+    name: Build .NET Backend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -25,6 +26,7 @@ jobs:
       working-directory: ./server
       run: dotnet test --no-build --verbosity normal
   build_client:
+    name: Build Angular Frontend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

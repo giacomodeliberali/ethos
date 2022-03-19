@@ -245,3 +245,7 @@ appsettings.Development.json
 
 # migration script
 migrate.sql
+
+dotCover.Output
+dotCover.Output.html
+*.logs

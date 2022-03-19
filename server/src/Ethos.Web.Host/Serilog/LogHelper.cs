@@ -11,7 +11,7 @@ public static class LogHelper
 {
     public static string RequestPayload { get; set; } = string.Empty;
 
-    public static async void EnrichFromRequest(IDiagnosticContext diagnosticContext, HttpContext httpContext)
+    public static async Task EnrichFromRequest(IDiagnosticContext diagnosticContext, HttpContext httpContext)
     {
         var request = httpContext.Request;
 

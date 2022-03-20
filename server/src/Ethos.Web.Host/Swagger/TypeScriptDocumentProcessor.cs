@@ -19,10 +19,10 @@ namespace Ethos.Web.Host.Swagger
 
             foreach (var type in typesWithAttribute)
             {
-                var schema = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository);
+                context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository);
             }
 
-            var sortedSchema = context.SchemaRepository.Schemas.ToList().OrderBy(s => s.Key);
+            var sortedSchema = context.SchemaRepository.Schemas.OrderBy(s => s.Key).ToList();
 
             context.SchemaRepository.Schemas.Clear();
 

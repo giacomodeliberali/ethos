@@ -1,8 +1,8 @@
 namespace Ethos.Domain.Exceptions
 {
-    public class ParticipantsMaxNumberReached : BusinessException
+    public class ParticipantsMaxNumberReachedException : BusinessException
     {
-        public ParticipantsMaxNumberReached(int maxParticipantsNumber)
+        public ParticipantsMaxNumberReachedException(int maxParticipantsNumber)
             : base($"Numero massimo di partecipanti raggiunto ({maxParticipantsNumber}.")
         {
         }

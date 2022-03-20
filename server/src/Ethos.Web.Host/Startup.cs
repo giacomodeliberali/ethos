@@ -1,11 +1,9 @@
 using Ethos.Application;
 using Ethos.Common;
 using Ethos.EntityFrameworkCore;
-using Ethos.Web.Host.Serilog;
 using Ethos.Web.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,12 +81,8 @@ namespace Ethos.Web.Host
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ethos");
                 });
             }
-
-            app.UseMiddleware<RequestResponseLoggingMiddleware>();
-            app.UseSerilogRequestLogging(opts =>
-            {
-                opts.EnrichDiagnosticContext = EnrichDiagnosticContextWithRequestAndResponseBody;
-            });
+            
+            app.UseSerilogRequestLogging();
 
             app.UseCors("AllowCorsPolicy");
 
@@ -110,11 +104,6 @@ namespace Ethos.Web.Host
             {
                 // use default options
             });
-        }
-
-        private async void EnrichDiagnosticContextWithRequestAndResponseBody(IDiagnosticContext context, HttpContext httpContext)
-        {
-            await LogHelper.EnrichFromRequest(context, httpContext);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Ethos.Web.Host.Swagger
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            var sortedSchema = context.SchemaRepository.Schemas.ToList().OrderBy(s => s.Key);
+            var sortedSchema = context.SchemaRepository.Schemas.OrderBy(s => s.Key).ToList();
 
             context.SchemaRepository.Schemas.Clear();
 

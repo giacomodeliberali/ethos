@@ -3,7 +3,7 @@ namespace Ethos.Common
     /// <summary>
     /// The available roles.
     /// </summary>
-    public class RoleConstants
+    public static class RoleConstants
     {
         /// <summary>
         /// The default role.

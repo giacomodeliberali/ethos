@@ -47,7 +47,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldThrowError_WhenOrganizerIsNotAdmin()
         {
-            var admin = await Scope.WithUser("admin");
+            await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
 
             await Should.ThrowAsync<BusinessException>(async () =>

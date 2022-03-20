@@ -242,7 +242,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
 
             using (await Scope.WithNewUser("demo2"))
             {
-                await Should.ThrowAsync<ParticipantsMaxNumberReached>(async () =>
+                await Should.ThrowAsync<ParticipantsMaxNumberReachedException>(async () =>
                 {
                     await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                     {
@@ -301,9 +301,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
 
             var generatedSchedules = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).ToList();
 
-            generatedSchedules.Count().ShouldBe(1);
+            generatedSchedules.Count.ShouldBe(1);
             generatedSchedules.Select(s => s.Bookings.Count()).Sum().ShouldBe(1);
-            generatedSchedules.Single().Bookings.Single().User.UserName.ShouldBe("userDemo");
+            generatedSchedules.Single().Bookings.Single().User.ShouldNotBeNull().UserName.ShouldBe("userDemo");
         }
     }
 }

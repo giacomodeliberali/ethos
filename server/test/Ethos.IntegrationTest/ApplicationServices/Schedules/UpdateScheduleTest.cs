@@ -36,7 +36,6 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
 
             var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddHours(2);
 
             var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {

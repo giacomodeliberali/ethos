@@ -33,7 +33,7 @@ namespace Ethos.IntegrationTest.Infrastructure
             var userQuery = Scope.ServiceProvider.GetRequiredService<IUserQueryService>();
             var admins = (await userQuery.GetAllAdminsAsync()).ToList();
 
-            admins.Count().ShouldBe(1);
+            admins.Count.ShouldBe(1);
 
             var admin = admins.Single();
 

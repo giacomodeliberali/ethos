@@ -18,13 +18,11 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IScheduleApplicationService _scheduleApplicationService;
-        private readonly IBookingApplicationService _bookingApplicationService;
 
         public DeleteScheduleTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
             _scheduleRepository = Scope.ServiceProvider.GetRequiredService<IScheduleRepository>();
             _scheduleApplicationService = Scope.ServiceProvider.GetRequiredService<IScheduleApplicationService>();
-            _bookingApplicationService = Scope.ServiceProvider.GetRequiredService<IBookingApplicationService>();
         }
 
         [Fact]

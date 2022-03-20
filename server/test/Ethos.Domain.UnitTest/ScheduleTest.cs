@@ -72,7 +72,7 @@ namespace Ethos.Domain.UnitTest
 
                 var startDate = DateTime.UtcNow;
 
-                var sut = RecurringSchedule.Factory.Create(
+                RecurringSchedule.Factory.Create(
                     GuidGenerator.Create(),
                     user,
                     name: "Schedule recurring",
@@ -80,7 +80,7 @@ namespace Ethos.Domain.UnitTest
                     participantsMaxNumber: 0,
                     new Period(startDate, startDate.AddMonths(1)),
                     duration: 60,
-                    recurringExpression: "00 10 37 ? * SUN,MON"); // invalid cron
+                    recurringExpression: "00 10 37 ? * SUN,MON");
             });
         }
 

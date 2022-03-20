@@ -11,7 +11,7 @@ using NSubstitute.ExceptionExtensions;
 
 namespace Ethos.IntegrationTest.Setup
 {
-    internal class ChangeUserDisposable : IDisposable
+    internal sealed class ChangeUserDisposable : IDisposable
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ApplicationUser _user;

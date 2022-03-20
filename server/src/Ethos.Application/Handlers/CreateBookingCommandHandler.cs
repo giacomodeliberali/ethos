@@ -86,7 +86,7 @@ namespace Ethos.Application.Handlers
             if (schedule.ParticipantsMaxNumber > 0 &&
                 currentBookings.Count >= schedule.ParticipantsMaxNumber)
             {
-                throw new ParticipantsMaxNumberReached(schedule.ParticipantsMaxNumber);
+                throw new ParticipantsMaxNumberReachedException(schedule.ParticipantsMaxNumber);
             }
 
             var currentUser = await _currentUser.GetCurrentUser();

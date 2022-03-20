@@ -80,7 +80,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
             if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.InstanceAndFuture)
             {
-                await DeleteFutureSchedules(schedule, request.InstanceStartDate, request.InstanceEndDate);
+                await DeleteFutureSchedules(schedule, request.InstanceStartDate);
             }
             else if (request.RecurringScheduleOperationType == RecurringScheduleOperationType.Instance)
             {
@@ -90,8 +90,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
         private async Task DeleteFutureSchedules(
             RecurringSchedule schedule,
-            DateTime instanceStartDate,
-            DateTime instanceEndDate)
+            DateTime instanceStartDate)
         {
             var futureBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,

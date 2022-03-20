@@ -45,7 +45,7 @@ namespace Ethos.Application.Handlers.Schedules.Single
 
             if (schedule is SingleSchedule singleSchedule)
             {
-                await DeleteSchedule(singleSchedule, request);
+                await DeleteSchedule(singleSchedule);
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -53,7 +53,7 @@ namespace Ethos.Application.Handlers.Schedules.Single
             return result;
         }
 
-        private async Task DeleteSchedule(SingleSchedule schedule, DeleteSingleScheduleCommand request)
+        private async Task DeleteSchedule(SingleSchedule schedule)
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,

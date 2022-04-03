@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
+    name: Build frontend & backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -75,6 +76,7 @@ jobs:
 
 
   deploy:
+    name: Azure deploy
     runs-on: windows-latest
     needs: build
     environment:

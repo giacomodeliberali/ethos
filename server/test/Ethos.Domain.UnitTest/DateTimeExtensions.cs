@@ -4,8 +4,8 @@ namespace Ethos.Domain.UnitTest;
 
 public static class DateTimeExtensions
 {
-    public static DateTimeOffset ToTimeZone(this DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone)
+    public static DateTimeOffset ToDateTimeOffset(this DateTime dateTime, TimeZoneInfo destinationTimeZone)
     {
-        return TimeZoneInfo.ConvertTime(dateTimeOffset, destinationTimeZone);
+        return new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, destinationTimeZone.GetUtcOffset(dateTime));
     }
 }

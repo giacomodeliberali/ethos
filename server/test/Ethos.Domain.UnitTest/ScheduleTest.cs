@@ -80,11 +80,11 @@ namespace Ethos.Domain.UnitTest
             
             occurrencesBeforeDayLight.Count.ShouldBe(5);
             occurrencesBeforeDayLight.First().StartDate.Offset.ShouldBe(TimeSpan.FromHours(1));
-            occurrencesBeforeDayLight.First().StartDate.ShouldBe(new DateTimeOffset(2022, 03, 21, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
-            occurrencesBeforeDayLight.First().EndDate.ShouldBe(new DateTimeOffset(2022, 03, 21, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+            occurrencesBeforeDayLight.First().StartDate.ShouldBe(DateTime.Parse("2022-03-21T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            occurrencesBeforeDayLight.First().EndDate.ShouldBe(DateTime.Parse("2022-03-21T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
             
-            occurrencesBeforeDayLight.Last().StartDate.ShouldBe(new DateTimeOffset(2022, 03, 25, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
-            occurrencesBeforeDayLight.Last().EndDate.ShouldBe(new DateTimeOffset(2022, 03, 25, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+            occurrencesBeforeDayLight.Last().StartDate.ShouldBe(DateTime.Parse("2022-03-25T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            occurrencesBeforeDayLight.Last().EndDate.ShouldBe(DateTime.Parse("2022-03-25T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
             
             var occurrencesAfterDayLight = sut.GetOccurrences(
                     new DateOnlyPeriod(
@@ -96,13 +96,11 @@ namespace Ethos.Domain.UnitTest
             occurrencesAfterDayLight.Count.ShouldBe(5);
             
             occurrencesAfterDayLight.First().StartDate.Offset.ShouldBe(TimeSpan.FromHours(2));
+            occurrencesAfterDayLight.First().StartDate.ShouldBe(DateTime.Parse("2022-03-28T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            occurrencesAfterDayLight.First().EndDate.ShouldBe(DateTime.Parse("2022-03-28T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
             
-            
-            occurrencesAfterDayLight.First().StartDate.ShouldBe(new DateTimeOffset(2022, 03, 28, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
-            occurrencesAfterDayLight.First().EndDate.ShouldBe(new DateTimeOffset(2022, 03, 28, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
-
-            occurrencesAfterDayLight.Last().StartDate.ShouldBe(new DateTimeOffset(2022, 04, 01, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
-            occurrencesAfterDayLight.Last().EndDate.ShouldBe(new DateTimeOffset(2022, 04, 01, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+            occurrencesAfterDayLight.Last().StartDate.ShouldBe(DateTime.Parse("2022-04-01T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            occurrencesAfterDayLight.Last().EndDate.ShouldBe(DateTime.Parse("2022-04-01T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
         }
 
         [Fact]

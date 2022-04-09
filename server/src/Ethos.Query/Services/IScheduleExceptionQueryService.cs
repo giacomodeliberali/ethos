@@ -9,7 +9,6 @@ namespace Ethos.Query.Services
     public interface IScheduleExceptionQueryService
     {
         Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, DateOnlyPeriod period);
-        Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(DateOnlyPeriod period);
         Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId);
     }
 }

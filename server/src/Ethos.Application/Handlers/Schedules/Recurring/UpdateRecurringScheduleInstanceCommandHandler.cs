@@ -13,6 +13,7 @@ using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Ethos.Application.Handlers.Schedules.Recurring
 {
@@ -24,6 +25,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         private readonly IScheduleExceptionRepository _scheduleExceptionRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<UpdateRecurringScheduleInstanceCommandHandler> _logger;
 
         public UpdateRecurringScheduleInstanceCommandHandler(
             IScheduleRepository scheduleRepository,
@@ -31,7 +33,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             IBookingQueryService bookingQueryService,
             IScheduleExceptionRepository scheduleExceptionRepository,
             IGuidGenerator guidGenerator,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<UpdateRecurringScheduleInstanceCommandHandler> logger)
         {
             _scheduleRepository = scheduleRepository;
             _userManager = userManager;
@@ -39,6 +42,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             _scheduleExceptionRepository = scheduleExceptionRepository;
             _guidGenerator = guidGenerator;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         protected override async Task Handle(UpdateRecurringScheduleInstanceCommand request, CancellationToken cancellationToken)
@@ -94,6 +98,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 schedule,
                 request.InstanceStartDate.ToDateTimeOffset(schedule.TimeZone),
                 request.InstanceEndDate.ToDateTimeOffset(schedule.TimeZone));
+            
+            _logger.LogDebug("[ScheduleException] Created for {StartDate} - {EndDate}", scheduleException.StartDate, scheduleException.EndDate);
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
 
@@ -108,6 +114,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.StartDate.ToDateTimeOffset(schedule.TimeZone), 
                 request.DurationInMinutes,
                 schedule.TimeZone);
+            
+            _logger.LogDebug("[SingleSchedule] Created for {StartDate} - {EndDate}", newSingleInstance.StartDate, newSingleInstance.EndDate);
 
             await _scheduleRepository.CreateAsync(newSingleInstance);
         }

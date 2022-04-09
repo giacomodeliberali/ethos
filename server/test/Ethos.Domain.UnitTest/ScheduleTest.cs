@@ -96,11 +96,13 @@ namespace Ethos.Domain.UnitTest
             occurrencesAfterDayLight.Count.ShouldBe(5);
             
             occurrencesAfterDayLight.First().StartDate.Offset.ShouldBe(TimeSpan.FromHours(2));
-            occurrencesAfterDayLight.First().StartDate.ShouldBe(DateTime.Parse("2022-03-28T09:00"));
-            occurrencesAfterDayLight.First().EndDate.ShouldBe(DateTime.Parse("2022-03-28T10:00"));
             
-            occurrencesAfterDayLight.Last().StartDate.ShouldBe(DateTime.Parse("2022-04-01T09:00"));
-            occurrencesAfterDayLight.Last().EndDate.ShouldBe(DateTime.Parse("2022-04-01T10:00"));
+            
+            occurrencesAfterDayLight.First().StartDate.ShouldBe(new DateTimeOffset(2022, 03, 28, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+            occurrencesAfterDayLight.First().EndDate.ShouldBe(new DateTimeOffset(2022, 03, 28, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+
+            occurrencesAfterDayLight.Last().StartDate.ShouldBe(new DateTimeOffset(2022, 04, 01, 09, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
+            occurrencesAfterDayLight.Last().EndDate.ShouldBe(new DateTimeOffset(2022, 04, 01, 10, 0, 0, TimeZones.Amsterdam.BaseUtcOffset));
         }
 
         [Fact]

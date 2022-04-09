@@ -13,6 +13,7 @@ using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ethos.Application.Handlers
 {
@@ -23,19 +24,22 @@ namespace Ethos.Application.Handlers
         private readonly IScheduleExceptionQueryService _scheduleExceptionQueryService;
         private readonly ICurrentUser _currentUser;
         private readonly IScheduleRepository _scheduleRepository;
+        private readonly ILogger<GetSchedulesQueryCommandHandler> _logger;
 
         public GetSchedulesQueryCommandHandler(
             IScheduleQueryService scheduleQueryService,
             IBookingQueryService bookingQueryService,
             IScheduleExceptionQueryService scheduleExceptionQueryService,
             ICurrentUser currentUser,
-            IScheduleRepository scheduleRepository)
+            IScheduleRepository scheduleRepository,
+            ILogger<GetSchedulesQueryCommandHandler> logger)
         {
             _scheduleQueryService = scheduleQueryService;
             _bookingQueryService = bookingQueryService;
             _scheduleExceptionQueryService = scheduleExceptionQueryService;
             _currentUser = currentUser;
             _scheduleRepository = scheduleRepository;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<GeneratedScheduleDto>> Handle(GetSchedulesQuery request, CancellationToken cancellationToken)
@@ -65,12 +69,24 @@ namespace Ethos.Application.Handlers
             {
                 var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(recurringSchedule.Id, period);
 
+                var logScheduleException = LoggerMessage.Define<DateTimeOffset, DateTimeOffset>(LogLevel.Debug, new EventId(1),"ScheduleException from {StartDate} to {EndDate}");
+                var logHasExceptions = LoggerMessage.Define<bool>(LogLevel.Debug, new EventId(1),"Has exception {Value}");
+                foreach (var scheduleExtensionProjection in scheduleExceptions)
+                {
+                    logScheduleException(_logger, scheduleExtensionProjection.StartDate, scheduleExtensionProjection.EndDate, null);
+                }
+                
                 var nextExecutions = recurringSchedule.GetOccurrences(period, recurringSchedule.TimeZone);
 
+                var logNextExecution = LoggerMessage.Define<string, DateTimeOffset, DateTimeOffset>(LogLevel.Debug, new EventId(1),"Schedule {Name}. Execution = {NextStart} to {NextEnd}");
+                
                 foreach (var (nextStartDate, nextEndDate) in nextExecutions)
                 {
+                    logNextExecution(_logger, recurringSchedule.Name, nextStartDate, nextEndDate, null);
+                    
                     var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= nextStartDate && e.EndDate >= nextEndDate);
 
+                    logHasExceptions(_logger, hasExceptions, null);
                     if (hasExceptions)
                     {
                         continue;

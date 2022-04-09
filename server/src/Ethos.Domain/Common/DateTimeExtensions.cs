@@ -1,6 +1,6 @@
 using System;
 
-namespace Ethos.Domain.UnitTest;
+namespace Ethos.Domain.Common;
 
 public static class DateTimeExtensions
 {

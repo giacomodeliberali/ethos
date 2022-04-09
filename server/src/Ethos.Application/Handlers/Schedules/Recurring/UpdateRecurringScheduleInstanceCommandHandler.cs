@@ -92,8 +92,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             var scheduleException = ScheduleException.Factory.Create(
                 _guidGenerator.Create(),
                 schedule,
-                request.InstanceStartDate,
-                request.InstanceEndDate);
+                request.InstanceStartDate.ToDateTimeOffset(schedule.TimeZone),
+                request.InstanceEndDate.ToDateTimeOffset(schedule.TimeZone));
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
 
@@ -105,7 +105,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.Name,
                 request.Description,
                 request.ParticipantsMaxNumber,
-                request.StartDate, 
+                request.StartDate.ToDateTimeOffset(schedule.TimeZone), 
                 request.DurationInMinutes,
                 schedule.TimeZone);
 

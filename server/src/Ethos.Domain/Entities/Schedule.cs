@@ -39,6 +39,13 @@ namespace Ethos.Domain.Entities
             int durationInMinutes,
             TimeZoneInfo timeZone)
         {
+            Guard.Against.Default(id, nameof(id));
+            Guard.Against.Null(organizer);
+            Guard.Against.Null(timeZone);
+            Guard.Against.NullOrEmpty(name, nameof(name));
+            Guard.Against.Negative(participantsMaxNumber, nameof(participantsMaxNumber));
+            Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
+            
             Id = id;
             Organizer = organizer;
             Name = name;

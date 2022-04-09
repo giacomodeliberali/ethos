@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Nullable>enable</Nullable>
+    <NoWarn>CA1848</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,6 +16,6 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+    <NoWarn>$(NoWarn),1573,1591,1712;</NoWarn>
   </PropertyGroup>
 </Project>

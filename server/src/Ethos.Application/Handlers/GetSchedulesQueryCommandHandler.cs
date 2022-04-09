@@ -64,29 +64,32 @@ namespace Ethos.Application.Handlers
                 .Select(s => (RecurringSchedule)s);
             
             var result = new List<GeneratedScheduleDto>();
-
+            
+            _logger.LogDebug("[GenerateRecurringSchedules] For period {StartDate} - {EndDate}", period.StartDate, period.EndDate);
+            
             foreach (var recurringSchedule in recurringSchedules)
             {
+                _logger.LogDebug("[GetScheduleExceptionsAsync] For Schedule {Id} with timeZone {TimeZone}", recurringSchedule.Id, recurringSchedule.TimeZone.Id);
+                
                 var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(recurringSchedule.Id, period);
-
-                var logScheduleException = LoggerMessage.Define<DateTimeOffset, DateTimeOffset>(LogLevel.Debug, new EventId(1),"ScheduleException from {StartDate} to {EndDate}");
-                var logHasExceptions = LoggerMessage.Define<bool>(LogLevel.Debug, new EventId(1),"Has exception {Value}");
+                
+                _logger.LogDebug("[GetScheduleExceptionsAsync] Got {Count} exceptions", scheduleExceptions.Count);
+                
                 foreach (var scheduleExtensionProjection in scheduleExceptions)
                 {
-                    logScheduleException(_logger, scheduleExtensionProjection.StartDate, scheduleExtensionProjection.EndDate, null);
+                    _logger.LogDebug("[ScheduleException] From {StartDate} to {EndDate}", scheduleExtensionProjection.StartDate, scheduleExtensionProjection.EndDate);
                 }
                 
                 var nextExecutions = recurringSchedule.GetOccurrences(period, recurringSchedule.TimeZone);
 
-                var logNextExecution = LoggerMessage.Define<string, DateTimeOffset, DateTimeOffset>(LogLevel.Debug, new EventId(1),"Schedule {Name}. Execution = {NextStart} to {NextEnd}");
-                
                 foreach (var (nextStartDate, nextEndDate) in nextExecutions)
                 {
-                    logNextExecution(_logger, recurringSchedule.Name, nextStartDate, nextEndDate, null);
-                    
+                    _logger.LogDebug("NextExecution = {NextStart} to {NextEnd}",  nextStartDate, nextEndDate);
+
                     var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= nextStartDate && e.EndDate >= nextEndDate);
 
-                    logHasExceptions(_logger, hasExceptions, null);
+                    _logger.LogDebug("HasExceptions {Value}", hasExceptions);
+                    
                     if (hasExceptions)
                     {
                         continue;

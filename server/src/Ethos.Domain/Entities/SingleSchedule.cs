@@ -6,26 +6,30 @@ namespace Ethos.Domain.Entities
 {
     public class SingleSchedule : Schedule
     {
-        public Period Period { get; private set; }
+        public DateTime StartDate { get; private set; }
+
+        public DateTime EndDate => StartDate.AddMinutes(DurationInMinutes);
 
         private SingleSchedule(
             Guid id,
             ApplicationUser organizer,
-            Period period,
+            DateTime startDate,
             int duration,
             string name,
             string description,
             int participantsMaxNumber)
             : base(id, organizer, name, description, participantsMaxNumber, duration)
         {
-            Period = period;
+            StartDate = startDate;
         }
 
-        public void UpdatePeriod(Period period)
+        public void UpdateTime(DateTime startDate, int durationInMinutes)
         {
-            Guard.Against.Null(period, nameof(period));
-            Period = period;
-            DurationInMinutes = period.DurationInMinutes;
+            Guard.Against.Default(startDate, nameof(startDate));
+            Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
+
+            StartDate = startDate;
+            DurationInMinutes = durationInMinutes;
         }
 
         public static class Factory
@@ -36,18 +40,20 @@ namespace Ethos.Domain.Entities
                 string name,
                 string description,
                 int participantsMaxNumber,
-                Period period)
+                DateTime startDate,
+                int durationInMinutes)
             {
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
-                Guard.Against.Null(period, nameof(period));
+                Guard.Against.Default(startDate, nameof(startDate));
+                Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
 
                 return new SingleSchedule(
                     id,
                     organizer,
-                    period,
-                    period.DurationInMinutes,
+                    startDate,
+                    durationInMinutes,
                     name,
                     description,
                     participantsMaxNumber);
@@ -57,7 +63,6 @@ namespace Ethos.Domain.Entities
                 Guid id,
                 ApplicationUser organizer,
                 DateTime startDate,
-                DateTime endDate,
                 int duration,
                 string name,
                 string description,
@@ -66,7 +71,7 @@ namespace Ethos.Domain.Entities
                 return new SingleSchedule(
                     id,
                     organizer,
-                    new Period(startDate, endDate),
+                    startDate,
                     duration,
                     name,
                     description,

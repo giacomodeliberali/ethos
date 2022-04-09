@@ -94,9 +94,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 "Name up",
                 "Description up",
                 0,
-                new Period(
-                    DateTime.Parse("2021-10-02T10:00Z").ToUniversalTime(),
-                    DateTime.Parse("2021-10-02T11:00Z").ToUniversalTime()));
+                DateTime.Parse("2021-10-02T10:00Z").ToUniversalTime(),
+                60);
 
             updatedSchedule.ShouldBeEquivalentTo(expectedSchedule);
 

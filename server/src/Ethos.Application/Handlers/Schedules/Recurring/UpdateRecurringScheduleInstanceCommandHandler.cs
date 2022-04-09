@@ -108,7 +108,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.Name,
                 request.Description,
                 request.ParticipantsMaxNumber,
-                new Period(request.StartDate, request.DurationInMinutes));
+                request.StartDate, 
+                request.DurationInMinutes);
 
             await _scheduleRepository.CreateAsync(newSingleInstance);
         }

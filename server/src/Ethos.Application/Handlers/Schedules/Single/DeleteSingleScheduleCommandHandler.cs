@@ -57,8 +57,8 @@ namespace Ethos.Application.Handlers.Schedules.Single
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                schedule.Period.StartDate,
-                schedule.Period.EndDate);
+                schedule.StartDate,
+                schedule.EndDate);
 
             if (existingBookings.Any())
             {

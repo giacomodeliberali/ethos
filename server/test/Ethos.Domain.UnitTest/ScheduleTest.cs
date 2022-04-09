@@ -15,22 +15,22 @@ namespace Ethos.Domain.UnitTest
             var user = new ApplicationUser(GuidGenerator.Create(), "ShouldCreate_NonRecurring_Schedule@test.com", "username", "Full Name");
 
             var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddMonths(1);
-
             var id = GuidGenerator.Create();
+            
             var sut = SingleSchedule.Factory.Create(
                 id,
                 user,
                 name: "Schedule",
                 description: "Description",
                 participantsMaxNumber: 10,
-                new Period(startDate, endDate));
+                startDate,
+                60);
 
             sut.ShouldNotBeNull();
             sut.Id.ShouldBe(id);
             sut.Organizer.Id.ShouldBe(user.Id);
-            sut.Period.StartDate.ShouldBe(startDate.ToUniversalTime());
-            sut.Period.EndDate.ShouldBe(endDate.ToUniversalTime());
+            sut.StartDate.ShouldBe(startDate.ToUniversalTime());
+            sut.EndDate.ShouldBe(startDate.AddMinutes(60).ToUniversalTime());
             sut.Name.ShouldBe("Schedule");
             sut.Description.ShouldBe("Description");
             sut.ParticipantsMaxNumber.ShouldBe(10);

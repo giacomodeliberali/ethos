@@ -38,8 +38,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var singleScheduleData = new SingleScheduleData()
             {
                 ScheduleId = schedule.Id,
-                StartDate = schedule.Period.StartDate,
-                EndDate = schedule.Period.EndDate,
+                StartDate = schedule.StartDate,
+                EndDate = schedule.EndDate,
             };
 
             await _applicationDbContext.SingleSchedules.AddAsync(singleScheduleData);
@@ -105,7 +105,6 @@ namespace Ethos.EntityFrameworkCore.Repositories
                     scheduleData.Id,
                     organizer,
                     singleScheduleData.StartDate,
-                    singleScheduleData.EndDate,
                     scheduleData.DurationInMinutes,
                     scheduleData.Name,
                     scheduleData.Description,
@@ -135,8 +134,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             await UpdateInternalAsync(schedule);
 
             var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleAsync(s => s.ScheduleId == schedule.Id);
-            singleScheduleData.StartDate = schedule.Period.StartDate;
-            singleScheduleData.EndDate = schedule.Period.EndDate;
+            singleScheduleData.StartDate = schedule.StartDate;
+            singleScheduleData.EndDate = schedule.EndDate;
         }
 
         public async Task UpdateAsync(RecurringSchedule schedule)

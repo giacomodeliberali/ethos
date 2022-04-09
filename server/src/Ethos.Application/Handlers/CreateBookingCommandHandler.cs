@@ -69,7 +69,7 @@ namespace Ethos.Application.Handlers
             }
             else if (schedule is SingleSchedule singleSchedule)
             {
-                if (request.StartDate < singleSchedule.Period.StartDate || request.EndDate > singleSchedule.Period.EndDate)
+                if (request.StartDate < singleSchedule.StartDate || request.EndDate > singleSchedule.EndDate)
                 {
                     throw new BusinessException("Invalid booking date/time.");
                 }

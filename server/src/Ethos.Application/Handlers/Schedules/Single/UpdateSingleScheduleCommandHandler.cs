@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Ethos.Application.Commands.Schedules.Single;
 using Ethos.Application.Exceptions;
 using Ethos.Common;
-using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
@@ -49,8 +48,8 @@ namespace Ethos.Application.Handlers.Schedules.Single
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                schedule.Period.StartDate,
-                schedule.Period.EndDate);
+                schedule.StartDate,
+                schedule.EndDate);
 
             if (existingBookings.Any())
             {
@@ -67,7 +66,7 @@ namespace Ethos.Application.Handlers.Schedules.Single
             schedule!.UpdateOrganizer(organizer);
             schedule.UpdateNameAndDescription(request.Name, request.Description);
             schedule.UpdateParticipantsMaxNumber(request.ParticipantsMaxNumber);
-            schedule.UpdatePeriod(new Period(request.StartDate, request.DurationInMinutes));
+            schedule.UpdateTime(request.StartDate, request.DurationInMinutes);
 
             await _scheduleRepository.UpdateAsync(schedule);
             await _unitOfWork.SaveChangesAsync();

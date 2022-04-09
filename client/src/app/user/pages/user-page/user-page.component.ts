@@ -81,18 +81,6 @@ export class UserPageComponent extends BaseDirective {
   loadSchedules(date: string) {
     const startDate = moment(date);
     const endDate = moment(date);
-    startDate.set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
-    endDate.set({
-      hour: 23,
-      minute: 59,
-      second: 59,
-      millisecond: 0,
-    });
     this.loadingSvc
       .startLoading(
         this,

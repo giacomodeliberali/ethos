@@ -250,7 +250,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
    */
   private createCronExpression(days: string[], time: Date) {
     const daysString = days.map((x) => x.toUpperCase()).join(',');
-    const timeString = moment.utc(time);
+    const timeString = moment(time);
     const hour = timeString.hour();
     const minute = timeString.minute();
     console.log(`${minute} ${hour} ? * ${daysString}`);

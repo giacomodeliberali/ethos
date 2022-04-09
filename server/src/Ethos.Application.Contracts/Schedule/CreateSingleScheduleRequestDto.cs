@@ -30,6 +30,6 @@ namespace Ethos.Application.Contracts.Schedule
         public Guid OrganizerId { get; set; }
 
         [Required]
-        public string TimeZone { get; set; }
+        public string TimeZone { get; set; } = "Europe/Rome"; // TODO remove default
     }
 }

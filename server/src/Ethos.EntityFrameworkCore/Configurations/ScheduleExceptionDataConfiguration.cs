@@ -16,12 +16,10 @@ namespace Ethos.EntityFrameworkCore.Configurations
 
             builder
                 .Property(s => s.StartDate)
-                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
                 .IsRequired();
 
             builder
                 .Property(s => s.EndDate)
-                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
                 .IsRequired();
         }
     }

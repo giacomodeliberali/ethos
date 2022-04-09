@@ -10,9 +10,9 @@ namespace Ethos.Application.Commands.Schedules.Recurring
 
         public string Description { get; }
 
-        public DateTime StartDate { get; }
+        public DateTimeOffset StartDate { get; }
 
-        public DateTime EndDate { get; }
+        public DateTimeOffset EndDate { get; }
 
         [Required]
         public int DurationInMinutes { get; }
@@ -32,15 +32,18 @@ namespace Ethos.Application.Commands.Schedules.Recurring
         /// </summary>
         public Guid OrganizerId { get; }
 
+        public string TimeZone { get; }
+
         public CreateRecurringScheduleCommand(
             string name,
             string description,
-            DateTime startDate,
-            DateTime endDate,
+            DateTimeOffset startDate,
+            DateTimeOffset endDate,
             int durationInMinutes,
             string recurringCronExpression,
             int participantsMaxNumber,
-            Guid organizerId)
+            Guid organizerId, 
+            string timeZone)
         {
             Name = name;
             Description = description;
@@ -50,6 +53,7 @@ namespace Ethos.Application.Commands.Schedules.Recurring
             RecurringCronExpression = recurringCronExpression;
             ParticipantsMaxNumber = participantsMaxNumber;
             OrganizerId = organizerId;
+            TimeZone = timeZone;
         }
     }
 }

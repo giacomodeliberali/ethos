@@ -31,7 +31,8 @@ namespace Ethos.Application.Services
                 input.StartDate,
                 input.DurationInMinutes,
                 input.ParticipantsMaxNumber,
-                input.OrganizerId));
+                input.OrganizerId,
+                input.TimeZone));
 
             return new CreateScheduleReplyDto()
             {
@@ -49,7 +50,8 @@ namespace Ethos.Application.Services
                 input.DurationInMinutes,
                 input.RecurringCronExpression,
                 input.ParticipantsMaxNumber,
-                input.OrganizerId));
+                input.OrganizerId,
+                input.TimeZone));
 
             return new CreateScheduleReplyDto()
             {
@@ -101,22 +103,18 @@ namespace Ethos.Application.Services
             });
         }
 
+        public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTimeOffset startDate,
+            DateTimeOffset endDate)
+        {
+            return await _mediator.Send(new GetSchedulesQuery(startDate, endDate));
+        }
+
         /// <inheritdoc />
         public async Task DeleteAsync(DeleteSingleScheduleRequestDto input)
         {
             await _mediator.Send(new DeleteSingleScheduleCommand
             {
                 Id = input.Id,
-            });
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate)
-        {
-            return await _mediator.Send(new GetSchedulesQuery()
-            {
-                StartDate = startDate,
-                EndDate = endDate,
             });
         }
 

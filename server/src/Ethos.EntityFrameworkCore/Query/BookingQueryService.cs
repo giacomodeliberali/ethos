@@ -18,23 +18,23 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<List<BookingProjection>> GetAllBookingsInRange(Guid scheduleId, DateTime startDate, DateTime endDate)
+        public async Task<List<BookingProjection>> GetAllBookingsInRange(Guid scheduleId, DateOnlyPeriod period)
         {
             var bookings = await (
-                    from booking in ApplicationDbContext.Bookings.AsNoTracking()
-                    join schedule in ApplicationDbContext.Schedules.AsNoTracking() on booking.ScheduleId equals schedule.Id
-                    join user in ApplicationDbContext.Users.AsNoTracking() on booking.UserId equals user.Id
-                    join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
-                    where booking.StartDate >= startDate
-                    where booking.EndDate <= endDate
-                    where booking.ScheduleId == scheduleId
-                    select new
-                    {
-                        Booking = booking,
-                        Schedule = schedule,
-                        User = user,
-                        Organizer = organizer,
-                    }).ToListAsync();
+                from booking in ApplicationDbContext.Bookings.AsNoTracking()
+                join schedule in ApplicationDbContext.Schedules.AsNoTracking() on booking.ScheduleId equals schedule.Id
+                join user in ApplicationDbContext.Users.AsNoTracking() on booking.UserId equals user.Id
+                join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
+                where booking.StartDate >= period.StartDate.ToDateTime(TimeOnly.MinValue)
+                where booking.EndDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue)
+                where booking.ScheduleId == scheduleId
+                select new
+                {
+                    Booking = booking,
+                    Schedule = schedule,
+                    User = user,
+                    Organizer = organizer,
+                }).ToListAsync();
 
             var bookingsResult = bookings
                 .Select(item => new BookingProjection()
@@ -96,7 +96,7 @@ namespace Ethos.EntityFrameworkCore.Query
                 .ToList();
         }
 
-        public async Task<List<BookingProjection>> GetAllBookingsByUserId(Guid userId, Period period)
+        public async Task<List<BookingProjection>> GetAllBookingsByUserId(Guid userId, DateOnlyPeriod period)
         {
             var bookings = await (
                 from booking in ApplicationDbContext.Bookings.AsNoTracking()
@@ -104,8 +104,8 @@ namespace Ethos.EntityFrameworkCore.Query
                 join user in ApplicationDbContext.Users.AsNoTracking() on booking.UserId equals user.Id
                 join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
                 where booking.UserId == userId
-                where booking.StartDate >= period.StartDate
-                where booking.EndDate <= period.EndDate
+                where booking.StartDate >= period.StartDate.ToDateTime(TimeOnly.MinValue)
+                where booking.EndDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue)
                 select new
                 {
                     Booking = booking,

@@ -46,9 +46,10 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.Name,
                 request.Description,
                 request.ParticipantsMaxNumber,
-                new Period(request.StartDate, request.EndDate),
+                new DateOnlyPeriod(request.StartDate, request.EndDate),
                 request.DurationInMinutes,
-                request.RecurringCronExpression);
+                request.RecurringCronExpression,
+                TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone));
 
             await _scheduleRepository.CreateAsync(schedule);
 

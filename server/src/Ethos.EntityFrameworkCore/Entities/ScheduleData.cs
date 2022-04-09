@@ -15,5 +15,7 @@ namespace Ethos.EntityFrameworkCore.Entities
         public int DurationInMinutes { get; set; }
 
         public int ParticipantsMaxNumber { get; set; }
+
+        public string TimeZone { get; set; }
     }
 }

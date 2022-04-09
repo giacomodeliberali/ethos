@@ -11,8 +11,7 @@ namespace Ethos.Application.Commands.Schedules.Single
                 .NotEmpty();
 
             RuleFor(command => command.StartDate)
-                .NotEmpty()
-                .Must(BeUtc).WithMessage(UtcMessage);
+                .NotEmpty();
 
             RuleFor(command => command.DurationInMinutes)
                 .GreaterThan(0);

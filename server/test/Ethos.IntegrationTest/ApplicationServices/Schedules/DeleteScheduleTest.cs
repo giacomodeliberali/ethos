@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
+using Ethos.Domain.Common;
 using Ethos.Domain.Repositories;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Web.Host;
@@ -34,7 +35,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T08:00"),
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
             });
@@ -63,8 +65,9 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Recurring schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime(),
-                EndDate = DateTime.Parse("2021-12-01T00:00Z").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T00:00"),
+                EndDate = DateTime.Parse("2021-12-01T00:00"),
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 60,
                 ParticipantsMaxNumber = 2,
                 RecurringCronExpression = "0 09 * * MON-FRI",
@@ -75,8 +78,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Id = singleScheduleReply.Id,
                 RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
-                InstanceStartDate = DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-01T11:00:00Z").ToUniversalTime(),
+                InstanceStartDate = DateTime.Parse("2021-10-01T09:00:00"),
+                InstanceEndDate = DateTime.Parse("2021-10-01T11:00:00"),
             });
 
             (await ApplicationDbContext.Schedules.AsQueryable().CountAsync()).ShouldBe(0);
@@ -87,8 +90,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task Should_UpdateDateTime_WhenDeletingFutureRecurringSchedules()
         {
-            var firstOctober = DateTime.Parse("2021-10-01T00:00Z").ToUniversalTime();
-            var lastOctober = DateTime.Parse("2021-10-31T00:00Z").ToUniversalTime();
+            var firstOctober = DateTime.Parse("2021-10-01T00:00");
+            var lastOctober = DateTime.Parse("2021-10-31T00:00");
 
             using var admin = await Scope.WithUser("admin");
             var scheduleReplyDto = await _scheduleApplicationService.CreateRecurringAsync(new CreateRecurringScheduleRequestDto()
@@ -97,6 +100,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Description = "Recurring schedule every weekday at 9am",
                 StartDate = firstOctober,
                 EndDate = lastOctober,
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 RecurringCronExpression = CronTestExpressions.EveryWeekDayAt9,
                 OrganizerId = admin.User.Id,
@@ -107,19 +111,19 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             await _scheduleApplicationService.DeleteRecurringAsync(new DeleteRecurringScheduleRequestDto()
             {
                 Id = scheduleReplyDto.Id,
-                InstanceStartDate = DateTime.Parse("2021-10-07T09:00:00Z").ToUniversalTime(),
-                InstanceEndDate = DateTime.Parse("2021-10-07T11:00:00Z").ToUniversalTime(),
+                InstanceStartDate = DateTime.Parse("2021-10-07T09:00:00"),
+                InstanceEndDate = DateTime.Parse("2021-10-07T11:00:00"),
                 RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
             });
 
             var result = (await _scheduleApplicationService.GetSchedules(firstOctober, lastOctober)).ToList();
             result.Count.ShouldBe(4);
 
-            result.First().StartDate.ShouldBe(DateTime.Parse("2021-10-01T09:00:00Z").ToUniversalTime());
-            result.First().EndDate.ShouldBe(DateTime.Parse("2021-10-01T11:00:00Z").ToUniversalTime());
+            result.First().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-01T09:00:00"));
+            result.First().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-01T11:00:00"));
 
-            result.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-06T09:00:00Z").ToUniversalTime());
-            result.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-06T11:00:00Z").ToUniversalTime());
+            result.Last().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-06T09:00:00"));
+            result.Last().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-06T11:00:00"));
         }
 
         [Fact]
@@ -130,7 +134,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01T08:00Z").ToUniversalTime(),
+                StartDate = DateTime.Parse("2021-10-01T08:00"),
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
             });

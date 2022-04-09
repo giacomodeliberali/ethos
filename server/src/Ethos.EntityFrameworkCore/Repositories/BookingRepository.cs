@@ -31,8 +31,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 Id = booking.Id,
                 ScheduleId = booking.Schedule.Id,
                 UserId = booking.User.Id,
-                StartDate = booking.StartDate,
-                EndDate = booking.EndDate,
+                StartDate = booking.StartDate.DateTime,
+                EndDate = booking.EndDate.DateTime,
             };
 
             await _applicationDbContext.Bookings.AddAsync(bookingData);
@@ -69,8 +69,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
         public async Task UpdateAsync(Booking booking)
         {
             var bookingData = await _applicationDbContext.Bookings.SingleAsync(b => b.Id == booking.Id);
-            bookingData.StartDate = booking.StartDate;
-            bookingData.EndDate = booking.EndDate;
+            bookingData.StartDate = booking.StartDate.DateTime;
+            bookingData.EndDate = booking.EndDate.DateTime;
             bookingData.ScheduleId = booking.Schedule.Id;
         }
     }

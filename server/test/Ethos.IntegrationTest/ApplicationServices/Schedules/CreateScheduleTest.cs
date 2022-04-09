@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
 using Ethos.Common;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
@@ -34,6 +35,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             })).Id;
@@ -57,6 +59,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = DateTime.UtcNow,
+                    TimeZone = TimeZones.Amsterdam.Id,
                     DurationInMinutes = 120,
                     OrganizerId = demoUser.Id,
                 });
@@ -66,7 +69,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldThrowError_WhenStartDateIsAfterOrEqualEndDate()
         {
-            var admin = await Scope.WithUser("admin");
+            await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
 
             await Should.ThrowAsync<BusinessException>(async () =>
@@ -77,6 +80,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Description = "Description",
                     StartDate = DateTime.UtcNow.AddMonths(1),
                     EndDate = DateTime.UtcNow,
+                    TimeZone = TimeZones.Amsterdam.Id,
                     OrganizerId = demoUser.Id,
                     DurationInMinutes = 60,
                     RecurringCronExpression = CronTestExpressions.EveryMondayAt14,
@@ -91,6 +95,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Test schedule",
                     Description = "Description",
                     StartDate = DateTime.UtcNow,
+                    TimeZone = TimeZones.Amsterdam.Id,
                     OrganizerId = demoUser.Id,
                     DurationInMinutes = 60,
                 });
@@ -106,6 +111,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Name = "Test schedule",
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
             })).Id;
@@ -124,6 +130,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Description = "Description",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1),
+                TimeZone = TimeZones.Amsterdam.Id,
                 OrganizerId = admin.User.Id,
                 RecurringCronExpression = CronTestExpressions.EveryMondayAt14,
                 DurationInMinutes = 60,

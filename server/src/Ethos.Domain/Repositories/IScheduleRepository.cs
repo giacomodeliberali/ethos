@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Domain.Entities;
 
@@ -15,6 +16,8 @@ namespace Ethos.Domain.Repositories
         Task DeleteAsync(RecurringSchedule schedule);
 
         Task<Schedule> GetByIdAsync(Guid id);
+        
+        Task<IEnumerable<Schedule>> GetByIdAsync(IEnumerable<Guid> ids);
 
         Task UpdateAsync(SingleSchedule schedule);
 

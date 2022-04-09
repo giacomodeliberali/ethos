@@ -10,12 +10,12 @@ namespace Ethos.Query.Services
         /// <summary>
         /// Return all the recurring schedules that overlaps with the provided interval.
         /// </summary>
-        Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true);
+        Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(DateOnlyPeriod period, bool fromInclusive = true, bool toInclusive = true);
 
         /// <summary>
         /// Return all the single schedules that overlaps with the provided interval.
         /// </summary>
-        Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true);
+        Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(DateOnlyPeriod period, bool fromInclusive = true, bool toInclusive = true);
 
         /// <summary>
         /// Returns the list of all recurring schedules.

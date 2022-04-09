@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Ethos.EntityFrameworkCore.Query
         }
 
         /// <inheritdoc />
-        public async Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true)
+        public async Task<List<RecurringScheduleProjection>> GetOverlappingRecurringSchedulesAsync(DateOnlyPeriod period, bool fromInclusive = true, bool toInclusive = true)
         {
             var schedules =
                 await (from schedule in ApplicationDbContext.Schedules.AsNoTracking()
@@ -37,8 +38,8 @@ namespace Ethos.EntityFrameworkCore.Query
                 Name = item.Schedule.Name,
                 Description = item.Schedule.Description,
                 ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
-                StartDate = item.RecurringSchedule.StartDate,
-                EndDate = item.RecurringSchedule.EndDate,
+                StartDate = item.RecurringSchedule.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = item.RecurringSchedule.EndDate.ToDateTime(TimeOnly.MaxValue),
                 DurationInMinutes = item.Schedule.DurationInMinutes,
                 RecurringExpression = item.RecurringSchedule.RecurringExpression,
                 Organizer = new ScheduleProjection.OrganizerProjection()
@@ -51,15 +52,15 @@ namespace Ethos.EntityFrameworkCore.Query
             }).ToList();
         }
 
-        public async Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(Period period, bool fromInclusive = true, bool toInclusive = true)
+        public async Task<List<SingleScheduleProjection>> GetOverlappingSingleSchedulesAsync(DateOnlyPeriod period, bool fromInclusive = true, bool toInclusive = true)
         {
             var schedules =
                 await (
                     from schedule in ApplicationDbContext.Schedules.AsNoTracking()
                     join singleSchedule in ApplicationDbContext.SingleSchedules.AsNoTracking() on schedule.Id equals singleSchedule.ScheduleId
                     join organizer in ApplicationDbContext.Users.AsNoTracking() on schedule.OrganizerId equals organizer.Id
-                    where fromInclusive ? singleSchedule.StartDate <= period.EndDate : singleSchedule.StartDate < period.EndDate
-                    where toInclusive ? singleSchedule.EndDate >= period.StartDate : singleSchedule.EndDate > period.StartDate
+                    where fromInclusive ? singleSchedule.StartDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue) : singleSchedule.StartDate < period.EndDate.ToDateTime(TimeOnly.MaxValue)
+                    where toInclusive ? singleSchedule.EndDate >= period.StartDate.ToDateTime(TimeOnly.MinValue) : singleSchedule.EndDate > period.StartDate.ToDateTime(TimeOnly.MinValue)
                     select new
                     {
                         Schedule = schedule,
@@ -106,8 +107,8 @@ namespace Ethos.EntityFrameworkCore.Query
                 Name = item.Schedule.Name,
                 Description = item.Schedule.Description,
                 ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
-                StartDate = item.RecurringSchedule.StartDate,
-                EndDate = item.RecurringSchedule.EndDate,
+                StartDate = item.RecurringSchedule.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = item.RecurringSchedule.EndDate.ToDateTime(TimeOnly.MaxValue),
                 DurationInMinutes = item.Schedule.DurationInMinutes,
                 RecurringExpression = item.RecurringSchedule.RecurringExpression,
                 Organizer = new ScheduleProjection.OrganizerProjection()

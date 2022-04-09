@@ -28,7 +28,7 @@ namespace Ethos.Web.Controllers
         /// Generate all (single and recurring) schedules that are in the given interval.
         /// </summary>
         [HttpGet]
-        public async Task<IEnumerable<GeneratedScheduleDto>> GetAllSchedulesInRange([Required] DateTime? startDate, [Required] DateTime? endDate)
+        public async Task<IEnumerable<GeneratedScheduleDto>> GetAllSchedulesInRange([Required] DateTimeOffset? startDate, [Required] DateTimeOffset? endDate)
         {
             return await _scheduleApplicationService.GetSchedules(startDate!.Value, endDate!.Value);
         }

@@ -13,10 +13,10 @@ namespace Ethos.Application.Contracts.Schedule
         public UserDto Organizer { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTimeOffset StartDate { get; set; }
 
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         [Required]
         public double DurationInMinutes => EndDate.Subtract(StartDate).TotalMinutes;

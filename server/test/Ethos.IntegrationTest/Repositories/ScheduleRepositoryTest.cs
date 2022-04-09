@@ -41,11 +41,12 @@ namespace Ethos.IntegrationTest.Repositories
                 "Test schedule",
                 "Description",
                 3,
-                new Period(
-                    DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime(),
-                    DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime()),
+                new DateOnlyPeriod(
+                    DateTime.Parse("2021-10-01T07:00:00"),
+                    DateTime.Parse("2021-10-31T09:00:00")),
                 120,
-                "0 09 * * MON-FRI"
+                "0 09 * * MON-FRI",
+                TimeZones.Amsterdam
             );
 
             createdSchedule.ShouldBeEquivalentTo(expected);
@@ -63,10 +64,10 @@ namespace Ethos.IntegrationTest.Repositories
 
             var originalSchedule = (await _scheduleRepository.GetByIdAsync(scheduleId)) as RecurringSchedule;
 
-            var newStartDate = DateTime.Parse("2021-10-03T07:00:00Z").ToUniversalTime();
-            var newEndDate = DateTime.Parse("2021-10-5T09:00:00Z").ToUniversalTime();
+            var newStartDate = DateTime.Parse("2021-10-03T07:00:00");
+            var newEndDate = DateTime.Parse("2021-10-5T09:00:00");
 
-            originalSchedule!.UpdateDate(new Period(newStartDate, newEndDate), 60, "0 09 * * MON-FRI");
+            originalSchedule!.UpdateDate(new DateOnlyPeriod(newStartDate, newEndDate), 60, "0 09 * * MON-FRI", originalSchedule.TimeZone);
             originalSchedule.UpdateParticipantsMaxNumber(3);
             originalSchedule.UpdateNameAndDescription("New name", "New description");
 
@@ -79,13 +80,14 @@ namespace Ethos.IntegrationTest.Repositories
             var expected = RecurringSchedule.Factory.FromSnapshot(
                 scheduleId,
                 organizer,
-                newStartDate.Date,
-                newEndDate.Date.AddDays(1).AddTicks(-1),
+                new DateOnly(2021, 10, 03),
+                new DateOnly(2021, 10, 05),
                 "0 09 * * MON-FRI",
                 60,
                 "New name",
                 "New description",
-                3);
+                3,
+                TimeZones.Amsterdam);
 
 
             updatedSchedule.ShouldBeEquivalentTo(expected);
@@ -94,8 +96,8 @@ namespace Ethos.IntegrationTest.Repositories
         private RecurringSchedule GenerateScheduleFor(ApplicationUser organizer)
         {
 
-            var startDate = DateTime.Parse("2021-10-01T07:00:00").ToUniversalTime();
-            var endDate = DateTime.Parse("2021-10-31T09:00:00").ToUniversalTime();
+            var startDate = DateTime.Parse("2021-10-01T07:00:00");
+            var endDate = DateTime.Parse("2021-10-31T09:00:00");
 
             var schedule = RecurringSchedule.Factory.Create(
                 GuidGenerator.Create(),
@@ -103,9 +105,10 @@ namespace Ethos.IntegrationTest.Repositories
                 "Test schedule",
                 "Description",
                 3,
-                new Period(startDate, endDate),
+                new DateOnlyPeriod(startDate, endDate),
                 120,
-                "0 09 * * MON-FRI"
+                "0 09 * * MON-FRI",
+                TimeZones.Amsterdam
             );
 
             return schedule;

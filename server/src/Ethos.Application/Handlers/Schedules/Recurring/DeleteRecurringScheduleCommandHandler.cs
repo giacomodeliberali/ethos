@@ -67,11 +67,9 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         {
             Guard.Against.Null(request.RecurringScheduleOperationType, nameof(request.RecurringScheduleOperationType));
 
-            var occurrences = schedule.RecurringCronExpression.GetOccurrences(
-                request.InstanceStartDate,
-                request.InstanceEndDate,
-                fromInclusive: true,
-                toInclusive: true);
+            var occurrences = schedule.GetOccurrences(
+                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate),
+                schedule.TimeZone);
 
             if (occurrences.Count() != 1)
             {
@@ -90,20 +88,20 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
         private async Task DeleteFutureSchedules(
             RecurringSchedule schedule,
-            DateTime instanceStartDate)
+            DateTimeOffset instanceStartDate)
         {
             var futureBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                startDate: instanceStartDate,
-                endDate: schedule.Period.EndDate);
+                new DateOnlyPeriod(instanceStartDate, schedule.Period.EndDate));
 
             if (futureBookings.Any())
             {
                 throw new BusinessException($"Non è possibile eliminare la schedulazione, sono già presenti {futureBookings.Count} prenotazioni");
             }
 
-            var firstOccurrenceStartDate = schedule.RecurringCronExpression.GetNextOccurrence(schedule.Period.StartDate, inclusive: true);
-            var isFirstOccurence = firstOccurrenceStartDate == instanceStartDate;
+            var firstOccurrence = schedule.GetFirstOccurrence(schedule.TimeZone).StartDate;
+            var isFirstOccurence = new DateOnly(firstOccurrence.Year, firstOccurrence.Month, firstOccurrence.Day) == 
+                                   new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day);
             if (isFirstOccurence)
             {
                 // I am deleting the first occurrence, just delete everything
@@ -117,21 +115,24 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             else
             {
                 // I am editing an occurrence in the middle. Make the past end at last occurence (but do not delete the past!)
-                var lastPastOccurrenceEnd = schedule.RecurringCronExpression.GetOccurrences(
-                        fromUtc: schedule.Period.StartDate,
-                        toUtc: instanceStartDate,
-                        toInclusive: false)
-                    .Last()
-                    .AddMinutes(schedule.DurationInMinutes);
 
+                var lastOcc = schedule.GetOccurrences(
+                    new DateOnlyPeriod(
+                        schedule.Period.StartDate, 
+                        new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day)),
+                    schedule.TimeZone).Last().EndDate.AddDays(-1);
+                
+                var newEndDate = new DateOnly(lastOcc.Year, lastOcc.Month, lastOcc.Day);
+                
                 schedule.UpdateDate(
-                    new Period(schedule.Period.StartDate, lastPastOccurrenceEnd),
+                    new DateOnlyPeriod(schedule.Period.StartDate, newEndDate < schedule.Period.StartDate ? schedule.Period.StartDate : newEndDate),
                     schedule.DurationInMinutes,
-                    schedule.RecurringCronExpressionString);
+                    schedule.RecurringCronExpressionString,
+                    schedule.TimeZone);
 
                 await _scheduleRepository.UpdateAsync(schedule);
                 
-                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, new Period(schedule.Period.EndDate, DateTime.MaxValue.ToUniversalTime()));
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, new DateOnlyPeriod(schedule.Period.EndDate, DateOnly.MaxValue));
                 foreach (var scheduleException in scheduleExceptions)
                 {
                     await _scheduleExceptionRepository.DeleteAsync(scheduleException.Id);
@@ -141,14 +142,13 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
         private async Task DeleteSingleInstanceOfRecurringSchedule(
             RecurringSchedule schedule,
-            DateTime instanceStartDate,
-            DateTime instanceEndDate)
+            DateTimeOffset instanceStartDate,
+            DateTimeOffset instanceEndDate)
         {
             // add to exception table
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                instanceStartDate,
-                instanceEndDate);
+                new DateOnlyPeriod(instanceStartDate, instanceEndDate));
 
             if (existingBookings.Any())
             {

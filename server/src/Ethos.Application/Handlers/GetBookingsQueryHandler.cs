@@ -27,7 +27,7 @@ namespace Ethos.Application.Handlers
 
         public async Task<IEnumerable<BookingDto>> Handle(GetFutureBookingsQuery request, CancellationToken cancellationToken)
         {
-            var period = new Period(DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
+            var period = new DateOnlyPeriod(DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
             var bookings = await _bookingQueryService.GetAllBookingsByUserId(request.UserId, period);
             return _mapper.Map<IEnumerable<BookingDto>>(bookings);
         }

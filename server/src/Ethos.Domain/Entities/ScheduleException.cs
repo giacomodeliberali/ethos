@@ -11,8 +11,8 @@ namespace Ethos.Domain.Entities
         private ScheduleException(
             Guid id,
             RecurringSchedule schedule,
-            DateTime startDate,
-            DateTime endDate)
+            DateTimeOffset startDate,
+            DateTimeOffset endDate)
         {
             Id = id;
             Schedule = schedule;
@@ -22,17 +22,17 @@ namespace Ethos.Domain.Entities
 
         public RecurringSchedule Schedule { get; }
 
-        public DateTime StartDate { get; }
+        public DateTimeOffset StartDate { get; }
 
-        public DateTime EndDate { get; }
+        public DateTimeOffset EndDate { get; }
 
         public static class Factory
         {
             public static ScheduleException Create(
                 Guid id,
                 RecurringSchedule schedule,
-                DateTime startDate,
-                DateTime endDate)
+                DateTimeOffset startDate,
+                DateTimeOffset endDate)
             {
                 Guard.Against.Default(id, nameof(id));
                 Guard.Against.Null(schedule, nameof(schedule));
@@ -45,8 +45,8 @@ namespace Ethos.Domain.Entities
             public static ScheduleException FromSnapshot(
                 Guid id,
                 RecurringSchedule schedule,
-                DateTime startDate,
-                DateTime endDate)
+                DateTimeOffset startDate,
+                DateTimeOffset endDate)
             {
                 return new ScheduleException(id, schedule, startDate, endDate);
             }

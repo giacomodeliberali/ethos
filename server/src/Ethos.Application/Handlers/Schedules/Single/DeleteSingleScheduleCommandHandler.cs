@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ethos.Application.Commands.Schedules.Single;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Exceptions;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Exceptions;
 using Ethos.Domain.Repositories;
@@ -57,8 +58,7 @@ namespace Ethos.Application.Handlers.Schedules.Single
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                schedule.StartDate,
-                schedule.EndDate);
+                new DateOnlyPeriod(schedule.StartDate, schedule.EndDate));
 
             if (existingBookings.Any())
             {

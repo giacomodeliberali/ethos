@@ -34,7 +34,7 @@ namespace Ethos.Application.Services
         /// <summary>
         /// Generate (in memory) all the schedules that are in the given interval.
         /// </summary>
-        Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<GeneratedScheduleDto>> GetSchedules(DateTimeOffset startDate, DateTimeOffset endDate);
 
         /// <summary>
         /// Returns the list of all recurring schedules and their next executions.

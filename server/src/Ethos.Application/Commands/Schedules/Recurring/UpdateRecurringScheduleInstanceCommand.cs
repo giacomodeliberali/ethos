@@ -14,8 +14,8 @@ namespace Ethos.Application.Commands.Schedules.Recurring
         string RecurringCronExpression,
         Guid OrganizerId, 
         int ParticipantsMaxNumber, 
-        DateTime InstanceStartDate, 
-        DateTime InstanceEndDate,
+        DateTimeOffset InstanceStartDate, 
+        DateTimeOffset InstanceEndDate,
         RecurringScheduleOperationType RecurringScheduleOperationType) : IRequest
     {
     }

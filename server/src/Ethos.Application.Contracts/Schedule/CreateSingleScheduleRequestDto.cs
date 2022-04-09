@@ -28,5 +28,8 @@ namespace Ethos.Application.Contracts.Schedule
         /// </summary>
         [Required]
         public Guid OrganizerId { get; set; }
+
+        [Required]
+        public string TimeZone { get; set; }
     }
 }

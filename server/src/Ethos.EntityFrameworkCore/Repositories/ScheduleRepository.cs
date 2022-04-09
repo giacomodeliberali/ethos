@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ethos.Domain.Common;
 using Ethos.Domain.Entities;
 using Ethos.Domain.Repositories;
 using Ethos.EntityFrameworkCore.Entities;
@@ -31,6 +33,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 OrganizerId = schedule.Organizer.Id,
                 DurationInMinutes = schedule.DurationInMinutes,
                 ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
+                TimeZone = schedule.TimeZone.Id,
             };
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
@@ -38,8 +41,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             var singleScheduleData = new SingleScheduleData()
             {
                 ScheduleId = schedule.Id,
-                StartDate = schedule.StartDate,
-                EndDate = schedule.EndDate,
+                StartDate = schedule.StartDate.DateTime,
+                EndDate = schedule.EndDate.DateTime,
             };
 
             await _applicationDbContext.SingleSchedules.AddAsync(singleScheduleData);
@@ -57,6 +60,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
                 OrganizerId = schedule.Organizer.Id,
                 DurationInMinutes = schedule.DurationInMinutes,
                 ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
+                TimeZone = schedule.TimeZone.Id,
             };
 
             await _applicationDbContext.Schedules.AddAsync(scheduleData);
@@ -108,7 +112,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
                     scheduleData.DurationInMinutes,
                     scheduleData.Name,
                     scheduleData.Description,
-                    scheduleData.ParticipantsMaxNumber);
+                    scheduleData.ParticipantsMaxNumber,
+                    TimeZoneInfo.FindSystemTimeZoneById(scheduleData.TimeZone));
             }
 
             var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == id);
@@ -123,10 +128,23 @@ namespace Ethos.EntityFrameworkCore.Repositories
                     scheduleData.DurationInMinutes,
                     scheduleData.Name,
                     scheduleData.Description,
-                    scheduleData.ParticipantsMaxNumber);
+                    scheduleData.ParticipantsMaxNumber,
+                    TimeZoneInfo.FindSystemTimeZoneById(scheduleData.TimeZone));
             }
 
             throw new ArgumentException("Invalid schedule type");
+        }
+
+        public async Task<IEnumerable<Schedule>> GetByIdAsync(IEnumerable<Guid> ids)
+        {
+            var schedules = new List<Schedule>();
+
+            foreach (var scheduleId in ids)
+            {
+                schedules.Add(await GetByIdAsync(scheduleId));
+            }
+
+            return schedules;
         }
 
         public async Task UpdateAsync(SingleSchedule schedule)
@@ -134,8 +152,8 @@ namespace Ethos.EntityFrameworkCore.Repositories
             await UpdateInternalAsync(schedule);
 
             var singleScheduleData = await _applicationDbContext.SingleSchedules.SingleAsync(s => s.ScheduleId == schedule.Id);
-            singleScheduleData.StartDate = schedule.StartDate;
-            singleScheduleData.EndDate = schedule.EndDate;
+            singleScheduleData.StartDate = schedule.StartDate.DateTime;
+            singleScheduleData.EndDate = schedule.EndDate.DateTime;
         }
 
         public async Task UpdateAsync(RecurringSchedule schedule)
@@ -156,6 +174,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             scheduleData.DurationInMinutes = schedule.DurationInMinutes;
             scheduleData.ParticipantsMaxNumber = schedule.ParticipantsMaxNumber;
             scheduleData.OrganizerId = schedule.Organizer.Id;
+            scheduleData.TimeZone = schedule.TimeZone.Id;
         }
     }
 }

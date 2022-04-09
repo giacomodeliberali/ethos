@@ -28,13 +28,16 @@ namespace Ethos.Domain.Entities
 
         public int DurationInMinutes { get; protected set; }
 
+        public TimeZoneInfo TimeZone { get; protected set; }
+
         protected Schedule(
             Guid id,
             ApplicationUser organizer,
             string name,
             string description,
             int participantsMaxNumber,
-            int durationInMinutes)
+            int durationInMinutes,
+            TimeZoneInfo timeZone)
         {
             Id = id;
             Organizer = organizer;
@@ -42,6 +45,7 @@ namespace Ethos.Domain.Entities
             Description = description;
             ParticipantsMaxNumber = participantsMaxNumber;
             DurationInMinutes = durationInMinutes;
+            TimeZone = timeZone;
         }
 
         public virtual void UpdateOrganizer(ApplicationUser organizer)

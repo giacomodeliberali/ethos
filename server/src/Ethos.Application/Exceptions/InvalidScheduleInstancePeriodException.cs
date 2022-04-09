@@ -5,7 +5,7 @@ namespace Ethos.Application.Exceptions;
 
 public class InvalidScheduleInstancePeriodException : BusinessException
 {
-    public InvalidScheduleInstancePeriodException(DateTime instanceStartDate, DateTime instanceEndDate, int occurrence) 
+    public InvalidScheduleInstancePeriodException(DateTimeOffset instanceStartDate, DateTimeOffset instanceEndDate, int occurrence) 
         : base($"Schedule for period {instanceStartDate:s} - {instanceEndDate:s} has {occurrence} occurrences")
     {
     }

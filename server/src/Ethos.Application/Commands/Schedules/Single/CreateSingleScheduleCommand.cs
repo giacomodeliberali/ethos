@@ -21,13 +21,16 @@ namespace Ethos.Application.Commands.Schedules.Single
         /// </summary>
         public Guid OrganizerId { get; }
 
+        public string TimeZone { get; }
+
         public CreateSingleScheduleCommand(
             string name,
             string description,
             DateTime startDate,
             int durationInMinutes,
             int participantsMaxNumber,
-            Guid organizerId)
+            Guid organizerId, 
+            string timeZone)
         {
             Name = name;
             Description = description;
@@ -35,6 +38,7 @@ namespace Ethos.Application.Commands.Schedules.Single
             DurationInMinutes = durationInMinutes;
             ParticipantsMaxNumber = participantsMaxNumber;
             OrganizerId = organizerId;
+            TimeZone = timeZone;
         }
     }
 }

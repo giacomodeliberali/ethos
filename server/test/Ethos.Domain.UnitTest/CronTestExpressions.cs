@@ -1,4 +1,4 @@
-namespace Ethos.IntegrationTest
+namespace Ethos.Domain.UnitTest
 {
     public static class CronTestExpressions
     {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ethos.Application.Contracts.Schedule
@@ -31,9 +30,6 @@ namespace Ethos.Application.Contracts.Schedule
 
         [Required]
         public string RecurringCronExpression { get; set; }
-
-        [Required]
-        public IEnumerable<DateTime> NextOccurrences { get; set; }
 
         public class UserDto
         {

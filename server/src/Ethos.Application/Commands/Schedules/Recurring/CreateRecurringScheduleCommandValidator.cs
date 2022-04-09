@@ -13,12 +13,11 @@ namespace Ethos.Application.Commands.Schedules.Recurring
             RuleFor(command => command.RecurringCronExpression).NotEmpty();
             RuleFor(command => command.DurationInMinutes).GreaterThan(0);
             RuleFor(command => command.StartDate)
-                .Must(BeUtc)
-                .WithMessage(UtcMessage)
                 .NotEmpty();
             RuleFor(command => command.EndDate)
-                .Must(BeUtc)
-                .WithMessage(UtcMessage);
+                .NotEmpty();
+            
+            RuleFor(command => command.TimeZone).NotEmpty();
         }
     }
 }

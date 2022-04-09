@@ -5,6 +5,7 @@ using Ethos.Application.Contracts.Booking;
 using Ethos.Application.Contracts.Schedule;
 using Ethos.Application.Services;
 using Ethos.Common;
+using Ethos.Domain.Common;
 using Ethos.IntegrationTest.Setup;
 using Ethos.Web.Host;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +29,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndNotIncludeParticipantsData_IfCaller_IsAdmin()
         {
-            var startDate = DateTime.Parse("2031-10-01T07:00:00Z").ToUniversalTime();
-            var endDate = DateTime.Parse("2031-10-31T09:00:00Z").ToUniversalTime();
+            var startDate = DateTime.Parse("2031-10-01T07:00:00");
+            var endDate = DateTime.Parse("2031-10-31T09:00:00");
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -39,6 +40,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Name",
                     Description = "Description",
                     StartDate = startDate,
+                    TimeZone = TimeZones.Amsterdam.Id,
                     DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 });
@@ -49,8 +51,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = DateTime.Parse("2031-10-01T07:00:00Z").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2031-10-01T09:00:00Z").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2031-10-01T07:00:00"),
+                    EndDate = DateTime.Parse("2031-10-01T09:00:00"),
                 });
             }
 
@@ -65,8 +67,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndIncludeParticipantsData_IfCaller_IsUser()
         {
-            var startDate = DateTime.Parse("2031-10-01T07:00:00Z").ToUniversalTime();
-            var endDate = DateTime.Parse("2031-10-31T09:00:00Z").ToUniversalTime();
+            var startDate = DateTime.Parse("2031-10-01T07:00:00");
+            var endDate = DateTime.Parse("2031-10-31T09:00:00");
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -76,6 +78,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Name = "Name",
                     Description = "Description",
                     StartDate = startDate,
+                    TimeZone = TimeZones.Amsterdam.Id,
                     DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
                 });
@@ -86,8 +89,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = DateTime.Parse("2031-10-01T07:00:00Z").ToUniversalTime(),
-                    EndDate = DateTime.Parse("2031-10-01T09:00:00Z").ToUniversalTime(),
+                    StartDate = DateTime.Parse("2031-10-01T07:00:00"),
+                    EndDate = DateTime.Parse("2031-10-01T09:00:00"),
                 });
 
                 var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();
@@ -101,8 +104,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_WhenSchedulesAreRecurring_AndReturnOverlappingSchedules()
         {
-            var firstOctober = DateTime.Parse("2021-10-01T00:00:00Z").ToUniversalTime();
-            var lastOctober = DateTime.Parse("2021-10-31T23:59:59Z").ToUniversalTime();
+            var firstOctober = DateTime.Parse("2021-10-01T00:00:00");
+            var lastOctober = DateTime.Parse("2021-10-31T23:59:59");
 
             using var admin = await Scope.WithUser("admin");
 
@@ -112,6 +115,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Description = "Recurring schedule every weekday at 9am",
                 StartDate = firstOctober,
                 EndDate = lastOctober,
+                TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 RecurringCronExpression = "0 09 * * MON-FRI", // every week day at 9am
                 OrganizerId = admin.User.Id,
@@ -119,35 +123,35 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
 
 
             var generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                    DateTime.Parse("2021-10-4T09:00:00Z").ToUniversalTime(),
-                    DateTime.Parse("2021-10-8T09:00:00Z").ToUniversalTime())).ToList();
+                    DateTime.Parse("2021-10-4T09:00:00"),
+                    DateTime.Parse("2021-10-8T09:00:00"))).ToList();
             generatedSchedules.Count.ShouldBe(5);
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-09-1T09:00:00Z").ToUniversalTime(),
-                DateTime.Parse("2021-10-3T09:00:00Z").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-09-1T09:00:00"),
+                DateTime.Parse("2021-10-3T09:00:00"))).ToList();
             generatedSchedules.Count.ShouldBe(1);
-            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
-            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
+            generatedSchedules.Single().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-1T09:00:00"));
+            generatedSchedules.Single().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-1T11:00:00"));
             generatedSchedules.Single().DurationInMinutes.ShouldBe(120);
 
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-09-1T09:00:00Z").ToUniversalTime(),
-                DateTime.Parse("2021-10-3T09:00:00Z").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-09-1T09:00:00"),
+                DateTime.Parse("2021-10-3T09:00:00"))).ToList();
             generatedSchedules.Count.ShouldBe(1);
-            generatedSchedules.Single().StartDate.ShouldBe(DateTime.Parse("2021-10-1T09:00:00Z").ToUniversalTime());
-            generatedSchedules.Single().EndDate.ShouldBe(DateTime.Parse("2021-10-1T11:00:00Z").ToUniversalTime());
+            generatedSchedules.Single().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-1T09:00:00"));
+            generatedSchedules.Single().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-1T11:00:00"));
             generatedSchedules.Single().DurationInMinutes.ShouldBe(120);
 
             generatedSchedules = (await _scheduleApplicationService.GetSchedules(
-                DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime(),
-                DateTime.Parse("2021-11-15T09:00:00Z").ToUniversalTime())).ToList();
+                DateTime.Parse("2021-10-15T09:00:00"),
+                DateTime.Parse("2021-11-15T09:00:00"))).ToList();
             generatedSchedules.Count.ShouldBe(11);
-            generatedSchedules.First().StartDate.ShouldBe(DateTime.Parse("2021-10-15T09:00:00Z").ToUniversalTime());
-            generatedSchedules.First().EndDate.ShouldBe(DateTime.Parse("2021-10-15T11:00:00Z").ToUniversalTime());
-            generatedSchedules.Last().StartDate.ShouldBe(DateTime.Parse("2021-10-29T09:00:00Z").ToUniversalTime());
-            generatedSchedules.Last().EndDate.ShouldBe(DateTime.Parse("2021-10-29T11:00:00Z").ToUniversalTime());
+            generatedSchedules.First().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-15T09:00:00"));
+            generatedSchedules.First().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-15T11:00:00"));
+            generatedSchedules.Last().StartDate.DateTime.ShouldBe(DateTime.Parse("2021-10-29T09:00:00"));
+            generatedSchedules.Last().EndDate.DateTime.ShouldBe(DateTime.Parse("2021-10-29T11:00:00"));
             generatedSchedules.Last().DurationInMinutes.ShouldBe(120);
         }
     }

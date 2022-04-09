@@ -8,8 +8,8 @@ namespace Ethos.Query.Services
 {
     public interface IBookingQueryService
     {
-        Task<List<BookingProjection>> GetAllBookingsInRange(Guid scheduleId, DateTime startDate, DateTime endDate);
+        Task<List<BookingProjection>> GetAllBookingsInRange(Guid scheduleId, DateOnlyPeriod period);
         Task<List<BookingProjection>> GetAllBookings(Guid scheduleId);
-        Task<List<BookingProjection>> GetAllBookingsByUserId(Guid userId, Period period);
+        Task<List<BookingProjection>> GetAllBookingsByUserId(Guid userId, DateOnlyPeriod period);
     }
 }

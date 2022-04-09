@@ -8,11 +8,11 @@ namespace Ethos.Application.Commands.Booking
     {
         public Guid ScheduleId { get; }
 
-        public DateTime StartDate { get; }
+        public DateTimeOffset StartDate { get; }
 
-        public DateTime EndDate { get; }
+        public DateTimeOffset EndDate { get; }
 
-        public CreateBookingCommand(Guid scheduleId, DateTime startDate, DateTime endDate)
+        public CreateBookingCommand(Guid scheduleId, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             ScheduleId = scheduleId;
             StartDate = startDate;

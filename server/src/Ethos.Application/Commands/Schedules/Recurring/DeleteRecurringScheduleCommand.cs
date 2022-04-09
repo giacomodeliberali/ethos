@@ -11,8 +11,8 @@ namespace Ethos.Application.Commands.Schedules.Recurring
 
         public RecurringScheduleOperationType RecurringScheduleOperationType { get; init; }
 
-        public DateTime InstanceStartDate { get; init; }
+        public DateTimeOffset InstanceStartDate { get; init; }
 
-        public DateTime InstanceEndDate { get; init; }
+        public DateTimeOffset InstanceEndDate { get; init; }
     }
 }

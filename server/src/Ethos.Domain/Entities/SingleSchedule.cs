@@ -1,31 +1,33 @@
 using System;
 using Ardalis.GuardClauses;
-using Ethos.Domain.Common;
+using Ethos.Domain.Extensions;
 
 namespace Ethos.Domain.Entities
 {
     public class SingleSchedule : Schedule
     {
-        public DateTime StartDate { get; private set; }
+        public DateTimeOffset StartDate { get; private set; }
 
-        public DateTime EndDate => StartDate.AddMinutes(DurationInMinutes);
+        public DateTimeOffset EndDate => StartDate.AddMinutes(DurationInMinutes);
 
         private SingleSchedule(
             Guid id,
             ApplicationUser organizer,
-            DateTime startDate,
+            DateTimeOffset startDate,
             int duration,
             string name,
             string description,
-            int participantsMaxNumber)
-            : base(id, organizer, name, description, participantsMaxNumber, duration)
+            int participantsMaxNumber,
+            TimeZoneInfo timeZone)
+            : base(id, organizer, name, description, participantsMaxNumber, duration, timeZone)
         {
             StartDate = startDate;
         }
 
-        public void UpdateTime(DateTime startDate, int durationInMinutes)
+        public void UpdateTime(DateTimeOffset startDate, int durationInMinutes)
         {
             Guard.Against.Default(startDate, nameof(startDate));
+            Guard.Against.DifferentTimezone(startDate, TimeZone);
             Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
 
             StartDate = startDate;
@@ -40,13 +42,16 @@ namespace Ethos.Domain.Entities
                 string name,
                 string description,
                 int participantsMaxNumber,
-                DateTime startDate,
-                int durationInMinutes)
+                DateTimeOffset startDate,
+                int durationInMinutes,
+                TimeZoneInfo timeZone)
             {
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
                 Guard.Against.NullOrEmpty(description, nameof(description));
                 Guard.Against.Default(startDate, nameof(startDate));
+                Guard.Against.Null(timeZone, nameof(timeZone));
+                Guard.Against.DifferentTimezone(startDate, timeZone);
                 Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
 
                 return new SingleSchedule(
@@ -56,18 +61,23 @@ namespace Ethos.Domain.Entities
                     durationInMinutes,
                     name,
                     description,
-                    participantsMaxNumber);
+                    participantsMaxNumber,
+                    timeZone);
             }
 
             public static SingleSchedule FromSnapshot(
                 Guid id,
                 ApplicationUser organizer,
-                DateTime startDate,
+                DateTimeOffset startDate,
                 int duration,
                 string name,
                 string description,
-                int participantsMaxNumber)
+                int participantsMaxNumber,
+                TimeZoneInfo timeZone)
             {
+                Guard.Against.Null(timeZone);
+                Guard.Against.DifferentTimezone(startDate, timeZone);
+                
                 return new SingleSchedule(
                     id,
                     organizer,
@@ -75,7 +85,8 @@ namespace Ethos.Domain.Entities
                     duration,
                     name,
                     description,
-                    participantsMaxNumber);
+                    participantsMaxNumber,
+                    timeZone);
             }
         }
     }

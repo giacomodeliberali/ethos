@@ -1,4 +1,5 @@
 using System;
+using Ethos.EntityFrameworkCore.Converters;
 using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,12 +16,12 @@ namespace Ethos.EntityFrameworkCore.Configurations
 
             builder
                 .Property(s => s.StartDate)
-                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+                .HasConversion<DateOnlyToDateTimeConverter>()
                 .IsRequired();
 
             builder
                 .Property(s => s.EndDate)
-                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+                .HasConversion<DateOnlyToDateTimeConverter>()
                 .IsRequired();
 
             builder.Property(s => s.RecurringExpression).HasMaxLength(256).IsRequired();

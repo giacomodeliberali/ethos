@@ -7,9 +7,9 @@ namespace Ethos.Domain.Entities
     {
         public ApplicationUser User { get; private set; }
 
-        public DateTime StartDate { get; private set; }
+        public DateTimeOffset StartDate { get; private set; }
 
-        public DateTime EndDate { get; private set; }
+        public DateTimeOffset EndDate { get; private set; }
 
         public Schedule Schedule { get; private set; }
 
@@ -17,8 +17,8 @@ namespace Ethos.Domain.Entities
             Guid id,
             Schedule schedule,
             ApplicationUser user,
-            DateTime startDate,
-            DateTime endDate)
+            DateTimeOffset startDate,
+            DateTimeOffset endDate)
         {
             Id = id;
             User = user;
@@ -33,8 +33,8 @@ namespace Ethos.Domain.Entities
                 Guid id,
                 Schedule schedule,
                 ApplicationUser user,
-                DateTime startDate,
-                DateTime endDate)
+                DateTimeOffset startDate,
+                DateTimeOffset endDate)
             {
                 return new Booking(id, schedule, user, startDate, endDate);
             }
@@ -43,8 +43,8 @@ namespace Ethos.Domain.Entities
                 Guid id,
                 Schedule schedule,
                 ApplicationUser user,
-                DateTime startDate,
-                DateTime endDate)
+                DateTimeOffset startDate,
+                DateTimeOffset endDate)
             {
                 return new Booking(id, schedule, user, startDate, endDate);
             }

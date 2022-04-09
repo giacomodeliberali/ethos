@@ -16,6 +16,7 @@ namespace Ethos.EntityFrameworkCore.Configurations
             builder.Property(s => s.Description).HasMaxLength(2048).IsRequired();
             builder.Property(s => s.DurationInMinutes).IsRequired();
             builder.Property(s => s.ParticipantsMaxNumber).IsRequired();
+            builder.Property(s => s.TimeZone).IsRequired();
         }
     }
 }

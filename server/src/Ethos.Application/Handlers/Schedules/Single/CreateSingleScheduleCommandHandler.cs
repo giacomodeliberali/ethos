@@ -49,7 +49,8 @@ namespace Ethos.Application.Handlers.Schedules.Single
                 request.Description,
                 request.ParticipantsMaxNumber,
                 request.StartDate,
-                request.DurationInMinutes);
+                request.DurationInMinutes,
+                TimeZoneInfo.FindSystemTimeZoneById(request.TimeZone));
 
             await _scheduleRepository.CreateAsync(schedule);
 

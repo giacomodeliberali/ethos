@@ -52,11 +52,9 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
 
             var recurringSchedule = (RecurringSchedule)schedule;
             
-            var occurrences = recurringSchedule.RecurringCronExpression.GetOccurrences(
-                request.InstanceStartDate,
-                request.InstanceEndDate,
-                fromInclusive: true,
-                toInclusive: true);
+            var occurrences = recurringSchedule.GetOccurrences(
+                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate),
+                schedule.TimeZone);
 
             if (occurrences.Count() != 1)
             {
@@ -84,8 +82,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                request.InstanceStartDate,
-                request.InstanceEndDate);
+                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate));
 
             if (existingBookings.Any())
             {
@@ -109,7 +106,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.Description,
                 request.ParticipantsMaxNumber,
                 request.StartDate, 
-                request.DurationInMinutes);
+                request.DurationInMinutes,
+                schedule.TimeZone);
 
             await _scheduleRepository.CreateAsync(newSingleInstance);
         }
@@ -120,8 +118,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         {
             var existingBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
-                request.InstanceStartDate,
-                schedule.Period.EndDate);
+                new DateOnlyPeriod(request.InstanceStartDate, schedule.Period.EndDate));
 
             if (existingBookings.Any())
             {
@@ -130,9 +127,10 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             
             // update past
             schedule.UpdateDate(
-                new Period(schedule.Period.StartDate, request.InstanceStartDate), 
+                new DateOnlyPeriod(schedule.Period.StartDate, request.InstanceStartDate), 
                 schedule.DurationInMinutes, 
-                schedule.RecurringCronExpressionString);
+                schedule.RecurringCronExpressionString,
+                schedule.TimeZone); 
 
             await _scheduleRepository.UpdateAsync(schedule);
             
@@ -145,9 +143,10 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.Name,
                 request.Description,
                 request.ParticipantsMaxNumber,
-                new Period(request.StartDate, request.EndDate),
+                new DateOnlyPeriod(request.StartDate, request.EndDate),
                 request.DurationInMinutes,
-                request.RecurringCronExpression);
+                request.RecurringCronExpression,
+                schedule.TimeZone);
 
             await _scheduleRepository.CreateAsync(newRecurring);
         }

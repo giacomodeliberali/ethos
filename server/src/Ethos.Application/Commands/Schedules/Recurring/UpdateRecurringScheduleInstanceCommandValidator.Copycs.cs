@@ -11,16 +11,13 @@ namespace Ethos.Application.Commands.Schedules.Recurring
                 .NotEmpty();
 
             RuleFor(command => command.InstanceStartDate)
-                .NotEmpty()
-                .Must(BeUtc).WithMessage(UtcMessage);
+                .NotEmpty();
 
             RuleFor(command => command.InstanceEndDate)
-                .NotEmpty()
-                .Must(BeUtc).WithMessage(UtcMessage);
+                .NotEmpty();
 
             RuleFor(command => command.StartDate)
-                .NotEmpty()
-                .Must(BeUtc).WithMessage(UtcMessage);
+                .NotEmpty();
 
             RuleFor(command => command.DurationInMinutes)
                 .GreaterThan(0);

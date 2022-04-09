@@ -7,8 +7,14 @@ namespace Ethos.Application.Queries
 {
     public class GetSchedulesQuery : IRequest<IEnumerable<GeneratedScheduleDto>>
     {
-        public DateTime StartDate { get; init; }
+        public GetSchedulesQuery(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+        }
 
-        public DateTime EndDate { get; init; }
+        public DateTimeOffset StartDate { get; }
+
+        public DateTimeOffset EndDate { get; }
     }
 }

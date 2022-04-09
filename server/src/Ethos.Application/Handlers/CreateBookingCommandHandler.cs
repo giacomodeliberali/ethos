@@ -56,13 +56,12 @@ namespace Ethos.Application.Handlers
                     throw new BusinessException("Invalid booking duration.");
                 }
 
-                var occurrences = recurringSchedule.RecurringCronExpression.GetOccurrences(
-                    request.StartDate,
-                    request.EndDate,
-                    fromInclusive: true,
-                    toInclusive: true).ToList();
+                var occurrences = recurringSchedule.GetOccurrences(
+                    new DateOnlyPeriod(request.StartDate, request.EndDate),
+                    schedule.TimeZone)
+                    .ToList();
 
-                if (occurrences.Count != 1 || occurrences.Single() < recurringSchedule.Period.StartDate || occurrences.Single() > recurringSchedule.Period.EndDate)
+                if (occurrences.Count != 1)
                 {
                     throw new BusinessException("Invalid booking date/time.");
                 }
@@ -81,7 +80,9 @@ namespace Ethos.Application.Handlers
                 }
             }
 
-            var currentBookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, request.StartDate, request.EndDate);
+            var currentBookings = await _bookingQueryService.GetAllBookingsInRange(
+                schedule.Id,
+                new DateOnlyPeriod(request.StartDate, request.EndDate));
 
             if (schedule.ParticipantsMaxNumber > 0 &&
                 currentBookings.Count >= schedule.ParticipantsMaxNumber)

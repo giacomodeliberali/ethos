@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Ardalis.GuardClauses;
 using Cronos;
 using Ethos.Domain.Common;
@@ -13,7 +14,7 @@ namespace Ethos.Domain.Entities
         /// <summary>
         /// The period of this schedule.
         /// </summary>
-        public Period Period { get; private set; }
+        public DateOnlyPeriod Period { get; private set; }
 
         /// <summary>
         /// The underlying CRON expression expressed as a string.
@@ -25,28 +26,30 @@ namespace Ethos.Domain.Entities
         /// The recurring CRON expression.
         /// <remarks>Do not call the toString() (see https://github.com/HangfireIO/Cronos/issues/15)</remarks>
         /// </summary>
-        public CronExpression RecurringCronExpression => CronExpression.Parse(RecurringCronExpressionString);
+        private CronExpression RecurringCronExpression => CronExpression.Parse(RecurringCronExpressionString);
 
         private RecurringSchedule(
             Guid id,
             ApplicationUser organizer,
-            Period period,
+            DateOnlyPeriod period,
             string recurringExpression,
             int duration,
             string name,
             string description,
-            int participantsMaxNumber)
-            : base(id, organizer, name, description, participantsMaxNumber, duration)
+            int participantsMaxNumber,
+            TimeZoneInfo timeZone)
+            : base(id, organizer, name, description, participantsMaxNumber, duration, timeZone)
         {
             Period = period;
             RecurringCronExpressionString = recurringExpression;
         }
 
-        public void UpdateDate(Period period, int durationInMinutes, string recurringExpression)
+        public void UpdateDate(DateOnlyPeriod period, int durationInMinutes, string recurringExpression, TimeZoneInfo timeZone)
         {
             Guard.Against.NullOrEmpty(recurringExpression, nameof(recurringExpression));
             Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
             Guard.Against.Null(period, nameof(period));
+            Guard.Against.Null(timeZone, nameof(timeZone));
 
             try
             {
@@ -56,23 +59,64 @@ namespace Ethos.Domain.Entities
             {
                 throw new BusinessException($"Invalid CRON expression '{recurringExpression}'", ex);
             }
-
-            // do not consider time;
-            Period = new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)); 
+            
+            Period = period; 
             DurationInMinutes = durationInMinutes;
             RecurringCronExpressionString = recurringExpression;
+            TimeZone = timeZone;
         }
 
-        public IEnumerable<Period> GetOccurrences(Period period, bool fromInclusive = true, bool toInclusive = true)
+        private static DateOnly Max(DateOnly first, DateOnly second)
         {
+            if (first >= second)
+            {
+                return first;
+            }
+
+            return second;
+        }
+        
+        private static DateOnly Min(DateOnly first, DateOnly second)
+        {
+            if (first <= second)
+            {
+                return first;
+            }
+
+            return second;
+        }
+
+        public IEnumerable<(DateTimeOffset StartDate, DateTimeOffset EndDate)> GetOccurrences(DateOnlyPeriod requestedPeriod, TimeZoneInfo timeZone)
+        {
+            if (requestedPeriod.EndDate < Period.StartDate || requestedPeriod.StartDate > Period.EndDate)
+            {
+                return Enumerable.Empty<(DateTimeOffset StartDate, DateTimeOffset EndDate)>();
+            }
+            
+            DateOnlyPeriod safePeriod = new DateOnlyPeriod(
+                Max(Period.StartDate, requestedPeriod.StartDate),
+                Min(Period.EndDate, requestedPeriod.EndDate));
+
+            var from = new DateTimeOffset(safePeriod.StartDate.Year, safePeriod.StartDate.Month, safePeriod.StartDate.Day, 0, 0, 0, timeZone.BaseUtcOffset);
+            var to = new DateTimeOffset(safePeriod.EndDate.Year, safePeriod.EndDate.Month, safePeriod.EndDate.Day, 23, 59, 59, timeZone.BaseUtcOffset);
+
             return RecurringCronExpression
-                .GetOccurrences(period.StartDate, period.EndDate, fromInclusive, toInclusive)
-                .Select(nextStartDate => new Period(nextStartDate, nextStartDate.AddMinutes(DurationInMinutes)));
+                .GetOccurrences(
+                    from,
+                    to, 
+                    timeZone,
+                    fromInclusive: true,
+                    toInclusive: true)
+                .Select(nextStartDate =>
+                {
+                    return (nextStartDate, nextStartDate.AddMinutes(DurationInMinutes));
+                });
         }
 
-        public IEnumerable<Period> GetOccurrences()
+        public (DateTimeOffset StartDate, DateTimeOffset EndDate) GetFirstOccurrence(TimeZoneInfo timeZone)
         {
-            return GetOccurrences(Period);
+            var occ = GetOccurrences(Period, timeZone);
+            return occ.Select(s => (s.StartDate.DateTime, s.EndDate.DateTime)).First();
         }
 
         public static class Factory
@@ -83,9 +127,10 @@ namespace Ethos.Domain.Entities
                 string name,
                 string description,
                 int participantsMaxNumber,
-                Period period,
+                DateOnlyPeriod period,
                 int duration,
-                string recurringExpression)
+                string recurringExpression,
+                TimeZoneInfo timeZone)
             {
                 Guard.Against.Null(organizer, nameof(organizer));
                 Guard.Against.NullOrEmpty(name, nameof(name));
@@ -93,6 +138,7 @@ namespace Ethos.Domain.Entities
                 Guard.Against.NullOrEmpty(recurringExpression, nameof(recurringExpression));
                 Guard.Against.NegativeOrZero(duration, nameof(duration));
                 Guard.Against.Null(period, nameof(period));
+                Guard.Against.Null(timeZone, nameof(timeZone));
 
                 try
                 {
@@ -106,34 +152,37 @@ namespace Ethos.Domain.Entities
                 return new RecurringSchedule(
                     id,
                     organizer,
-                    new Period(period.StartDate.Date, period.EndDate.Date.AddDays(1).AddTicks(-1)), // do not consider time
+                    period,
                     recurringExpression,
                     duration,
                     name,
                     description,
-                    participantsMaxNumber);
+                    participantsMaxNumber,
+                    timeZone);
             }
 
             public static RecurringSchedule FromSnapshot(
                 Guid id,
                 ApplicationUser organizer,
-                DateTime startDate,
-                DateTime endDate,
+                DateOnly startDate,
+                DateOnly endDate,
                 string recurringExpression,
                 int duration,
                 string name,
                 string description,
-                int participantsMaxNumber)
+                int participantsMaxNumber,
+                TimeZoneInfo timeZone)
             {
                 return new RecurringSchedule(
                     id,
                     organizer,
-                    new Period(startDate, endDate),
+                    new DateOnlyPeriod(startDate, endDate),
                     recurringExpression,
                     duration,
                     name,
                     description,
-                    participantsMaxNumber);
+                    participantsMaxNumber,
+                    timeZone);
             }
         }
     }

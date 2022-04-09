@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cronos;
@@ -38,7 +36,6 @@ namespace Ethos.Application.Handlers
 
             foreach (var recurringSchedule in recurringSchedules)
             {
-                // var nextOccurrences = await GetNextOccurrences(recurringSchedule).ToListAsync(cancellationToken);
                 result.Add(new RecurringScheduleDto()
                 {
                     Id = recurringSchedule.Id,
@@ -56,41 +53,10 @@ namespace Ethos.Application.Handlers
                     RecurringCronExpression = recurringSchedule.RecurringExpression,
                     StartDate = recurringSchedule.StartDate,
                     EndDate = recurringSchedule.EndDate,
-                    NextOccurrences = Enumerable.Empty<DateTime>(), // TODO: split in separate call
                 });
             }
 
             return result;
-        }
-
-        private async IAsyncEnumerable<DateTime> GetNextOccurrences(RecurringScheduleProjection schedule)
-        {
-            var now = DateTime.UtcNow;
-            var period = new Period(
-                schedule.StartDate >= now ? schedule.StartDate : now,
-                schedule.EndDate ?? DateTime.UtcNow.AddMonths(3));
-
-            var scheduleExceptions =
-                await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, period);
-
-            var nextExecutions = CronExpression.Parse(schedule.RecurringExpression).GetOccurrences(
-                fromUtc: period.StartDate,
-                toUtc: period.EndDate,
-                fromInclusive: true,
-                toInclusive: true);
-
-            foreach (var nextExecution in nextExecutions)
-            {
-                var startDate = nextExecution;
-                var endDate = nextExecution.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
-
-                var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= startDate && e.EndDate >= endDate);
-
-                if (!hasExceptions)
-                {
-                    yield return nextExecution;
-                }
-            }
         }
     }
 }

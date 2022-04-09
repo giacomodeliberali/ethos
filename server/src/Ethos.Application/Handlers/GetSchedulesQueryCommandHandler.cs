@@ -9,6 +9,8 @@ using Ethos.Application.Identity;
 using Ethos.Application.Queries;
 using Ethos.Common;
 using Ethos.Domain.Common;
+using Ethos.Domain.Entities;
+using Ethos.Domain.Repositories;
 using Ethos.Query.Services;
 using MediatR;
 
@@ -20,17 +22,20 @@ namespace Ethos.Application.Handlers
         private readonly IBookingQueryService _bookingQueryService;
         private readonly IScheduleExceptionQueryService _scheduleExceptionQueryService;
         private readonly ICurrentUser _currentUser;
+        private readonly IScheduleRepository _scheduleRepository;
 
         public GetSchedulesQueryCommandHandler(
             IScheduleQueryService scheduleQueryService,
             IBookingQueryService bookingQueryService,
             IScheduleExceptionQueryService scheduleExceptionQueryService,
-            ICurrentUser currentUser)
+            ICurrentUser currentUser,
+            IScheduleRepository scheduleRepository)
         {
             _scheduleQueryService = scheduleQueryService;
             _bookingQueryService = bookingQueryService;
             _scheduleExceptionQueryService = scheduleExceptionQueryService;
             _currentUser = currentUser;
+            _scheduleRepository = scheduleRepository;
         }
 
         public async Task<IEnumerable<GeneratedScheduleDto>> Handle(GetSchedulesQuery request, CancellationToken cancellationToken)
@@ -39,61 +44,58 @@ namespace Ethos.Application.Handlers
 
             var result = new List<GeneratedScheduleDto>();
 
-            var period = new Period(request.StartDate, request.EndDate);
+            var period = new DateOnlyPeriod(request.StartDate, request.EndDate);
             result.AddRange(await GetSingleSchedules(period, isAdmin));
             result.AddRange(await GenerateRecurringSchedules(period, isAdmin));
 
             return result.OrderBy(s => s.StartDate);
         }
 
-        private async Task<List<GeneratedScheduleDto>> GenerateRecurringSchedules(Period period, bool isAdmin)
+        private async Task<List<GeneratedScheduleDto>> GenerateRecurringSchedules(DateOnlyPeriod period, bool isAdmin)
         {
-            var recurringSchedules = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(period);
+            var recurringSchedulesProjections = await _scheduleQueryService.GetOverlappingRecurringSchedulesAsync(period);
 
+            var recurringSchedules = 
+                (await _scheduleRepository.GetByIdAsync(recurringSchedulesProjections.Select(p => p.Id)))
+                .Select(s => (RecurringSchedule)s);
+            
             var result = new List<GeneratedScheduleDto>();
 
-            foreach (var schedule in recurringSchedules)
+            foreach (var recurringSchedule in recurringSchedules)
             {
-                var cronExpression = CronExpression.Parse(schedule.RecurringExpression);
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(recurringSchedule.Id, period);
 
-                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, period);
+                var nextExecutions = recurringSchedule.GetOccurrences(period, recurringSchedule.TimeZone);
 
-                var nextExecutions = cronExpression.GetOccurrences(
-                    fromUtc: schedule.StartDate >= period.StartDate ? schedule.StartDate.ToUniversalTime() : period.StartDate,
-                    toUtc: schedule.EndDate.HasValue && schedule.EndDate.Value <= period.EndDate ? schedule.EndDate.Value.ToUniversalTime() : period.EndDate,
-                    fromInclusive: true,
-                    toInclusive: true);
-
-                foreach (var nextExecution in nextExecutions)
+                foreach (var (nextStartDate, nextEndDate) in nextExecutions)
                 {
-                    var startDate = nextExecution;
-                    var endDate = nextExecution.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
-
-                    var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= startDate && e.EndDate >= endDate);
+                    var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= nextStartDate && e.EndDate >= nextEndDate);
 
                     if (hasExceptions)
                     {
                         continue;
                     }
 
-                    var bookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, startDate, endDate);
+                    var bookings = await _bookingQueryService.GetAllBookingsInRange(
+                        recurringSchedule.Id,
+                        new DateOnlyPeriod(nextStartDate, nextEndDate));
 
                     result.Add(new GeneratedScheduleDto()
                     {
-                        ScheduleId = schedule.Id,
-                        Name = schedule.Name,
-                        Description = schedule.Description,
-                        ParticipantsMaxNumber = schedule.ParticipantsMaxNumber,
-                        StartDate = startDate,
-                        EndDate = endDate,
+                        ScheduleId = recurringSchedule.Id,
+                        Name = recurringSchedule.Name,
+                        Description = recurringSchedule.Description,
+                        ParticipantsMaxNumber = recurringSchedule.ParticipantsMaxNumber,
+                        StartDate = nextStartDate.DateTime,
+                        EndDate = nextEndDate.DateTime,
                         IsRecurring = true,
-                        RecurringCronExpression = schedule.RecurringExpression,
+                        RecurringCronExpression = recurringSchedule.RecurringCronExpressionString,
                         Organizer = new GeneratedScheduleDto.UserDto()
                         {
-                            Id = schedule.Organizer.Id,
-                            FullName = schedule.Organizer.FullName,
-                            Email = schedule.Organizer.Email,
-                            UserName = schedule.Organizer.UserName,
+                            Id = recurringSchedule.Organizer.Id,
+                            FullName = recurringSchedule.Organizer.FullName,
+                            Email = recurringSchedule.Organizer.Email,
+                            UserName = recurringSchedule.Organizer.UserName,
                         },
                         Bookings = bookings.Select(b => new GeneratedScheduleDto.BookingDto()
                         {
@@ -115,7 +117,7 @@ namespace Ethos.Application.Handlers
             return result;
         }
 
-        private async Task<List<GeneratedScheduleDto>> GetSingleSchedules(Period period, bool isAdmin)
+        private async Task<List<GeneratedScheduleDto>> GetSingleSchedules(DateOnlyPeriod period, bool isAdmin)
         {
             var singleSchedules = await _scheduleQueryService.GetOverlappingSingleSchedulesAsync(period);
 
@@ -125,7 +127,7 @@ namespace Ethos.Application.Handlers
             {
                 var startDate = schedule.StartDate;
                 var endDate = schedule.StartDate.Add(TimeSpan.FromMinutes(schedule.DurationInMinutes));
-                var bookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, startDate, endDate);
+                var bookings = await _bookingQueryService.GetAllBookingsInRange(schedule.Id, new DateOnlyPeriod(startDate,endDate));
 
                 result.Add(new GeneratedScheduleDto()
                 {

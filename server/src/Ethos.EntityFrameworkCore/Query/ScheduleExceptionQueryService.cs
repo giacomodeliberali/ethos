@@ -19,10 +19,12 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, Period period)
+        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, DateOnlyPeriod period)
         {
             var exceptions = await ScheduleExceptions
-                .Where(e => e.ScheduleId == recurringScheduleId && e.StartDate >= period.StartDate && e.EndDate <= period.EndDate)
+                .Where(e => e.ScheduleId == recurringScheduleId &&
+                            e.StartDate >= period.StartDate.ToDateTime(TimeOnly.MinValue) &&
+                            e.EndDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue))
                 .ToListAsync();
 
             return exceptions.Select(e => new ScheduleExtensionProjection()
@@ -34,10 +36,11 @@ namespace Ethos.EntityFrameworkCore.Query
             }).ToList();
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Period period)
+        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(DateOnlyPeriod period)
         {
             var exceptions = await ScheduleExceptions
-                .Where(e => e.StartDate >= period.StartDate && e.EndDate <= period.EndDate)
+                .Where(e => e.StartDate >= period.StartDate.ToDateTime(TimeOnly.MinValue) &&
+                            e.EndDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue))
                 .ToListAsync();
 
             return exceptions.Select(e => new ScheduleExtensionProjection()

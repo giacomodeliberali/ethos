@@ -95,10 +95,9 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             var scheduleException = ScheduleException.Factory.Create(
                 _guidGenerator.Create(),
                 schedule,
-                request.InstanceStartDate.ToDateTimeOffset(schedule.TimeZone),
-                request.InstanceEndDate.ToDateTimeOffset(schedule.TimeZone));
+                new DateOnly(request.InstanceStartDate.Year, request.InstanceStartDate.Month, request.InstanceStartDate.Day));
             
-            _logger.LogDebug("[ScheduleException] Created for {StartDate} - {EndDate}", scheduleException.StartDate, scheduleException.EndDate);
+            _logger.LogDebug("[ScheduleException] Created for {Date}", scheduleException.Date);
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
 
@@ -132,6 +131,28 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 throw new CanNotEditScheduleWithExistingBookingsException(existingBookings.Count);
             }
             
+            var organizer = await GetOrganizer(request.OrganizerId);
+            
+            // var firstOccurrence = schedule.GetFirstOccurrence().StartDate;
+            // var isFirstOccurence = new DateOnly(firstOccurrence.Year, firstOccurrence.Month, firstOccurrence.Day) == 
+            //                        new DateOnly(request.InstanceStartDate.Year, request.InstanceStartDate.Month, request.InstanceStartDate.Day);
+            // if (isFirstOccurence)
+            // {
+            //     schedule.UpdateDate(
+            //         new DateOnlyPeriod(request.StartDate, request.EndDate), 
+            //         request.DurationInMinutes, 
+            //         request.RecurringCronExpression,
+            //         schedule.TimeZone); 
+            //     
+            //     schedule.UpdateOrganizer(organizer);
+            //     schedule.UpdateNameAndDescription(request.Name, request.Description);
+            //     schedule.UpdateParticipantsMaxNumber(request.ParticipantsMaxNumber);
+            //     
+            //     await _scheduleRepository.UpdateAsync(schedule);
+            //     
+            //     return;
+            // }
+
             // update past
             schedule.UpdateDate(
                 new DateOnlyPeriod(schedule.Period.StartDate, request.InstanceStartDate), 
@@ -142,7 +163,6 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             await _scheduleRepository.UpdateAsync(schedule);
             
             // create new future recurring with new info
-            var organizer = await GetOrganizer(request.OrganizerId);
 
             var newRecurring = RecurringSchedule.Factory.Create(
                 _guidGenerator.Create(),

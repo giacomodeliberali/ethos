@@ -14,8 +14,6 @@ namespace Ethos.EntityFrameworkCore.Query
     public class ScheduleExceptionQueryService : BaseQueryService, IScheduleExceptionQueryService
     {
         private IQueryable<ScheduleExceptionData> ScheduleExceptions => ApplicationDbContext.ScheduleExceptions.AsNoTracking();
-        
-        private IQueryable<ScheduleData> Schedules => ApplicationDbContext.Schedules.AsNoTracking();
 
         public ScheduleExceptionQueryService(
             ApplicationDbContext applicationDbContext)
@@ -23,45 +21,33 @@ namespace Ethos.EntityFrameworkCore.Query
         {
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, DateOnlyPeriod period)
+        public async Task<List<ScheduleExceptionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId, DateOnlyPeriod period)
         {
             var exceptions = await ScheduleExceptions
                 .Where(e => e.ScheduleId == recurringScheduleId &&
-                            e.StartDate >= period.StartDate.ToDateTime(TimeOnly.MinValue) &&
-                            e.EndDate <= period.EndDate.ToDateTime(TimeOnly.MaxValue))
+                            e.Date >= period.StartDate &&
+                            e.Date <= period.EndDate)
                 .ToListAsync();
 
-            var schedule = await Schedules.FirstAsync(s => s.Id == recurringScheduleId);
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone);
-
-            // TODO: aggiungere timezone in tutti i writemodel dove ci sono datetime in modo da evitare di dover ogni volta
-            // leggere lo Schedule padre. In ogni projection assicurarsi che sia ritornato il dattime con l'offset corretto
-            // es. bookings
-            
-            return exceptions.Select(e => new ScheduleExtensionProjection()
+            return exceptions.Select(e => new ScheduleExceptionProjection()
             {
                 Id = e.Id,
                 ScheduleId = e.ScheduleId,
-                StartDate = e.StartDate.ToDateTimeOffset(timeZone),
-                EndDate = e.EndDate.ToDateTimeOffset(timeZone),
+                Date = new DateOnly(e.Date.Year, e.Date.Month, e.Date.Day),
             }).ToList();
         }
 
-        public async Task<List<ScheduleExtensionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId)
+        public async Task<List<ScheduleExceptionProjection>> GetScheduleExceptionsAsync(Guid recurringScheduleId)
         {
             var exceptions = await ScheduleExceptions
                 .Where(e => e.ScheduleId == recurringScheduleId)
                 .ToListAsync();
 
-            var schedule = await Schedules.FirstAsync(s => s.Id == recurringScheduleId);
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone);
-
-            return exceptions.Select(e => new ScheduleExtensionProjection()
+            return exceptions.Select(e => new ScheduleExceptionProjection()
             {
                 Id = e.Id,
                 ScheduleId = e.ScheduleId,
-                StartDate = e.StartDate.ToDateTimeOffset(timeZone),
-                EndDate = e.EndDate.ToDateTimeOffset(timeZone),
+                Date = new DateOnly(e.Date.Year, e.Date.Month, e.Date.Day),
             }).ToList();
         }
     }

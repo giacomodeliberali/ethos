@@ -1,4 +1,5 @@
 using System;
+using Ethos.EntityFrameworkCore.Converters;
 using Ethos.EntityFrameworkCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,11 +16,8 @@ namespace Ethos.EntityFrameworkCore.Configurations
             builder.Property(s => s.ScheduleId).IsRequired();
 
             builder
-                .Property(s => s.StartDate)
-                .IsRequired();
-
-            builder
-                .Property(s => s.EndDate)
+                .Property(s => s.Date)
+                .HasConversion<DateOnlyToDateTimeConverter>()
                 .IsRequired();
         }
     }

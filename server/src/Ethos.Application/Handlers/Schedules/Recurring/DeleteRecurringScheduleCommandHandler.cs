@@ -156,8 +156,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             var scheduleException = ScheduleException.Factory.Create(
                 _guidGenerator.Create(),
                 schedule,
-                instanceStartDate,
-                instanceEndDate);
+                new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day));
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
         }

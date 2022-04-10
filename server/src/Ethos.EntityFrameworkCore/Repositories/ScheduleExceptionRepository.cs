@@ -26,8 +26,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             {
                 Id = scheduleException.Id,
                 ScheduleId = scheduleException.Schedule.Id,
-                StartDate = scheduleException.StartDate.DateTime,
-                EndDate = scheduleException.EndDate.DateTime,
+                Date = scheduleException.Date,
             };
 
             await _applicationDbContext.ScheduleExceptions.AddAsync(scheduleExceptionData);
@@ -50,8 +49,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
         {
             var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == scheduleException.Id);
 
-            scheduleExceptionData.StartDate = scheduleException.StartDate.DateTime;
-            scheduleExceptionData.EndDate = scheduleException.EndDate.DateTime;
+            scheduleExceptionData.Date = scheduleException.Date;
         }
 
         public async Task<ScheduleException> GetByIdAsync(Guid id)
@@ -62,8 +60,7 @@ namespace Ethos.EntityFrameworkCore.Repositories
             return ScheduleException.Factory.FromSnapshot(
                 scheduleExceptionData.Id,
                 (recurringSchedule as RecurringSchedule) !,
-                scheduleExceptionData.StartDate,
-                scheduleExceptionData.EndDate);
+                new DateOnly(scheduleExceptionData.Date.Year, scheduleExceptionData.Date.Month, scheduleExceptionData.Date.Day));
         }
     }
 }

@@ -1,8 +1,8 @@
 using System;
 
-namespace Ethos.EntityFrameworkCore.Entities
+namespace Ethos.Query.Projections
 {
-    public class ScheduleExceptionData
+    public class ScheduleExceptionProjection : IProjection
     {
         public Guid Id { get; set; }
 

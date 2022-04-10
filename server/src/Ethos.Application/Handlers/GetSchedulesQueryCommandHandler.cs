@@ -77,7 +77,7 @@ namespace Ethos.Application.Handlers
                 
                 foreach (var scheduleExtensionProjection in scheduleExceptions)
                 {
-                    _logger.LogDebug("[ScheduleException] From {StartDate} to {EndDate}", scheduleExtensionProjection.StartDate, scheduleExtensionProjection.EndDate);
+                    _logger.LogDebug("[ScheduleException] {Date}", scheduleExtensionProjection.Date);
                 }
                 
                 var nextExecutions = recurringSchedule.GetOccurrences(period);
@@ -86,7 +86,9 @@ namespace Ethos.Application.Handlers
                 {
                     _logger.LogDebug("NextExecution = {NextStart} to {NextEnd}",  nextStartDate, nextEndDate);
 
-                    var hasExceptions = scheduleExceptions.Any(e => e.StartDate <= nextStartDate && e.EndDate >= nextEndDate);
+                    var hasExceptions = scheduleExceptions.Any(e => 
+                        e.Date <= new DateOnly(nextStartDate.Year, nextStartDate.Month, nextStartDate.Day) &&
+                        e.Date >= new DateOnly(nextStartDate.Year,nextStartDate.Month,nextStartDate.Day));
 
                     _logger.LogDebug("HasExceptions {Value}", hasExceptions);
                     

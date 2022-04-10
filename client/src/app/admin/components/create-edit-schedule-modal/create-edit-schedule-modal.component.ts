@@ -18,7 +18,7 @@ import {
 } from '@core/services/ethos.generated.service';
 import { ModalController } from '@ionic/angular';
 import { ToastService } from '@shared/services/toast.service';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const daysValidator = (control: FormControl) => {
   const isRecurring = control.parent?.get('isRecurring').value;
@@ -168,7 +168,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
           second: 0,
           millisecond: 0,
         })
-        .toISOString(),
+        .tz("Europe/Rome")
+        .format(),
       name: this.scheduleForm.get('name').value,
       organizerId: this.scheduleForm.get('organizerId').value,
       participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
@@ -188,7 +189,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
           second: 0,
           millisecond: 0,
         })
-        .toISOString(),
+        .tz("Europe/Rome")
+        .format(),
       name: this.scheduleForm.get('name').value,
       organizerId: this.scheduleForm.get('organizerId').value,
       participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')

@@ -168,7 +168,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
           second: 0,
           millisecond: 0,
         })
-        .tz("Europe/Rome")
+        .tz('Europe/Rome')
         .format(),
       name: this.scheduleForm.get('name').value,
       organizerId: this.scheduleForm.get('organizerId').value,
@@ -189,7 +189,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
           second: 0,
           millisecond: 0,
         })
-        .tz("Europe/Rome")
+        .tz('Europe/Rome')
         .format(),
       name: this.scheduleForm.get('name').value,
       organizerId: this.scheduleForm.get('organizerId').value,

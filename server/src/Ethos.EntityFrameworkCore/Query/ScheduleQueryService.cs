@@ -32,23 +32,26 @@ namespace Ethos.EntityFrameworkCore.Query
                     Organizer = organizer,
                 }).ToListAsync();
 
-            return schedules.Select(item => new RecurringScheduleProjection()
+            return schedules.Select(item =>
             {
-                Id = item.Schedule.Id,
-                Name = item.Schedule.Name,
-                Description = item.Schedule.Description,
-                ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
-                StartDate = item.RecurringSchedule.StartDate.ToDateTime(TimeOnly.MinValue),
-                EndDate = item.RecurringSchedule.EndDate.ToDateTime(TimeOnly.MaxValue),
-                DurationInMinutes = item.Schedule.DurationInMinutes,
-                RecurringExpression = item.RecurringSchedule.RecurringExpression,
-                Organizer = new ScheduleProjection.OrganizerProjection()
+                return new RecurringScheduleProjection()
                 {
-                    Id = item.Organizer.Id,
-                    Email = item.Organizer.Email,
-                    FullName = item.Organizer.FullName,
-                    UserName = item.Organizer.UserName,
-                },
+                    Id = item.Schedule.Id,
+                    Name = item.Schedule.Name,
+                    Description = item.Schedule.Description,
+                    ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
+                    StartDate = item.RecurringSchedule.StartDate.ToDateTime(TimeOnly.MinValue),
+                    EndDate = item.RecurringSchedule.EndDate.ToDateTime(TimeOnly.MaxValue),
+                    DurationInMinutes = item.Schedule.DurationInMinutes,
+                    RecurringExpression = item.RecurringSchedule.RecurringExpression,
+                    Organizer = new ScheduleProjection.OrganizerProjection()
+                    {
+                        Id = item.Organizer.Id,
+                        Email = item.Organizer.Email,
+                        FullName = item.Organizer.FullName,
+                        UserName = item.Organizer.UserName,
+                    },
+                };
             }).ToList();
         }
 
@@ -68,22 +71,26 @@ namespace Ethos.EntityFrameworkCore.Query
                         Organizer = organizer,
                     }).ToListAsync();
 
-            return schedules.Select(item => new SingleScheduleProjection()
+            return schedules.Select(item =>
             {
-                Id = item.Schedule.Id,
-                Name = item.Schedule.Name,
-                Description = item.Schedule.Description,
-                ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
-                StartDate = item.SingleSchedule.StartDate,
-                EndDate = item.SingleSchedule.EndDate,
-                DurationInMinutes = item.Schedule.DurationInMinutes,
-                Organizer = new ScheduleProjection.OrganizerProjection()
+                var timeZone = TimeZoneInfo.FindSystemTimeZoneById(item.Schedule.TimeZone);
+                return new SingleScheduleProjection()
                 {
-                    Id = item.Organizer.Id,
-                    Email = item.Organizer.Email,
-                    FullName = item.Organizer.FullName,
-                    UserName = item.Organizer.UserName,
-                },
+                    Id = item.Schedule.Id,
+                    Name = item.Schedule.Name,
+                    Description = item.Schedule.Description,
+                    ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
+                    StartDate = item.SingleSchedule.StartDate.ToDateTimeOffset(timeZone),
+                    EndDate = item.SingleSchedule.EndDate.ToDateTimeOffset(timeZone),
+                    DurationInMinutes = item.Schedule.DurationInMinutes,
+                    Organizer = new ScheduleProjection.OrganizerProjection()
+                    {
+                        Id = item.Organizer.Id,
+                        Email = item.Organizer.Email,
+                        FullName = item.Organizer.FullName,
+                        UserName = item.Organizer.UserName,
+                    },
+                };
             }).ToList();
         }
 

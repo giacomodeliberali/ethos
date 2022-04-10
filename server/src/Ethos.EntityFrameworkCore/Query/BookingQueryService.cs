@@ -37,20 +37,24 @@ namespace Ethos.EntityFrameworkCore.Query
                 }).ToListAsync();
 
             var bookingsResult = bookings
-                .Select(item => new BookingProjection()
+                .Select(item =>
                 {
-                    Id = item.Booking.Id,
-                    StartDate = item.Booking.StartDate,
-                    EndDate = item.Booking.EndDate,
-                    ScheduleId = item.Booking.ScheduleId,
-                    UserId = item.Booking.UserId,
-                    UserFullName = item.User.FullName,
-                    UserEmail = item.User.Email,
-                    UserName = item.User.UserName,
-                    ScheduleDescription = item.Schedule.Description,
-                    ScheduleName = item.Schedule.Name,
-                    ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
-                    ScheduleOrganizerFullName = item.Organizer.FullName,
+                    var timeZone = TimeZoneInfo.FindSystemTimeZoneById(item.Schedule.TimeZone);
+                    return new BookingProjection()
+                    {
+                        Id = item.Booking.Id,
+                        StartDate = item.Booking.StartDate.ToDateTimeOffset(timeZone),
+                        EndDate = item.Booking.EndDate.ToDateTimeOffset(timeZone),
+                        ScheduleId = item.Booking.ScheduleId,
+                        UserId = item.Booking.UserId,
+                        UserFullName = item.User.FullName,
+                        UserEmail = item.User.Email,
+                        UserName = item.User.UserName,
+                        ScheduleDescription = item.Schedule.Description,
+                        ScheduleName = item.Schedule.Name,
+                        ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
+                        ScheduleOrganizerFullName = item.Organizer.FullName,
+                    };
                 }).ToList();
 
             return bookingsResult
@@ -75,20 +79,24 @@ namespace Ethos.EntityFrameworkCore.Query
                 }).ToListAsync();
 
             var bookingsResult = bookings
-                .Select(item => new BookingProjection()
+                .Select(item =>
                 {
-                    Id = item.Booking.Id,
-                    StartDate = item.Booking.StartDate,
-                    EndDate = item.Booking.EndDate,
-                    ScheduleId = item.Booking.ScheduleId,
-                    UserId = item.Booking.UserId,
-                    UserFullName = item.User.FullName,
-                    UserEmail = item.User.Email,
-                    UserName = item.User.UserName,
-                    ScheduleDescription = item.Schedule.Description,
-                    ScheduleName = item.Schedule.Name,
-                    ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
-                    ScheduleOrganizerFullName = item.Organizer.FullName,
+                    var timeZone = TimeZoneInfo.FindSystemTimeZoneById(item.Schedule.TimeZone);
+                    return new BookingProjection()
+                    {
+                        Id = item.Booking.Id,
+                        StartDate = item.Booking.StartDate.ToDateTimeOffset(timeZone),
+                        EndDate = item.Booking.EndDate.ToDateTimeOffset(timeZone),
+                        ScheduleId = item.Booking.ScheduleId,
+                        UserId = item.Booking.UserId,
+                        UserFullName = item.User.FullName,
+                        UserEmail = item.User.Email,
+                        UserName = item.User.UserName,
+                        ScheduleDescription = item.Schedule.Description,
+                        ScheduleName = item.Schedule.Name,
+                        ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
+                        ScheduleOrganizerFullName = item.Organizer.FullName,
+                    };
                 }).ToList();
 
             return bookingsResult
@@ -115,20 +123,24 @@ namespace Ethos.EntityFrameworkCore.Query
                 }).ToListAsync();
 
             var bookingsResult = bookings
-                .Select(item => new BookingProjection()
+                .Select(item =>
                 {
-                    Id = item.Booking.Id,
-                    StartDate = item.Booking.StartDate,
-                    EndDate = item.Booking.EndDate,
-                    ScheduleId = item.Booking.ScheduleId,
-                    UserId = item.Booking.UserId,
-                    UserFullName = item.User.FullName,
-                    UserEmail = item.User.Email,
-                    UserName = item.User.UserName,
-                    ScheduleDescription = item.Schedule.Description,
-                    ScheduleName = item.Schedule.Name,
-                    ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
-                    ScheduleOrganizerFullName = item.Organizer.FullName,
+                    var timeZone = TimeZoneInfo.FindSystemTimeZoneById(item.Schedule.TimeZone);
+                    return new BookingProjection()
+                    {
+                        Id = item.Booking.Id,
+                        StartDate = item.Booking.StartDate.ToDateTimeOffset(timeZone),
+                        EndDate = item.Booking.EndDate.ToDateTimeOffset(timeZone),
+                        ScheduleId = item.Booking.ScheduleId,
+                        UserId = item.Booking.UserId,
+                        UserFullName = item.User.FullName,
+                        UserEmail = item.User.Email,
+                        UserName = item.User.UserName,
+                        ScheduleDescription = item.Schedule.Description,
+                        ScheduleName = item.Schedule.Name,
+                        ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
+                        ScheduleOrganizerFullName = item.Organizer.FullName,
+                    };
                 }).ToList();
 
             return bookingsResult

@@ -74,8 +74,7 @@ namespace Ethos.Domain.UnitTest
             var occurrencesBeforeDayLight = sut.GetOccurrences(
                 new DateOnlyPeriod(
                     new DateOnly(2022, 03, 21),
-                    new DateOnly(2022, 03, 25)),
-                TimeZones.Amsterdam)
+                    new DateOnly(2022, 03, 25)))
                 .ToList();
             
             occurrencesBeforeDayLight.Count.ShouldBe(5);
@@ -89,8 +88,7 @@ namespace Ethos.Domain.UnitTest
             var occurrencesAfterDayLight = sut.GetOccurrences(
                     new DateOnlyPeriod(
                         new DateOnly(2022, 03, 28),
-                        new DateOnly(2022, 04, 1)),
-                    TimeZones.Amsterdam)
+                        new DateOnly(2022, 04, 1)))
                 .ToList();
             
             occurrencesAfterDayLight.Count.ShouldBe(5);

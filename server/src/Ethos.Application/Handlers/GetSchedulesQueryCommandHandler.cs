@@ -80,7 +80,7 @@ namespace Ethos.Application.Handlers
                     _logger.LogDebug("[ScheduleException] From {StartDate} to {EndDate}", scheduleExtensionProjection.StartDate, scheduleExtensionProjection.EndDate);
                 }
                 
-                var nextExecutions = recurringSchedule.GetOccurrences(period, recurringSchedule.TimeZone);
+                var nextExecutions = recurringSchedule.GetOccurrences(period);
 
                 foreach (var (nextStartDate, nextEndDate) in nextExecutions)
                 {
@@ -105,8 +105,8 @@ namespace Ethos.Application.Handlers
                         Name = recurringSchedule.Name,
                         Description = recurringSchedule.Description,
                         ParticipantsMaxNumber = recurringSchedule.ParticipantsMaxNumber,
-                        StartDate = nextStartDate.DateTime,
-                        EndDate = nextEndDate.DateTime,
+                        StartDate = nextStartDate,
+                        EndDate = nextEndDate,
                         IsRecurring = true,
                         RecurringCronExpression = recurringSchedule.RecurringCronExpressionString,
                         Organizer = new GeneratedScheduleDto.UserDto()

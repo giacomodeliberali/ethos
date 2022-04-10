@@ -86,7 +86,7 @@ namespace Ethos.Domain.Entities
             return second;
         }
 
-        public IEnumerable<(DateTimeOffset StartDate, DateTimeOffset EndDate)> GetOccurrences(DateOnlyPeriod requestedPeriod, TimeZoneInfo timeZone)
+        public IEnumerable<(DateTimeOffset StartDate, DateTimeOffset EndDate)> GetOccurrences(DateOnlyPeriod requestedPeriod)
         {
             if (requestedPeriod.EndDate < Period.StartDate || requestedPeriod.StartDate > Period.EndDate)
             {
@@ -97,14 +97,17 @@ namespace Ethos.Domain.Entities
                 Max(Period.StartDate, requestedPeriod.StartDate),
                 Min(Period.EndDate, requestedPeriod.EndDate));
 
-            var from = new DateTimeOffset(safePeriod.StartDate.Year, safePeriod.StartDate.Month, safePeriod.StartDate.Day, 0, 0, 0, timeZone.BaseUtcOffset);
-            var to = new DateTimeOffset(safePeriod.EndDate.Year, safePeriod.EndDate.Month, safePeriod.EndDate.Day, 23, 59, 59, timeZone.BaseUtcOffset);
+            var startDate = new DateTime(safePeriod.StartDate.Year, safePeriod.StartDate.Month, safePeriod.StartDate.Day, 0, 0, 0);
+            var endDate = new DateTime(safePeriod.EndDate.Year, safePeriod.EndDate.Month, safePeriod.EndDate.Day, 23, 59, 59);
+            
+            var from = new DateTimeOffset(startDate, TimeZone.GetUtcOffset(startDate));
+            var to = new DateTimeOffset(endDate, TimeZone.GetUtcOffset(endDate));
 
             return RecurringCronExpression
                 .GetOccurrences(
                     from,
                     to, 
-                    timeZone,
+                    TimeZone,
                     fromInclusive: true,
                     toInclusive: true)
                 .Select(nextStartDate =>
@@ -113,10 +116,9 @@ namespace Ethos.Domain.Entities
                 });
         }
 
-        public (DateTimeOffset StartDate, DateTimeOffset EndDate) GetFirstOccurrence(TimeZoneInfo timeZone)
+        public (DateTimeOffset StartDate, DateTimeOffset EndDate) GetFirstOccurrence()
         {
-            var occ = GetOccurrences(Period, timeZone);
-            return occ.Select(s => (s.StartDate.DateTime, s.EndDate.DateTime)).First();
+            return GetOccurrences(Period).First();
         }
 
         public static class Factory

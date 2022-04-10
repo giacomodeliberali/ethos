@@ -57,8 +57,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             var recurringSchedule = (RecurringSchedule)schedule;
             
             var occurrences = recurringSchedule.GetOccurrences(
-                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate),
-                schedule.TimeZone);
+                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate));
 
             if (occurrences.Count() != 1)
             {

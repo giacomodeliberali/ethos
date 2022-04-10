@@ -67,9 +67,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         {
             Guard.Against.Null(request.RecurringScheduleOperationType, nameof(request.RecurringScheduleOperationType));
 
-            var occurrences = schedule.GetOccurrences(
-                new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate),
-                schedule.TimeZone);
+            var occurrences = schedule.GetOccurrences(new DateOnlyPeriod(request.InstanceStartDate, request.InstanceEndDate));
 
             if (occurrences.Count() != 1)
             {
@@ -99,7 +97,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 throw new BusinessException($"Non è possibile eliminare la schedulazione, sono già presenti {futureBookings.Count} prenotazioni");
             }
 
-            var firstOccurrence = schedule.GetFirstOccurrence(schedule.TimeZone).StartDate;
+            var firstOccurrence = schedule.GetFirstOccurrence().StartDate;
             var isFirstOccurence = new DateOnly(firstOccurrence.Year, firstOccurrence.Month, firstOccurrence.Day) == 
                                    new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day);
             if (isFirstOccurence)
@@ -119,8 +117,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 var lastOcc = schedule.GetOccurrences(
                     new DateOnlyPeriod(
                         schedule.Period.StartDate, 
-                        new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day)),
-                    schedule.TimeZone).Last().EndDate.AddDays(-1);
+                        new DateOnly(instanceStartDate.Year, instanceStartDate.Month, instanceStartDate.Day)))
+                    .Last().EndDate.AddDays(-1);
                 
                 var newEndDate = new DateOnly(lastOcc.Year, lastOcc.Month, lastOcc.Day);
                 

@@ -21,7 +21,7 @@ namespace Ethos.Domain.Entities
             TimeZoneInfo timeZone)
             : base(id, organizer, name, description, participantsMaxNumber, duration, timeZone)
         {
-            StartDate = startDate;
+            StartDate = TimeZoneInfo.ConvertTime(startDate, TimeZone);
         }
 
         public void UpdateTime(DateTimeOffset startDate, int durationInMinutes)
@@ -30,7 +30,7 @@ namespace Ethos.Domain.Entities
             Guard.Against.DifferentTimezone(startDate, TimeZone);
             Guard.Against.NegativeOrZero(durationInMinutes, nameof(durationInMinutes));
 
-            StartDate = startDate;
+            StartDate = TimeZoneInfo.ConvertTime(startDate, TimeZone);
             DurationInMinutes = durationInMinutes;
         }
 

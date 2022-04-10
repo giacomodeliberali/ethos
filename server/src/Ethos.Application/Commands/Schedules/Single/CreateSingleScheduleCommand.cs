@@ -10,7 +10,7 @@ namespace Ethos.Application.Commands.Schedules.Single
 
         public string Description { get; }
 
-        public DateTime StartDate { get; }
+        public DateTimeOffset StartDate { get; }
 
         public int DurationInMinutes { get; }
 
@@ -26,7 +26,7 @@ namespace Ethos.Application.Commands.Schedules.Single
         public CreateSingleScheduleCommand(
             string name,
             string description,
-            DateTime startDate,
+            DateTimeOffset startDate,
             int durationInMinutes,
             int participantsMaxNumber,
             Guid organizerId, 

@@ -12,7 +12,7 @@ namespace Ethos.Application.Contracts.Schedule
         public string Description { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTimeOffset StartDate { get; set; }
 
         [Required]
         public int DurationInMinutes { get; set; }

@@ -11,7 +11,7 @@ namespace Ethos.Application.Commands.Schedules.Single
 
         public string Description { get; init; }
 
-        public DateTime StartDate { get; init; }
+        public DateTimeOffset StartDate { get; init; }
 
         public int DurationInMinutes { get; init; }
 

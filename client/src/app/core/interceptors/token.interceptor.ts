@@ -30,11 +30,6 @@ export class TokenInterceptor implements HttpInterceptor {
         }
         return next.handle(request).pipe(
           catchError((error: HttpErrorResponse) => {
-            console.log(
-              error,
-              window.location.pathname.split('/')[1],
-              this.userSvc.getUser().roles
-            );
             if (
               this.userSvc
                 .getUser()

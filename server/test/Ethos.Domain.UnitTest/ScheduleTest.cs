@@ -16,7 +16,7 @@ namespace Ethos.Domain.UnitTest
         {
             var user = new ApplicationUser(GuidGenerator.Create(), "ShouldCreate_NonRecurring_Schedule@test.com", "username", "Full Name");
             
-            var startDate = DateTime.Parse("2022-04-09T10:00");
+            var startDate = DateTime.Parse("2022-04-09T10:00").ToDateTimeOffset(TimeZones.Amsterdam);
 
             var sut = SingleSchedule.Factory.Create(
                 GuidGenerator.Create(),
@@ -35,9 +35,9 @@ namespace Ethos.Domain.UnitTest
             sut.Description.ShouldBe("Description");
             sut.ParticipantsMaxNumber.ShouldBe(10);
             
-            sut.StartDate.ShouldBe(DateTime.Parse("2022-04-09T10:00"));
+            sut.StartDate.ShouldBe(DateTime.Parse("2022-04-09T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
             
-            sut.EndDate.ShouldBe(DateTime.Parse("2022-04-09T11:00"));
+            sut.EndDate.ShouldBe(DateTime.Parse("2022-04-09T11:00").ToDateTimeOffset(TimeZones.Amsterdam));
             
             sut.TimeZone.Id.ShouldBe("Europe/Amsterdam");
         }

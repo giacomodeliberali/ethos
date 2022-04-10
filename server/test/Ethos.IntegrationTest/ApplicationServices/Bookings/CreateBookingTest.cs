@@ -37,7 +37,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 {
                     Name = "Test schedule",
                     Description = "Description",
-                    StartDate = DateTime.Parse("2031-10-01T10:00"),
+                    StartDate = DateTime.Parse("2031-10-01T10:00").ToDateTimeOffset(TimeZones.Amsterdam),
                     TimeZone = TimeZones.Amsterdam.Id,
                     DurationInMinutes = 120,
                     OrganizerId = admin.User.Id,
@@ -48,8 +48,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
             {
                 ScheduleId = scheduleId,
-                StartDate = DateTime.Parse("2031-10-01T10:00"),
-                EndDate = DateTime.Parse("2031-10-01T12:00"),
+                StartDate = DateTime.Parse("2031-10-01T10:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                EndDate = DateTime.Parse("2031-10-01T12:00").ToDateTimeOffset(TimeZones.Amsterdam),
             });
 
             var booking = await ApplicationDbContext.Bookings.AsQueryable().SingleAsync();
@@ -61,8 +61,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
         [Fact]
         public async Task ShouldThrow_WhenBookingIsNotValidDateTime_ForNonRecurringSchedule()
         {
-            var startDate = DateTime.Parse("2021-10-01T07:00:00");
-            var endDate = DateTime.Parse("2021-10-01T09:00:00");
+            var startDate = DateTime.Parse("2021-10-01T07:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
+            var endDate = DateTime.Parse("2021-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
 
             Guid scheduleId;
             using (var admin = await Scope.WithUser("admin"))
@@ -140,8 +140,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
             {
                 // ok
                 ScheduleId = scheduleId,
-                StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                EndDate = DateTime.Parse("2031-10-01T11:00:00"),
+                StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                EndDate = DateTime.Parse("2031-10-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
             });
 
             await Should.ThrowAsync<BusinessException>(async () =>
@@ -149,8 +149,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-10-01T08:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T09:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T08:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             });
 
@@ -160,8 +160,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 {
                     // a month after
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-11-01T09:00:00"),
-                    EndDate = DateTime.Parse("2031-11-01T11:00:00"),
+                    StartDate = DateTime.Parse("2031-11-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-11-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             });
 
@@ -171,8 +171,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 {
                     // duration is incorrect
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T10:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T10:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             });
         }
@@ -205,8 +205,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T11:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             }
 
@@ -216,8 +216,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 var reply = await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T11:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
                 bookingDemo1 = reply.Id;
             }
@@ -230,8 +230,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                     {
                         // max participants reached
                         ScheduleId = scheduleId,
-                        StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                        EndDate = DateTime.Parse("2031-10-01T11:00:00"),
+                        StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                        EndDate = DateTime.Parse("2031-10-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                     });
                 });
             }
@@ -246,8 +246,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = scheduleId,
-                    StartDate = DateTime.Parse("2031-10-01T09:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T11:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T11:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             }
         }
@@ -256,7 +256,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Bookings
         [Fact]
         public async Task ShouldCreateABooking_ForTheGivenNonRecurringSchedule()
         {
-            var startDate = DateTime.Parse("2031-10-01T09:00:00");
+            var startDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
             var endDate = startDate.AddHours(2);
 
             Guid scheduleId;

@@ -18,10 +18,10 @@ public static class GuardsExtensions
         //     throw new ArgumentException($"{parameterName} must not contain timezone kind");
         // }
 
-        // if (dateTime.Offset != timeZone.BaseUtcOffset)
-        // {
-        //     throw new ArgumentException($"{parameterName} must use the same offset as the specified timezone {timeZone.Id}. Found {dateTime.Offset} instead of {timeZone.BaseUtcOffset}");
-        // }
+        if (dateTime.Offset != timeZone.GetUtcOffset(dateTime))
+        {
+            throw new ArgumentException($"{parameterName} must use the same offset as the specified timezone {timeZone.Id}. Found {dateTime.Offset} instead of {timeZone.GetUtcOffset(dateTime)}");
+        }
 
         return dateTime;
     }

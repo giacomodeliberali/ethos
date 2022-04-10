@@ -29,8 +29,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndNotIncludeParticipantsData_IfCaller_IsAdmin()
         {
-            var startDate = DateTime.Parse("2031-10-01T07:00:00");
-            var endDate = DateTime.Parse("2031-10-31T09:00:00");
+            var startDate = DateTime.Parse("2031-10-01T07:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -51,14 +50,14 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = DateTime.Parse("2031-10-01T07:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T09:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T07:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
             }
 
             using (await Scope.WithNewUser("userDemo2", fullName: "User Demo 2"))
             {
-                var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();
+                var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, startDate)).ShouldHaveSingleItem();
                 var booking = generatedSchedule.Bookings.Single();
                 booking.User.ShouldBeNull(); // should not include user data of userDemo
             }
@@ -67,8 +66,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
         [Fact]
         public async Task ShouldGenerateInmemorySchedules_AndIncludeParticipantsData_IfCaller_IsUser()
         {
-            var startDate = DateTime.Parse("2031-10-01T07:00:00");
-            var endDate = DateTime.Parse("2031-10-31T09:00:00");
+            var startDate = DateTime.Parse("2031-10-01T07:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
+            var endDate = DateTime.Parse("2031-10-31T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam);
 
             CreateScheduleReplyDto reply;
             using (var admin = await Scope.WithUser("admin"))
@@ -89,8 +88,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 await _bookingApplicationService.CreateAsync(new CreateBookingRequestDto()
                 {
                     ScheduleId = reply.Id,
-                    StartDate = DateTime.Parse("2031-10-01T07:00:00"),
-                    EndDate = DateTime.Parse("2031-10-01T09:00:00"),
+                    StartDate = DateTime.Parse("2031-10-01T07:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
+                    EndDate = DateTime.Parse("2031-10-01T09:00:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 });
 
                 var generatedSchedule = (await _scheduleApplicationService.GetSchedules(startDate, endDate)).Single();

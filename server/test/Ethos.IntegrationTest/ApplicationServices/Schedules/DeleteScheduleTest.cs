@@ -35,7 +35,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01T08:00"),
+                StartDate = DateTime.Parse("2021-10-01T08:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,
@@ -134,7 +134,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule",
-                StartDate = DateTime.Parse("2021-10-01T08:00"),
+                StartDate = DateTime.Parse("2021-10-01T08:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 60,
                 OrganizerId = admin.User.Id,

@@ -105,15 +105,16 @@ namespace Ethos.EntityFrameworkCore.Repositories
 
             if (singleScheduleData != null)
             {
+                var timeZone = TimeZoneInfo.FindSystemTimeZoneById(scheduleData.TimeZone);
                 return SingleSchedule.Factory.FromSnapshot(
                     scheduleData.Id,
                     organizer,
-                    singleScheduleData.StartDate,
+                    singleScheduleData.StartDate.ToDateTimeOffset(timeZone),
                     scheduleData.DurationInMinutes,
                     scheduleData.Name,
                     scheduleData.Description,
                     scheduleData.ParticipantsMaxNumber,
-                    TimeZoneInfo.FindSystemTimeZoneById(scheduleData.TimeZone));
+                    timeZone);
             }
 
             var recurringScheduleData = await _applicationDbContext.RecurringSchedules.SingleOrDefaultAsync(s => s.ScheduleId == id);

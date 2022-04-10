@@ -1,5 +1,7 @@
 using System;
+using Ardalis.GuardClauses;
 using Ethos.Domain.Common;
+using Ethos.Domain.Extensions;
 
 namespace Ethos.Domain.Entities
 {
@@ -36,6 +38,12 @@ namespace Ethos.Domain.Entities
                 DateTimeOffset startDate,
                 DateTimeOffset endDate)
             {
+                Guard.Against.Default(id, nameof(id));
+                Guard.Against.Null(user);
+                Guard.Against.Null(schedule);
+                Guard.Against.DifferentTimezone(startDate, schedule.TimeZone);
+                Guard.Against.DifferentTimezone(endDate, schedule.TimeZone);
+                
                 return new Booking(id, schedule, user, startDate, endDate);
             }
 

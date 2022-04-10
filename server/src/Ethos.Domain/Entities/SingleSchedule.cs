@@ -75,9 +75,6 @@ namespace Ethos.Domain.Entities
                 int participantsMaxNumber,
                 TimeZoneInfo timeZone)
             {
-                Guard.Against.Null(timeZone);
-                Guard.Against.DifferentTimezone(startDate, timeZone);
-                
                 return new SingleSchedule(
                     id,
                     organizer,

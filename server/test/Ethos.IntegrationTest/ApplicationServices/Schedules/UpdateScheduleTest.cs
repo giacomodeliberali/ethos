@@ -35,7 +35,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var admin = await Scope.WithUser("admin");
             var demoUser = await CreateUser("demoUser", role: RoleConstants.User);
 
-            var startDate = DateTime.UtcNow;
+            var startDate = DateTime.UtcNow.ToDateTimeOffset(TimeZones.Amsterdam);
 
             var scheduleReplyDto = await _scheduleApplicationService.CreateAsync(new CreateSingleScheduleRequestDto()
             {
@@ -54,7 +54,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                     Id = scheduleReplyDto.Id,
                     Name = "Test schedule up",
                     Description = "Description up",
-                    StartDate = DateTime.UtcNow,
+                    StartDate = DateTime.UtcNow.ToDateTimeOffset(TimeZones.Amsterdam),
                     DurationInMinutes = 120,
                     OrganizerId = demoUser.Id,
                 });
@@ -70,7 +70,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Single schedule",
                 Description = "Schedule every weekday at 9am",
-                StartDate = DateTime.Parse("2021-10-01T08:00"),
+                StartDate = DateTime.Parse("2021-10-01T08:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
@@ -83,7 +83,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 Id = scheduleReplyDto.Id,
                 Name = "Name up",
                 Description = "Description up",
-                StartDate = DateTime.Parse("2021-10-02T10:00"),
+                StartDate = DateTime.Parse("2021-10-02T10:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 DurationInMinutes = 60,
                 OrganizerId = newUser.Id,
             });
@@ -96,7 +96,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
                 "Name up",
                 "Description up",
                 0,
-                DateTime.Parse("2021-10-02T10:00"),
+                DateTime.Parse("2021-10-02T10:00").ToDateTimeOffset(TimeZones.Amsterdam),
                 60,
                 TimeZones.Amsterdam);
 

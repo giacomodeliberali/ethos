@@ -34,7 +34,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Test schedule",
                 Description = "Description",
-                StartDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow.ToDateTimeOffset(TimeZones.Amsterdam),
                 TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,
@@ -110,7 +110,7 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             {
                 Name = "Test schedule",
                 Description = "Description",
-                StartDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow.ToDateTimeOffset(TimeZones.Amsterdam),
                 TimeZone = TimeZones.Amsterdam.Id,
                 DurationInMinutes = 120,
                 OrganizerId = admin.User.Id,

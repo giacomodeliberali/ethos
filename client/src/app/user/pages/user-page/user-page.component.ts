@@ -10,8 +10,6 @@ import {
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
 import { UserService } from '@core/services/user.service';
-import { ModalController } from '@ionic/angular';
-import { LogoutModalComponent } from '@shared/components/logout-modal/logout-modal.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
@@ -70,8 +68,7 @@ export class UserPageComponent extends BaseDirective {
     private userSvc: UserService,
     private toastSvc: ToastService,
     private router: Router,
-    private bookingsSvc: BookingsService,
-    private modalCtrl: ModalController
+    private bookingsSvc: BookingsService
   ) {
     super();
     this.currentDate = moment().toDate().toISOString();
@@ -178,22 +175,6 @@ export class UserPageComponent extends BaseDirective {
 
   goToToday() {
     this.currentDate = new Date().toISOString();
-  }
-
-  async openLogoutModal() {
-    const logoutModal = await this.modalCtrl.create({
-      component: LogoutModalComponent,
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
-      backdropDismiss: false,
-      mode: 'ios',
-    });
-    await logoutModal.present();
-    const { data } = await logoutModal.onWillDismiss();
-    if (data?.logout) {
-      this.userSvc.removeOldAuthentication();
-      this.router.navigate(['']);
-    }
   }
 
   unbookCourse(bookingId: string) {

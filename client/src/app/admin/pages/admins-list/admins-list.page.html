@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="admin"
+        text=""
+        color="light"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Aggiungi amministratore</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="page-container">
+    <div class="toolbar">
+      <div class="logo-container">
+        <img src="../../../../assets/images/ethos.svg" />
+      </div>
+    </div>
+    <div class="content-container">
+      <ion-searchbar
+        color="light"
+        (ionChange)="onSearchChange($event)"
+        debounce="500"
+      ></ion-searchbar>
+
+      <div class="list-container">
+        <ion-list *ngIf="(users$ | async)?.length > 0">
+          <ion-item
+            *ngFor="let user of users$ | async"
+            button
+            (click)="onUserClick(user)"
+          >
+            <ion-avatar slot="start">
+              <img src="../../../../assets/images/no-user.jpg" />
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ user.fullName }}</h2>
+              <h3>{{ user.email }}</h3>
+              <p>{{ user.roles.join(',') }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -38,14 +38,20 @@ namespace Ethos.Application.Seed
             var users = await _identityService.GetAllAdminsAsync();
             if (!users.Any())
             {
-                await _identityService.CreateUserAsync(
-                    new RegisterRequestDto()
+                var roles = new[]
                 {
-                    Email = "admin@ethos.it",
-                    Password = "P2ssw0rd!",
-                    FullName = "Administrator",
-                    UserName = "admin",
-                }, RoleConstants.Admin);
+                    RoleConstants.Admin,
+                    RoleConstants.User,
+                };
+                
+                await _identityService.CreateUserAsync(
+                    new RegisterRequestDto() 
+                    {
+                        Email = "admin@ethostraining.it",
+                        Password = "P2ssw0rd!",
+                        FullName = "Administrator",
+                        UserName = "admin",
+                    }, roles);
             }
         }
     }

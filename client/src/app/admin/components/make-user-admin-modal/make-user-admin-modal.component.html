@@ -1,0 +1,24 @@
+<div
+  class="form-container"
+  modal-default-content
+  [cancelButton]="{
+    title: 'Annulla',
+    fill: false,
+    type: 'tertiary'
+  }"
+  [successButton]="{
+    title: 'Aggiungi ruolo',
+    fill: true,
+    type: 'tertiary'
+  }"
+  (closeModalEvent)="closeModal($event)"
+>
+  <div class="title-section">
+    <h2>Aggiungi ruolo</h2>
+  </div>
+  <div class="section">
+    <div class="label">
+      Aggiungere il ruolo di amministratore all'utente {{ user.fullName }}?
+    </div>
+  </div>
+</div>

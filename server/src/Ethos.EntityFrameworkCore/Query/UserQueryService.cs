@@ -30,6 +30,12 @@ namespace Ethos.EntityFrameworkCore.Query
             return users.Where(u => u.Roles.Contains(RoleConstants.Admin));
         }
 
+        public async Task<IEnumerable<UserProjection>> SearchUsersAsync(string containsText)
+        {
+            var users = await GetAllUsers();
+            return users.Where(u => u.UserName.Contains(containsText, StringComparison.InvariantCultureIgnoreCase) || u.FullName.Contains(containsText, StringComparison.InvariantCultureIgnoreCase));
+        }
+
         private async Task<IEnumerable<UserProjection>> GetAllUsers()
         {
             var users = await (

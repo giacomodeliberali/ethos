@@ -63,6 +63,11 @@ namespace Ethos.Application.Identity
         /// <inheritdoc />
         public async Task CreateUserAsync(RegisterRequestDto input, string roleName)
         {
+            await CreateUserAsync(input, new[] { roleName });
+        }
+
+        public async Task CreateUserAsync(RegisterRequestDto input, IEnumerable<string> roleNames)
+        {
             if (await _userManager.FindByEmailAsync(input.Email) != null)
             {
                 throw new BusinessException("User already existing");
@@ -82,7 +87,10 @@ namespace Ethos.Application.Identity
                 throw new BusinessException(errors);
             }
 
-            await _userManager.AddToRoleAsync(user, roleName);
+            foreach (var roleName in roleNames)
+            {
+                await _userManager.AddToRoleAsync(user, roleName);    
+            }
         }
 
         /// <inheritdoc />
@@ -177,7 +185,7 @@ namespace Ethos.Application.Identity
         }
 
         /// <inheritdoc />
-        public async Task<ApplicationRole> GetRoleAsync(string name)
+        public async Task<ApplicationRole?> GetRoleAsync(string name)
         {
             return await _roleManager.FindByNameAsync(name);
         }
@@ -237,6 +245,29 @@ namespace Ethos.Application.Identity
         {
             var users = await _userQueryService.GetAllAdminsAsync();
             return users.Select(u => _mapper.Map<UserDto>(u));
+        }
+
+        public async Task<IEnumerable<UserDto>> SearchUsersAsync(string containsText)
+        {
+            var users = await _userQueryService.SearchUsersAsync(containsText);
+            return users.Select(u => _mapper.Map<UserDto>(u));
+        }
+
+        public async Task AddAdminRoleAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+            {
+                throw new BusinessException("User not found");
+            }
+
+            if (await _userManager.IsInRoleAsync(user, RoleConstants.Admin))
+            {
+                throw new BusinessException("User is already an admin");
+            }
+            
+            await _userManager.AddToRoleAsync(user, RoleConstants.Admin);
         }
     }
 }

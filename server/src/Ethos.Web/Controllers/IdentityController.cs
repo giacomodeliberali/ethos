@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -69,6 +70,26 @@ namespace Ethos.Web.Controllers
         public async Task<IEnumerable<UserDto>> GetAllAdminsAsync()
         {
             return await _identityService.GetAllAdminsAsync();
+        }
+        
+        /// <summary>
+        ///     Return the list af users that contains the given text.
+        /// </summary>
+        [Authorize(Roles = RoleConstants.Admin)]
+        [HttpGet("search")]
+        public async Task<IEnumerable<UserDto>> SearchUsersAsync([Required] string containsText)
+        {
+            return await _identityService.SearchUsersAsync(containsText);
+        }
+        
+        /// <summary>
+        ///     Add the 'Admin' role to the specified user.
+        /// </summary>
+        [Authorize(Roles = RoleConstants.Admin)]
+        [HttpGet("add-role")]
+        public async Task AddAdminRoleAsync([Required] Guid userId)
+        {
+            await _identityService.AddAdminRoleAsync(userId);
         }
     }
 }

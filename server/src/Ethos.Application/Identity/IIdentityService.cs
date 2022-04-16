@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ethos.Application.Contracts.Identity;
@@ -14,6 +15,11 @@ namespace Ethos.Application.Identity
         /// Creates a new user in the system with the specified role.
         /// </summary>
         Task CreateUserAsync(RegisterRequestDto input, string roleName);
+        
+        /// <summary>
+        /// Creates a new user in the system with the specified roles.
+        /// </summary>
+        Task CreateUserAsync(RegisterRequestDto input, IEnumerable<string> roleNames);
 
         /// <summary>
         /// Tries to authenticate the given user.
@@ -28,7 +34,7 @@ namespace Ethos.Application.Identity
         /// <summary>
         /// Returns the given role or null.
         /// </summary>
-        Task<ApplicationRole> GetRoleAsync(string name);
+        Task<ApplicationRole?> GetRoleAsync(string name);
 
         /// <summary>
         /// Sends the password reset link.
@@ -44,5 +50,15 @@ namespace Ethos.Application.Identity
         /// Return the list of all registered users.
         /// </summary>
         Task<IEnumerable<UserDto>> GetAllAdminsAsync();
+
+        /// <summary>
+        /// Return the list af users that starts with the given text.
+        /// </summary>
+        Task<IEnumerable<UserDto>> SearchUsersAsync(string containsText);
+
+        /// <summary>
+        /// Add the Admin role to the specified user.
+        /// </summary>
+        Task AddAdminRoleAsync(Guid userId);
     }
 }

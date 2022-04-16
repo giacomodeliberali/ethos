@@ -1,5 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserDto } from '@core/services/ethos.generated.service';
+import { MediaService } from '@core/services/media.service';
+import { UserService } from '@core/services/user.service';
+import { ModalController } from '@ionic/angular';
+import { LogoutModalComponent } from '../logout-modal/logout-modal.component';
 
 @Component({
   selector: 'app-user-card',
@@ -10,9 +15,27 @@ export class UserCardComponent implements OnInit {
   @Input()
   user: UserDto;
 
-  constructor() {}
+  constructor(
+    private modalCtrl: ModalController,
+    private userSvc: UserService,
+    private router: Router
+  ) {}
 
-  ngOnInit() {
-    console.log(this.user);
+  ngOnInit() {}
+
+  async logout() {
+    const logoutModal = await this.modalCtrl.create({
+      component: LogoutModalComponent,
+      cssClass: MediaService.isSmartphone ? 'bottom' : '',
+      swipeToClose: true,
+      backdropDismiss: false,
+      mode: 'ios',
+    });
+    await logoutModal.present();
+    const { data } = await logoutModal.onWillDismiss();
+    if (data?.logout) {
+      this.userSvc.removeOldAuthentication();
+      this.router.navigate(['']);
+    }
   }
 }

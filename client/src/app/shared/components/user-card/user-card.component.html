@@ -4,5 +4,10 @@
     <h3>{{ user?.fullName | titlecase }}</h3>
     <div class="username">{{ user?.userName }}</div>
     <div class="email">{{ user?.email }}</div>
+
+    <ion-button color="danger" style="margin-top: 20px" (click)="logout()">
+      Logout
+      <ion-icon slot="end" name="exit-outline"></ion-icon>
+    </ion-button>
   </ion-card>
 </div>

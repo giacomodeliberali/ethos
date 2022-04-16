@@ -19,11 +19,10 @@ import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
 import { UserService } from '@core/services/user.service';
 import { ModalController } from '@ionic/angular';
-import { LogoutModalComponent } from '@shared/components/logout-modal/logout-modal.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
 import { DeleteScheduleModalComponent } from '../../components/delete-schedule-modal/delete-schedule-modal.component';
@@ -143,9 +142,10 @@ export class AdminPageComponent extends BaseDirective {
         });
         this.loadSchedules(this.currentDate);
       },
-      error: () => {
+      error: (result) => {
         this.toastSvc.addErrorToast({
-          message: 'Errore durante la creazione del corso',
+          message:
+            result?.error?.message || 'Errore durante la creazione del corso',
         });
       },
     });
@@ -168,9 +168,10 @@ export class AdminPageComponent extends BaseDirective {
         });
         this.loadSchedules(this.currentDate);
       },
-      error: () => {
+      error: (result) => {
         this.toastSvc.addErrorToast({
-          message: 'Errore durante la modifica del corso',
+          message:
+            result?.error?.message || 'Errore durante la modifica del corso',
         });
       },
     });
@@ -271,22 +272,6 @@ export class AdminPageComponent extends BaseDirective {
     await showBookingsModal.present();
   }
 
-  async openLogoutModal() {
-    const logoutModal = await this.modalCtrl.create({
-      component: LogoutModalComponent,
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
-      backdropDismiss: false,
-      mode: 'ios',
-    });
-    await logoutModal.present();
-    const { data } = await logoutModal.onWillDismiss();
-    if (data?.logout) {
-      this.userSvc.removeOldAuthentication();
-      this.router.navigate(['']);
-    }
-  }
-
   goToUserSettings() {
     this.router.navigate(['admin', 'user-settings']);
   }
@@ -303,7 +288,7 @@ export class AdminPageComponent extends BaseDirective {
     this.currentDate = new Date().toISOString();
   }
 
-  private openEditModal(schedule?: GeneratedScheduleDto) {
+  openEditModal(schedule?: GeneratedScheduleDto) {
     (this.trainers
       ? of(this.trainers)
       : this.loadingSvc.startLoading(
@@ -318,5 +303,9 @@ export class AdminPageComponent extends BaseDirective {
       this.trainers = trainers;
       this.openCreateEditModal(trainers, schedule);
     });
+  }
+
+  openAdminsList() {
+    this.router.navigate(['admin', 'users']);
   }
 }

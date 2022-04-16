@@ -238,6 +238,51 @@ export class IdentityService extends NswagBaseClass {
 
         return this.processRequest("get", url_, options_, false);
     }
+
+    /**
+     * Return the list af users that contains the given text.
+     * @return Success
+     */
+    searchUsers(containsText: string): Observable<UserDto[]> {
+        let url_ = this.baseUrl + "/api/identity/search?";
+        if (containsText === undefined || containsText === null)
+            throw new Error("The parameter 'containsText' must be defined and cannot be null.");
+        else
+            url_ += "containsText=" + encodeURIComponent("" + containsText) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.processRequest("get", url_, options_, false);
+    }
+
+    /**
+     * Add the 'Admin' role to the specified user.
+     * @return Success
+     */
+    addAdminRole(userId: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/identity/add-role?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.processRequest("get", url_, options_, false);
+    }
 }
 
 @Injectable({

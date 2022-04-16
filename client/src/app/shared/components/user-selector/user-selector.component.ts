@@ -57,7 +57,6 @@ export class UserSelectorComponent implements ControlValueAccessor, OnChanges {
   }
 
   writeValue(value: string[] | string): void {
-    console.log(value);
     this.value = value;
   }
 

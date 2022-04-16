@@ -1,0 +1,31 @@
+@import 'mixins';
+
+ion-content {
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .toolbar {
+      --background: 'transparent';
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 4rem;
+        img {
+          height: 2rem;
+        }
+      }
+    }
+    .content-container {
+      flex: 1;        
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+
+      .list-container {
+        padding: 10px;
+      }
+    }
+  }
+}

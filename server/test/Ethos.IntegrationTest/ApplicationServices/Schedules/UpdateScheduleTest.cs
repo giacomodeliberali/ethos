@@ -168,19 +168,19 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             var recurring = schedules.ElementAt(0);
             recurring.ScheduleId.ShouldBe(scheduleReplyDto.Id);
             recurring.IsRecurring.ShouldBeTrue();
-            recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-01T09:00"));
-            recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-01T10:00"));
+            recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-01T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-01T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
 
             var jan4Recurring = schedules.ElementAt(1);
             jan4Recurring.IsRecurring.ShouldBeTrue();
-            jan4Recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-04T09:00"));
-            jan4Recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-04T10:00"));
+            jan4Recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-04T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            jan4Recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-04T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
 
             var single = schedules.ElementAt(2);
             single.IsRecurring.ShouldBeFalse();
             single.Organizer.UserName.ShouldBe("admin2");
-            single.StartDate.ShouldBe(DateTime.Parse("2021-01-04T19:00"));
-            single.EndDate.ShouldBe(DateTime.Parse("2021-01-04T21:00"));
+            single.StartDate.ShouldBe(DateTime.Parse("2021-01-04T19:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            single.EndDate.ShouldBe(DateTime.Parse("2021-01-04T21:00").ToDateTimeOffset(TimeZones.Amsterdam));
             single.DurationInMinutes.ShouldBe(120);
             single.ParticipantsMaxNumber.ShouldBe(2);
             single.Name.ShouldBe("Edit for 4 jan");
@@ -188,8 +188,8 @@ namespace Ethos.IntegrationTest.ApplicationServices.Schedules
             
             var jan6Recurring = schedules.ElementAt(3);
             jan6Recurring.IsRecurring.ShouldBeTrue();
-            jan6Recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-06T09:00"));
-            jan6Recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-06T10:00"));
+            jan6Recurring.StartDate.ShouldBe(DateTime.Parse("2021-01-06T09:00").ToDateTimeOffset(TimeZones.Amsterdam));
+            jan6Recurring.EndDate.ShouldBe(DateTime.Parse("2021-01-06T10:00").ToDateTimeOffset(TimeZones.Amsterdam));
         }
         
          [Fact]

@@ -18,7 +18,9 @@
     *ngIf="!showTrainersSearch"
   >
     <div class="title-section">
-      <h2>{{ schedule ? 'Modifica' : 'Crea' }} un corso</h2>
+      <h2 *ngIf="!schedule">Crea un corso</h2>
+      <h2 *ngIf="schedule && isRecurring">Modifica istanza di un corso riccorrente</h2>
+      <h2 *ngIf="schedule && !isRecurring">Modifica il corso</h2>
       <ion-segment
         (ionChange)="toggleClicked($event)"
         mode="md"

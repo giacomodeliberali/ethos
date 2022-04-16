@@ -84,7 +84,7 @@ export class AdminsListPage extends BaseDirective implements OnInit {
         }
       )
       .subscribe({
-        next: (course) => {
+        next: () => {
           this.toastSvc.addSuccessToast({
             header: 'Ruolo aggiunto!',
             message: `${user.fullName} è ora un amministratore.`,

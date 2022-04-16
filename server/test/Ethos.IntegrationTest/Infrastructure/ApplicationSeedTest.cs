@@ -23,7 +23,7 @@ namespace Ethos.IntegrationTest.Infrastructure
             var response = await UserManager.GetUsersInRoleAsync(RoleConstants.Admin);
             response.Count.ShouldBe(1);
             var admin = response.Single();
-            admin.Email.ShouldBe("admin@ethos.it");
+            admin.Email.ShouldBe("admin@ethostraining.it");
             admin.UserName.ShouldBe("admin");
         }
 
@@ -41,6 +41,7 @@ namespace Ethos.IntegrationTest.Infrastructure
             admin.Roles.ShouldBeEquivalentTo(new List<string>()
             {
                 RoleConstants.Admin,
+                RoleConstants.User,
             });
         }
     }

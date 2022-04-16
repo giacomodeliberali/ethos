@@ -20,7 +20,7 @@
     <div class="content-container">
       <ion-searchbar
         color="light"
-        (ionChange)="onSearchChange($event)"
+        (ionChange)="onSearchChange($any($event))"
         debounce="500"
       ></ion-searchbar>
 

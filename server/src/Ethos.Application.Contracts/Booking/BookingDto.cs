@@ -25,6 +25,8 @@ namespace Ethos.Application.Contracts.Booking
             public string OrganizerFullName { get; set; }
 
             public int DurationInMinutes { get; set; }
+
+            public int ParticipantsMaxNumber { get; set; }
         }
 
         public class UserDto

@@ -26,6 +26,7 @@ public class BookingsProfile : Profile
                 Description = src.ScheduleDescription,
                 DurationInMinutes = src.ScheduleDurationInMinutes,
                 OrganizerFullName = src.ScheduleOrganizerFullName,
+                ParticipantsMaxNumber = src.ParticipantsMaxNumber,
             }));
     }
 }

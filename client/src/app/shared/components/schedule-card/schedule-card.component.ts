@@ -31,9 +31,7 @@ export class ScheduleCardComponent implements OnInit {
 
   showActionButtons = false;
 
-  ngOnInit(): void {
-    console.log(this.schedule);
-  }
+  ngOnInit(): void {}
 
   get time() {
     if (this.schedule) {

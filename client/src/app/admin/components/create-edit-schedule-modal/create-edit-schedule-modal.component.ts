@@ -175,6 +175,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
       participantsMaxNumber: this.scheduleForm.get('participantsMaxNumber')
         .value,
       durationInMinutes: this.scheduleForm.get('durationInMinutes').value,
+      timeZone: 'Europe/Rome',
     };
   }
 
@@ -213,6 +214,7 @@ export class CreateEditScheduleModalComponent implements OnInit {
         this.scheduleForm.get('days').value as string[],
         this.scheduleForm.get('time').value as Date
       ),
+      timeZone: 'Europe/Rome',
     };
   }
 

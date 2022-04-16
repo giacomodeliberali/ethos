@@ -54,6 +54,7 @@ namespace Ethos.EntityFrameworkCore.Query
                         ScheduleName = item.Schedule.Name,
                         ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
                         ScheduleOrganizerFullName = item.Organizer.FullName,
+                        ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
                     };
                 }).ToList();
 
@@ -96,6 +97,7 @@ namespace Ethos.EntityFrameworkCore.Query
                         ScheduleName = item.Schedule.Name,
                         ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
                         ScheduleOrganizerFullName = item.Organizer.FullName,
+                        ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
                     };
                 }).ToList();
 
@@ -140,6 +142,7 @@ namespace Ethos.EntityFrameworkCore.Query
                         ScheduleName = item.Schedule.Name,
                         ScheduleDurationInMinutes = item.Schedule.DurationInMinutes,
                         ScheduleOrganizerFullName = item.Organizer.FullName,
+                        ParticipantsMaxNumber = item.Schedule.ParticipantsMaxNumber,
                     };
                 }).ToList();
 

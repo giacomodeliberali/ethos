@@ -19,7 +19,9 @@
   >
     <div class="title-section">
       <h2 *ngIf="!schedule">Crea un corso</h2>
-      <h2 *ngIf="schedule && isRecurring">Modifica istanza di un corso riccorrente</h2>
+      <h2 *ngIf="schedule && isRecurring">
+        Modifica istanza di un corso riccorrente
+      </h2>
       <h2 *ngIf="schedule && !isRecurring">Modifica il corso</h2>
       <ion-segment
         (ionChange)="toggleClicked($event)"
@@ -36,7 +38,7 @@
       </ion-segment>
     </div>
     <div class="section">
-<!--       <ion-item lines="none" *ngIf="schedule && isRecurring">
+      <!--       <ion-item lines="none" *ngIf="schedule && isRecurring">
         <ion-label>Modifica anche tutte le future riccorrenze</ion-label>
         <ion-toggle
           mode="md"

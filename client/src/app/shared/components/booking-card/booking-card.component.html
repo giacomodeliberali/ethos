@@ -1,0 +1,39 @@
+<ion-card
+  appClickOutside
+  class="ion-activatable"
+  (click)="showActionButtons = !showActionButtons"
+  (outsideClick)="showActionButtons = false"
+>
+  <ion-ripple-effect></ion-ripple-effect>
+  <div class="time-and-people">
+    <ion-icon class="time-icon" name="time-outline"></ion-icon>
+    <div class="time-value">{{ time }}</div>
+    <!--     <ion-icon class="partecipants-icon" name="person-circle-outline"></ion-icon>
+    <div class="partecipants-value">
+      x{{ booking.schedule.participantsMaxNumber }}
+    </div> -->
+  </div>
+  <div class="is-booked top-label">
+    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    <div>Prenotato</div>
+  </div>
+  <div class="action-buttons-container">
+    <div
+      *ngIf="showActionButtons"
+      class="unbook-button ion-activatable"
+      (click)="unbookClicked($event)"
+    >
+      <ion-ripple-effect></ion-ripple-effect>
+      <ion-icon name="close-outline"></ion-icon
+      ><span>Rimuovi prenotazione</span>
+    </div>
+  </div>
+  <h4>{{ booking.schedule.name }}</h4>
+  <div>{{ booking.schedule.description }}</div>
+  <ion-chip class="ion-margin-start">
+    <ion-avatar>
+      <img src="../../../../assets/images/no-user.jpg" />
+    </ion-avatar>
+    <ion-label>{{ booking.schedule.organizerFullName }}</ion-label>
+  </ion-chip>
+</ion-card>

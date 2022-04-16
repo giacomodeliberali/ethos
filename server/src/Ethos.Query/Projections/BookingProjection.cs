@@ -24,6 +24,8 @@ namespace Ethos.Query.Projections
 
         public string ScheduleOrganizerFullName { get; set; }
 
+        public int ParticipantsMaxNumber { get; set; }
+
         public DateTimeOffset StartDate { get; set; }
 
         public DateTimeOffset EndDate { get; set; }

@@ -482,6 +482,7 @@ export interface BookingDto_ScheduleDto {
     description?: string | null;
     organizerFullName?: string | null;
     durationInMinutes?: number;
+    participantsMaxNumber?: number;
 }
 
 export interface BookingDto_UserDto {
@@ -509,6 +510,7 @@ export interface CreateRecurringScheduleRequestDto {
     recurringCronExpression: string;
     participantsMaxNumber: number;
     organizerId: string;
+    timeZone: string;
 }
 
 export interface CreateScheduleReplyDto {
@@ -524,6 +526,7 @@ export interface CreateSingleScheduleRequestDto {
     participantsMaxNumber: number;
     /** The id of the organizer of this schedule. */
     organizerId: string;
+    timeZone: string;
 }
 
 export interface DeleteRecurringScheduleRequestDto {
@@ -595,7 +598,6 @@ export interface RecurringScheduleDto {
     description: string;
     participantsMaxNumber: number;
     recurringCronExpression: string;
-    nextOccurrences: string[];
 }
 
 export interface RecurringScheduleDto_UserDto {

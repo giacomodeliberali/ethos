@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { BookingCardComponent } from './components/booking-card/booking-card.component';
 import { DateTimeInputComponent } from './components/form-field/form-field-types/date-time-input/date-time-input.component';
 import { DefaultInputComponent } from './components/form-field/form-field-types/default-input/default-input.component';
 import { InfoInputComponent } from './components/form-field/form-field-types/info-input/info-input.component';
@@ -28,6 +29,7 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     UnsavedChangesComponent,
     LoadingComponent,
     ScheduleCardComponent,
+    BookingCardComponent,
     WeekDaySelectorComponent,
     UserSelectorComponent,
     DefaultInputComponent,
@@ -46,6 +48,7 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     ModalDefaultContentComponent,
     UnsavedChangesComponent,
     ScheduleCardComponent,
+    BookingCardComponent,
     WeekDaySelectorComponent,
     UserSelectorComponent,
     UserCardComponent,

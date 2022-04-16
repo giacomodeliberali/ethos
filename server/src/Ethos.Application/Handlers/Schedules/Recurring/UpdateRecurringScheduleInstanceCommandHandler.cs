@@ -26,6 +26,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
         private readonly IGuidGenerator _guidGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdateRecurringScheduleInstanceCommandHandler> _logger;
+        private readonly IMediator _mediator;
 
         public UpdateRecurringScheduleInstanceCommandHandler(
             IScheduleRepository scheduleRepository,
@@ -34,7 +35,8 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             IScheduleExceptionRepository scheduleExceptionRepository,
             IGuidGenerator guidGenerator,
             IUnitOfWork unitOfWork,
-            ILogger<UpdateRecurringScheduleInstanceCommandHandler> logger)
+            ILogger<UpdateRecurringScheduleInstanceCommandHandler> logger,
+            IMediator mediator)
         {
             _scheduleRepository = scheduleRepository;
             _userManager = userManager;
@@ -43,6 +45,7 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             _guidGenerator = guidGenerator;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;
         }
 
         protected override async Task Handle(UpdateRecurringScheduleInstanceCommand request, CancellationToken cancellationToken)
@@ -91,17 +94,23 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             {
                 throw new CanNotEditScheduleWithExistingBookingsException(existingBookings.Count);
             }
+            
+            var organizer = await GetOrganizer(request.OrganizerId);
+
+            var hasBeenRecreated = await RecreateIfFirstOccurrence(schedule, request, organizer);
+          
+            if (hasBeenRecreated)
+            {
+                return;
+            }
 
             var scheduleException = ScheduleException.Factory.Create(
                 _guidGenerator.Create(),
                 schedule,
                 new DateOnly(request.InstanceStartDate.Year, request.InstanceStartDate.Month, request.InstanceStartDate.Day));
-            
-            _logger.LogDebug("[ScheduleException] Created for {Date}", scheduleException.Date);
 
             await _scheduleExceptionRepository.CreateAsync(scheduleException);
 
-            var organizer = await GetOrganizer(request.OrganizerId);
             
             var newSingleInstance = SingleSchedule.Factory.Create(
                 _guidGenerator.Create(),
@@ -113,8 +122,6 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 request.DurationInMinutes,
                 schedule.TimeZone);
             
-            _logger.LogDebug("[SingleSchedule] Created for {StartDate} - {EndDate}", newSingleInstance.StartDate, newSingleInstance.EndDate);
-
             await _scheduleRepository.CreateAsync(newSingleInstance);
         }
 
@@ -133,25 +140,12 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
             
             var organizer = await GetOrganizer(request.OrganizerId);
             
-            // var firstOccurrence = schedule.GetFirstOccurrence().StartDate;
-            // var isFirstOccurence = new DateOnly(firstOccurrence.Year, firstOccurrence.Month, firstOccurrence.Day) == 
-            //                        new DateOnly(request.InstanceStartDate.Year, request.InstanceStartDate.Month, request.InstanceStartDate.Day);
-            // if (isFirstOccurence)
-            // {
-            //     schedule.UpdateDate(
-            //         new DateOnlyPeriod(request.StartDate, request.EndDate), 
-            //         request.DurationInMinutes, 
-            //         request.RecurringCronExpression,
-            //         schedule.TimeZone); 
-            //     
-            //     schedule.UpdateOrganizer(organizer);
-            //     schedule.UpdateNameAndDescription(request.Name, request.Description);
-            //     schedule.UpdateParticipantsMaxNumber(request.ParticipantsMaxNumber);
-            //     
-            //     await _scheduleRepository.UpdateAsync(schedule);
-            //     
-            //     return;
-            // }
+            var hasBeenRecreated = await RecreateIfFirstOccurrence(schedule, request, organizer);
+          
+            if (hasBeenRecreated)
+            {
+                return;
+            }
 
             // update past
             schedule.UpdateDate(
@@ -176,6 +170,40 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                 schedule.TimeZone);
 
             await _scheduleRepository.CreateAsync(newRecurring);
+        }
+
+        private async Task<bool> RecreateIfFirstOccurrence(RecurringSchedule schedule, UpdateRecurringScheduleInstanceCommand request, ApplicationUser organizer)
+        {
+            var firstOccurrence = schedule.GetFirstOccurrence();
+            var isFirstOccurence = new DateOnly(firstOccurrence.StartDate.Year, firstOccurrence.StartDate.Month, firstOccurrence.StartDate.Day) == 
+                                   new DateOnly(request.InstanceStartDate.Year, request.InstanceStartDate.Month, request.InstanceStartDate.Day);
+            if (isFirstOccurence)
+            {
+                await _mediator.Send(new DeleteRecurringScheduleCommand()
+                {
+                    Id = schedule.Id,
+                    InstanceStartDate = firstOccurrence.StartDate,
+                    InstanceEndDate = firstOccurrence.EndDate,
+                    RecurringScheduleOperationType = RecurringScheduleOperationType.InstanceAndFuture,
+                });
+
+                var newSchedule = RecurringSchedule.Factory.Create(
+                    _guidGenerator.Create(),
+                    organizer,
+                    request.Name,
+                    request.Description,
+                    request.ParticipantsMaxNumber,
+                    new DateOnlyPeriod(request.StartDate, request.EndDate),
+                    request.DurationInMinutes,
+                    request.RecurringCronExpression,
+                    schedule.TimeZone);
+
+                await _scheduleRepository.CreateAsync(newSchedule);
+
+                return true;
+            }
+
+            return false;
         }
 
         private async Task<ApplicationUser> GetOrganizer(Guid organizerId)

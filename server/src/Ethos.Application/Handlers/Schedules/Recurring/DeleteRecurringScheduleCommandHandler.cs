@@ -128,9 +128,12 @@ namespace Ethos.Application.Handlers.Schedules.Recurring
                     schedule.RecurringCronExpressionString,
                     schedule.TimeZone);
 
-                await _scheduleRepository.UpdateAsync(schedule);
+                await _scheduleRepository.UpdateAsync(schedule); 
                 
-                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(schedule.Id, new DateOnlyPeriod(schedule.Period.EndDate, DateOnly.MaxValue));
+                var scheduleExceptions = await _scheduleExceptionQueryService.GetScheduleExceptionsAsync(
+                    schedule.Id, 
+                    new DateOnlyPeriod(schedule.Period.EndDate.AddDays(1), DateOnly.MaxValue));
+               
                 foreach (var scheduleException in scheduleExceptions)
                 {
                     await _scheduleExceptionRepository.DeleteAsync(scheduleException.Id);

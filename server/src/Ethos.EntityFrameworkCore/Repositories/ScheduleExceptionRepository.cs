@@ -41,13 +41,13 @@ namespace Ethos.EntityFrameworkCore.Repositories
 
         public async Task DeleteAsync(Guid scheduleExceptionId)
         {
-            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == scheduleExceptionId);
+            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.Id == scheduleExceptionId);
             _applicationDbContext.Remove(scheduleExceptionData);
         }
 
         public async Task UpdateAsync(ScheduleException scheduleException)
         {
-            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.ScheduleId == scheduleException.Id);
+            var scheduleExceptionData = await _applicationDbContext.ScheduleExceptions.SingleAsync(e => e.Id == scheduleException.Id);
 
             scheduleExceptionData.Date = scheduleException.Date;
         }

@@ -105,7 +105,7 @@ export class AdminPageComponent extends BaseDirective {
       component: CreateEditScheduleModalComponent,
       componentProps: { currentDate: this.currentDate, trainers, schedule },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      swipeToClose: false,
       backdropDismiss: false,
       mode: 'ios',
     });

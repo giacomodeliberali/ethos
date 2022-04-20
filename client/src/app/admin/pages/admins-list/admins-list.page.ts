@@ -66,7 +66,7 @@ export class AdminsListPage extends BaseDirective implements OnInit {
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();
 
-    if (data === 'cancel') {
+    if (data !== 'success') {
       return;
     }
 

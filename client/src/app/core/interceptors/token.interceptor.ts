@@ -30,10 +30,9 @@ export class TokenInterceptor implements HttpInterceptor {
         }
         return next.handle(request).pipe(
           catchError((error: HttpErrorResponse) => {
+            const roles = this.userSvc.getUser()?.roles || [];
             if (
-              this.userSvc
-                .getUser()
-                .roles.includes(window.location.pathname.split('/')[1]) &&
+              roles.includes(window.location.pathname.split('/')[1]) &&
               error.status === 401
             ) {
               this.userSvc.removeOldAuthentication();

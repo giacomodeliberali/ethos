@@ -131,10 +131,13 @@ export class LoginPageComponent extends BaseDirective {
             });
             this.currentForm = 'login';
           },
-          error: (error) =>
+          error: (httpError) => {
             this.toastSvc.addErrorToast({
-              message: `Errore durante la creazione dell'utente.`,
-            }),
+              message:
+                httpError?.error?.message ||
+                `Errore durante la creazione dell'utente.`,
+            });
+          },
         });
     }
   }

@@ -15,7 +15,7 @@ import { BehaviorSubject } from 'rxjs';
     `
       svg {
         display: block;
-        height: 100%;
+        /* height: 100%; */
         width: auto;
       }
     `,

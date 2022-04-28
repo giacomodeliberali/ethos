@@ -23,7 +23,7 @@ import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
 import { of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
 import { DeleteScheduleModalComponent } from '../../components/delete-schedule-modal/delete-schedule-modal.component';
 import { ShowBookingModalComponent } from '../../components/show-booking-modal/show-booking-modal.component';
@@ -307,5 +307,29 @@ export class AdminPageComponent extends BaseDirective {
 
   openAdminsList() {
     this.router.navigate(['admin', 'users']);
+  }
+
+  refreshCurrentDate(
+    event: CustomEvent & { target: { complete: () => void } }
+  ) {
+    const date = moment(this.currentDate);
+
+    this.schedulesSvc
+      .getAllSchedulesInRange(date.toISOString(), date.toISOString())
+      .pipe(
+        catchError((error) => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la richiesta dei corsi',
+          });
+          return of([]);
+        }),
+        map((schedules) => this.divideScheduleByDayPeriod(schedules)),
+        finalize(() => {
+          event.target.complete();
+        })
+      )
+      .subscribe((schedules) => {
+        this.schedules = schedules;
+      });
   }
 }

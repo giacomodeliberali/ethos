@@ -14,7 +14,7 @@ import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
 import { of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-page',
@@ -200,6 +200,30 @@ export class UserPageComponent extends BaseDirective {
             message: 'Errore durante la rimozione della prenotazione.',
           });
         },
+      });
+  }
+
+  refreshCurrentDate(
+    event: CustomEvent & { target: { complete: () => void } }
+  ) {
+    const date = moment(this.currentDate);
+
+    this.schedulesSvc
+      .getAllSchedulesInRange(date.toISOString(), date.toISOString())
+      .pipe(
+        catchError((error) => {
+          this.toastSvc.addErrorToast({
+            message: 'Errore durante la richiesta dei corsi',
+          });
+          return of([]);
+        }),
+        map((schedules) => this.divideScheduleByDayPeriod(schedules)),
+        finalize(() => {
+          event.target.complete();
+        })
+      )
+      .subscribe((schedules) => {
+        this.schedules = schedules;
       });
   }
 }

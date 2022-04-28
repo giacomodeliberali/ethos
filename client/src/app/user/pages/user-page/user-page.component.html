@@ -1,4 +1,7 @@
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshCurrentDate($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div class="page-container">
     <div class="toolbar">
       <div class="logo-container">

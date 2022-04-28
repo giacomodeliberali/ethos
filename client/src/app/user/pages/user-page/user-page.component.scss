@@ -1,5 +1,9 @@
 @import 'mixins';
 
+:host {
+  background: var(--ion-color-primary);
+}
+
 ion-content {
   .page-container {
     display: flex;

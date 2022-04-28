@@ -101,3 +101,20 @@ ion-modal {
     }
   }
 }
+
+ion-refresher-content {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+
+  .refresher-pulling-icon {
+    ion-icon {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+
+  .refresher-refreshing-icon {
+    ion-spinner {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}

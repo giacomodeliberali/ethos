@@ -82,14 +82,19 @@ namespace Ethos.Application.Handlers
             var currentBookings = await _bookingQueryService.GetAllBookingsInRange(
                 schedule.Id,
                 new DateOnlyPeriod(request.StartDate, request.EndDate));
+            
+            var currentUser = await _currentUser.GetCurrentUser();
+
+            if (currentBookings.Any(b => b.UserId == currentUser.Id))
+            {
+                throw new AlreadyBookedException();
+            }
 
             if (schedule.ParticipantsMaxNumber > 0 &&
                 currentBookings.Count >= schedule.ParticipantsMaxNumber)
             {
                 throw new ParticipantsMaxNumberReachedException(schedule.ParticipantsMaxNumber);
             }
-
-            var currentUser = await _currentUser.GetCurrentUser();
 
             var booking = Booking.Factory.Create(
                 _guidGenerator.Create(),

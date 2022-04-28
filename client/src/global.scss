@@ -78,6 +78,7 @@ ion-modal {
     --color: var(--ion-color-primary-contrast);
     --border-radius: 0.25rem;
     --box-shadow: 0 8px 16px 0 rgba(255, 255, 255, 0.2);
+    --button-color: var(--ion-color-primary-contrast);
     &::part(header) {
       font-weight: bold;
       padding-bottom: 0.25rem;

@@ -61,12 +61,21 @@ export class ToastService {
 
   /** Show next toast */
   private async displayNext() {
-    const toast = await this.toastController.create(this.toastQueue[0]);
+    const toast = await this.toastController.create({
+      ...this.toastQueue[0],
+      buttons: [
+        {
+          role: 'cancel',
+          icon: 'close-outline',
+        },
+      ],
+    });
     for (const [key, value] of Object.entries(
       this.toastQueue[0].styleProperties
     )) {
       document.documentElement.style.setProperty(key, value);
     }
+    console.log('TOAST', toast);
     toast.present();
     toast.onDidDismiss().then(() => {
       this.toastQueue.shift();

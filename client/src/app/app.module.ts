@@ -22,9 +22,7 @@ import { ToastService } from '@shared/services/toast.service';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    IonicModule.forRoot({
-      navAnimation,
-    }),
+    IonicModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule,
     SharedModule,

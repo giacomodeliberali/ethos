@@ -18,7 +18,6 @@ import { ToastService } from '@shared/services/toast.service';
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

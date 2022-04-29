@@ -1,18 +1,125 @@
-<ion-tabs>
-  <ion-tab-bar slot="bottom" color="primary">
-    <ion-tab-button tab="schedules">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>Corsi</ion-label>
-      <!-- <ion-badge>6</ion-badge> -->
-    </ion-tab-button>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refreshCurrentDate($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="page-container">
+    <div class="toolbar">
+      <div class="logo-container">
+        <img src="../../../../assets/images/ethos.svg" />
+      </div>
+    </div>
+    <div class="content-container">
+      <div class="datepicker-container">
+        <ion-button
+          *ngIf="!hideLeftArrow; else arrowReplace"
+          mode="ios"
+          fill="clear"
+          (click)="goToPrevDay()"
+        >
+          <ion-icon color="secondary" name="arrow-back-outline"></ion-icon>
+        </ion-button>
+        <ion-item lines="none">
+          <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
+          <ion-datetime
+            mode="ios"
+            [value]="currentDate"
+            [min]="dateLimits.lowerLimit"
+            [max]="dateLimits.upperLimit"
+            [monthShortNames]="[
+              'Gen',
+              'Feb',
+              'Mar',
+              'Apr',
+              'Mag',
+              'Giu',
+              'Lug',
+              'Ago',
+              'Set',
+              'Ott',
+              'Nov',
+              'Dic'
+            ]"
+            (ionChange)="currentDate = $any($event).detail.value"
+            placeholder="Select Date"
+          ></ion-datetime>
+        </ion-item>
+        <ion-button
+          *ngIf="!hideRightArrow; else arrowReplace"
+          mode="ios"
+          fill="clear"
+          (click)="goToNextDay()"
+        >
+          <ion-icon color="secondary" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="today-container">
+        <ion-button
+          size="small"
+          fill="outline"
+          color="secondary"
+          mode="ios"
+          (click)="goToToday()"
+          >Vai a oggi</ion-button
+        >
+      </div>
+      <div class="day-periods">
+        <div class="day-period">
+          <h1 class="title">Mattina</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.morning.length <= 0">
+              Non sono previsti corsi durante la mattinata
+            </div>
+            <ng-container *ngIf="schedules.morning.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.morning">
+                <app-schedule-card
+                  (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
+                  [currentUser]="user"
+                  [schedule]="schedule"
+                ></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="day-period">
+          <h1 class="title">Pomeriggio</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.afternoon.length <= 0">
+              Non sono previsti corsi durante il pomeriggio
+            </div>
+            <ng-container *ngIf="schedules.afternoon.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.afternoon">
+                <app-schedule-card
+                  (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
+                  [currentUser]="user"
+                  [schedule]="schedule"
+                ></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="day-period">
+          <h1 class="title">Sera</h1>
+          <div class="courses-container" *ngIf="schedules">
+            <div class="no-elements" *ngIf="schedules.evening.length <= 0">
+              Non sono previsti corsi durante la sera
+            </div>
+            <ng-container *ngIf="schedules.evening.length > 0">
+              <div class="course" *ngFor="let schedule of schedules.evening">
+                <app-schedule-card
+                  (bookClick)="bookCourse($event)"
+                  (unbookClick)="unbookCourse($event)"
+                  [currentUser]="user"
+                  [schedule]="schedule"
+                ></app-schedule-card>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
 
-    <ion-tab-button tab="bookings">
-      <ion-icon name="today-outline"></ion-icon>
-      <ion-label>Prenotazioni</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="profile">
-      <ion-icon name="cog-outline"></ion-icon>
-      <ion-label>Profilo</ion-label>
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
+<ng-template #arrowReplace><div class="arrow-replace"></div></ng-template>

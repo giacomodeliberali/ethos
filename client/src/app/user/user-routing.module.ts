@@ -8,11 +8,11 @@ import { UserSettingsPage } from './pages/user-settings/user-settings.page';
 const routes: Routes = [
   {
     path: '',
-    component: UserSchedulesPageComponent,
+    component: UserPageComponent,
     children: [
       {
         path: 'schedules',
-        component: UserPageComponent,
+        component: UserSchedulesPageComponent,
       },
       {
         path: 'bookings',

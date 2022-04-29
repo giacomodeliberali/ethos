@@ -131,14 +131,6 @@ export class UserPageComponent extends BaseDirective {
     return schedulesByDayPortion;
   }
 
-  goToUserSettings() {
-    this.router.navigate(['user', 'settings']);
-  }
-
-  goToBookings() {
-    this.router.navigate(['user', 'bookings']);
-  }
-
   bookCourse(schedule: GeneratedScheduleDto) {
     this.loadingSvc
       .startLoading(
@@ -212,18 +204,17 @@ export class UserPageComponent extends BaseDirective {
       .getAllSchedulesInRange(date.toISOString(), date.toISOString())
       .pipe(
         catchError((error) => {
+          event.target.complete();
           this.toastSvc.addErrorToast({
             message: 'Errore durante la richiesta dei corsi',
           });
           return of([]);
         }),
-        map((schedules) => this.divideScheduleByDayPeriod(schedules)),
-        finalize(() => {
-          event.target.complete();
-        })
+        map((schedules) => this.divideScheduleByDayPeriod(schedules))
       )
       .subscribe((schedules) => {
         this.schedules = schedules;
+        event.target.complete();
       });
   }
 }

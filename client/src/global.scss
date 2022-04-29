@@ -103,11 +103,11 @@ ion-modal {
 }
 
 ion-refresher-content {
-  background: var(--ion-color-primary);
+  background: transparent;
   color: var(--ion-color-primary-contrast);
 
   .refresher-pulling-icon {
-    ion-icon {
+    ion-spinner {
       color: var(--ion-color-primary-contrast);
     }
   }

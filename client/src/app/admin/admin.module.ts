@@ -9,12 +9,14 @@ import { DeleteScheduleModalComponent } from './components/delete-schedule-modal
 import { MakeUserAdminModalComponent } from './components/make-user-admin-modal/make-user-admin-modal.component';
 import { ShowBookingModalComponent } from './components/show-booking-modal/show-booking-modal.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { AdminSchedulesPageComponent } from './pages/admin-schedules-page/admin-schedules-page.component';
 import { AdminsListPage } from './pages/admins-list/admins-list.page';
 import { UserSettingsPage } from './pages/user-settings/user-settings.page';
 
 @NgModule({
   declarations: [
     AdminPageComponent,
+    AdminSchedulesPageComponent,
     ShowBookingModalComponent,
     DeleteScheduleModalComponent,
     MakeUserAdminModalComponent,

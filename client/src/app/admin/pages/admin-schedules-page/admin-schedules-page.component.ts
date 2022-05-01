@@ -223,8 +223,8 @@ export class AdminSchedulesPageComponent extends BaseDirective {
       componentProps: { isRecurring: schedule.isRecurring },
       canDismiss: true,
       backdropDismiss: true,
-      breakpoints: [0.35, 0.5],
-      initialBreakpoint: 0.35,
+      breakpoints: [0.5],
+      initialBreakpoint: 0.5,
     });
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();
@@ -268,8 +268,8 @@ export class AdminSchedulesPageComponent extends BaseDirective {
       componentProps: { bookings },
       canDismiss: true,
       backdropDismiss: true,
-      breakpoints: [0.35, 1],
-      initialBreakpoint: 0.35,
+      breakpoints: [0.5, 1],
+      initialBreakpoint: 1,
     });
     await showBookingsModal.present();
   }

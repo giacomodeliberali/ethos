@@ -5,6 +5,7 @@ import { MediaService } from '@core/services/media.service';
 import { UserService } from '@core/services/user.service';
 import { ModalController } from '@ionic/angular';
 import { LogoutModalComponent } from '../logout-modal/logout-modal.component';
+import packageJson from '../../../../../package.json';
 
 @Component({
   selector: 'app-user-card',
@@ -14,6 +15,8 @@ import { LogoutModalComponent } from '../logout-modal/logout-modal.component';
 export class UserCardComponent implements OnInit {
   @Input()
   user: UserDto;
+
+  version = packageJson.version;
 
   constructor(
     private modalCtrl: ModalController,

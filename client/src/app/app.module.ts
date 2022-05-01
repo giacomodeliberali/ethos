@@ -12,10 +12,15 @@ import { SharedModule } from '@shared/shared.module';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ServiceWorkerModule, SwUpdate } from '@angular/service-worker';
+import {
+  ServiceWorkerModule,
+  SwUpdate,
+  VersionReadyEvent,
+} from '@angular/service-worker';
 import { ToastService } from '@shared/services/toast.service';
 import localeIt from '@angular/common/locales/it';
 import { registerLocaleData } from '@angular/common';
+import { filter, map } from 'rxjs/operators';
 registerLocaleData(localeIt);
 
 @NgModule({
@@ -49,14 +54,25 @@ registerLocaleData(localeIt);
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(updates: SwUpdate, toastService: ToastService) {
-    updates.available.subscribe(async () => {
-      toastService.addInfoToast({
-        header: 'Aggiornamento',
-        message: 'Nuova versione disponibile, la pagina verrà ricaricata',
+  constructor(swUpdate: SwUpdate, toastService: ToastService) {
+    swUpdate.versionUpdates
+      .pipe(
+        filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'),
+        map((evt) => ({
+          type: 'UPDATE_AVAILABLE',
+          current: evt.currentVersion,
+          available: evt.latestVersion,
+        }))
+      )
+      .subscribe(async (update) => {
+        toastService.addInfoToast({
+          header: 'Aggiornamento',
+          message: 'Nuova versione disponibile, l\'app verrà ricaricata fra 3 secondi',
+        });
+        await swUpdate.activateUpdate();
+        setTimeout(() => {
+          document.location.reload();
+        }, 3000);
       });
-      await updates.activateUpdate();
-      document.location.reload();
-    });
   }
 }

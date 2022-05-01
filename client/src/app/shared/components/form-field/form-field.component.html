@@ -1,8 +1,33 @@
-<ion-label *ngIf="label"
-  ><ion-icon *ngIf="icon" slot="start" [name]="icon"></ion-icon
-  ><span>{{ label }}</span></ion-label
->
-<div class="form-field-container">
-  <ng-template #formFieldTemplateContainer></ng-template>
-</div>
+<ion-item>
+  <ion-label *ngIf="label"
+    ><ion-icon *ngIf="icon" slot="start" [name]="icon"></ion-icon
+    ><span>{{ label }}</span></ion-label
+  >
+
+  <ion-input
+    *ngIf="type == 'text' || type == 'password' || type == 'email'"
+    class="input"
+    [placeholder]="placeholder"
+    [name]="name"
+    [type]="type"
+    [value]="valueChange | async"
+    [disabled]="disabled"
+    (change)="onChange($any($event).target.value)"
+    (focus)="changeFocus(true)"
+    (blur)="changeFocus(false)"
+    [formControl]="control"
+  ></ion-input>
+
+  <ion-icon
+    class="show-password"
+    *ngIf="type === 'password' || (type === 'text' && showPassword)"
+    [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+    (click)="changeShowPassword()"
+  ></ion-icon>
+
+  <ng-template
+    #formFieldTemplateContainer
+    *ngIf="!(type == 'text' || type == 'password' || type == 'email')"
+  ></ng-template>
+</ion-item>
 <div *ngIf="showError" class="error-message" [innerHTML]="errorMessage"></div>

@@ -197,6 +197,10 @@ export class FormFieldComponent
   }
 
   private createFormFieldComponent() {
+    if (this.control) {
+      return;
+    }
+
     this.container.clear();
     this.componentRef = this.viewContainerRef.createComponent(
       typeComponentMap[this.type] || DefaultInputComponent

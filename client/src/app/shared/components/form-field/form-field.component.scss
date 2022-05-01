@@ -54,4 +54,8 @@
       margin-top: 0.25rem;
     }
   }
+
+  ion-item {
+    --highlight-background: var(--ion-color-secondary);
+  }
 }

@@ -26,10 +26,10 @@ export class UserCardComponent implements OnInit {
   async logout() {
     const logoutModal = await this.modalCtrl.create({
       component: LogoutModalComponent,
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: true,
-      backdropDismiss: false,
-      mode: 'ios',
+      backdropDismiss: true,
+      breakpoints: [0.35, 0.5],
+      initialBreakpoint: 0.35,
     });
     await logoutModal.present();
     const { data } = await logoutModal.onWillDismiss();

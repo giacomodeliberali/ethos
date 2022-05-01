@@ -60,10 +60,10 @@ export class LoginPageComponent extends BaseDirective {
     event.stopPropagation();
     const modal = await this.modalCtrl.create({
       component: ForgotPasswordModalComponent,
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: true,
-      backdropDismiss: false,
-      mode: 'ios',
+      backdropDismiss: true,
+      breakpoints: [0.25, 0.5],
+      initialBreakpoint: 0.25,
     });
     await modal.present();
     const { data } = await modal.onWillDismiss();

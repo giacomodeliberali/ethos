@@ -58,10 +58,10 @@ export class AdminsListPage extends BaseDirective implements OnInit {
     const showDeleteModal = await this.modalCtrl.create({
       component: MakeUserAdminModalComponent,
       componentProps: { user },
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: true,
-      backdropDismiss: false,
-      mode: 'ios',
+      backdropDismiss: true,
+      breakpoints: [0.35, 1],
+      initialBreakpoint: 0.35,
     });
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();

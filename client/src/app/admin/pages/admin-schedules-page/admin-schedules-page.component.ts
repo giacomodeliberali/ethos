@@ -107,7 +107,6 @@ export class AdminSchedulesPageComponent extends BaseDirective {
     const editModal = await this.modalCtrl.create({
       component: CreateEditScheduleModalComponent,
       componentProps: { currentDate: this.currentDate, trainers, schedule },
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: false,
       backdropDismiss: false,
       mode: 'ios',
@@ -222,10 +221,10 @@ export class AdminSchedulesPageComponent extends BaseDirective {
     const showDeleteModal = await this.modalCtrl.create({
       component: DeleteScheduleModalComponent,
       componentProps: { isRecurring: schedule.isRecurring },
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: true,
-      backdropDismiss: false,
-      mode: 'ios',
+      backdropDismiss: true,
+      breakpoints: [0.35, 0.5],
+      initialBreakpoint: 0.35,
     });
     await showDeleteModal.present();
     const { data } = await showDeleteModal.onWillDismiss();
@@ -267,10 +266,10 @@ export class AdminSchedulesPageComponent extends BaseDirective {
     const showBookingsModal = await this.modalCtrl.create({
       component: ShowBookingModalComponent,
       componentProps: { bookings },
-      cssClass: MediaService.isSmartphone ? 'bottom' : '',
       canDismiss: true,
-      backdropDismiss: false,
-      mode: 'ios',
+      backdropDismiss: true,
+      breakpoints: [0.35, 1],
+      initialBreakpoint: 0.35,
     });
     await showBookingsModal.present();
   }

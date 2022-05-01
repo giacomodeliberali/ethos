@@ -48,9 +48,6 @@ jobs:
     - name: Install dependencies
       working-directory: ./client
       run: npm ci
-    - name: npm run lint  
-      working-directory: ./client
-      run: npm run lint
     - name: Build     
       working-directory: ./client
       run: npm run build

@@ -125,8 +125,8 @@ export class FormFieldComponent
 
   constructor(
     private elRef: ElementRef,
-    private resolver: ComponentFactoryResolver,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private viewContainerRef: ViewContainerRef
   ) {
     super();
     this.valueChange
@@ -198,16 +198,16 @@ export class FormFieldComponent
 
   private createFormFieldComponent() {
     this.container.clear();
-    const factory: ComponentFactory<FormField> =
-      this.resolver.resolveComponentFactory(
-        typeComponentMap[this.type] || DefaultInputComponent
-      );
-    this.componentRef = this.container.createComponent(factory);
+    this.componentRef = this.viewContainerRef.createComponent(
+      typeComponentMap[this.type] || DefaultInputComponent
+    );
     this.setAllFormFieldComponentProperties();
   }
 
   private setAllFormFieldComponentProperties() {
     this.setComponentProperty('type', this.type);
+    this.setComponentProperty('label', this.label);
+    this.setComponentProperty('icon', this.icon);
     this.setComponentProperty('placeholder', this.placeholder);
     this.setComponentProperty('name', this.name);
     this.setComponentProperty('disabled', this.disabled);

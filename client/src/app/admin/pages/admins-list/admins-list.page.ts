@@ -59,7 +59,7 @@ export class AdminsListPage extends BaseDirective implements OnInit {
       component: MakeUserAdminModalComponent,
       componentProps: { user },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      canDismiss: true,
       backdropDismiss: false,
       mode: 'ios',
     });

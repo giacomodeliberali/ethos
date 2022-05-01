@@ -29,15 +29,20 @@ ion-content {
         margin-top: 1rem;
         ion-item {
           max-width: 48rem;
+          --color: var(--ion-color-primary-contrast);
           --background: var(--ion-color-primary);
           ion-label {
             --color: var(--ion-color-secondary);
           }
-          ion-datetime {
+
+          ion-text{
+            padding: 5px;
+          }
+/*           ion-datetime {
             --placeholder-color: var(--ion-color-light);
             --padding-top: 1rem;
             color: var(--ion-color-light);
-          }
+          } */
         }
         ion-button {
           margin: 0;

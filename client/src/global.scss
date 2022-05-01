@@ -48,12 +48,26 @@ ion-content {
   );
 }
 
-ion-modal {
+ion-note {
+  line-height: 40px;
+  --color: var(--ion-text-color);
+}
+
+ion-popover {
+  --min-width: 300px;
+}
+
+ion-popover {
+  ion-content {
+    min-width: 300px;
+  }
+}
+
+/* ion-modal {
   &.bottom {
     align-items: flex-end;
     --border-radius: 0px !important;
   }
-  --height: auto !important;
   --border-radius: 4px !important;
   .modal-wrapper {
     max-height: 100% !important;
@@ -64,7 +78,7 @@ ion-modal {
       contain: content;
     }
   }
-}
+} */
 
 :root {
   --ionic-toast-color: var(--ion-color-tertiary);

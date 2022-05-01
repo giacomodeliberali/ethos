@@ -38,93 +38,123 @@
       </ion-segment>
     </div>
     <div class="section">
-      <!--       <ion-item lines="none" *ngIf="schedule && isRecurring">
-        <ion-label>Modifica anche tutte le future riccorrenze</ion-label>
-        <ion-toggle
-          mode="md"
-          color="tertiary"
-          formControlName="updateInstanceAndFuture"
-          slot="end"
-        ></ion-toggle>
-      </ion-item> -->
-      <app-form-field
-        formControlName="name"
-        type="text"
-        label="Nome del corso"
-        placeholder="Crossfit"
-        name="name"
-        icon="barbell-outline"
-      ></app-form-field>
-      <app-form-field
-        formControlName="description"
-        placeholder="Esercizi a corpo libero"
-        label="Descrizione"
-        name="description"
-        icon="text-outline"
-        type="textarea"
-      ></app-form-field>
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="barbell-outline"></ion-icon>
+          Nome del corso</ion-label
+        >
+        <ion-input
+          formControlName="name"
+          type="text"
+          placeholder="Crossfit"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="text-outline"></ion-icon>
+          Descrizione</ion-label
+        >
+        <ion-textarea
+          formControlName="description"
+          type="textarea"
+          placeholder="Esercizi a corpo libero"
+        ></ion-textarea>
+      </ion-item>
+
       <div class="row">
-        <app-form-field
-          formControlName="startDate"
-          [label]="isRecurring ? 'Dal' : 'Data'"
-          placeholder="dd/MM/yyyy"
-          [value]="currentDate"
-          name="startDate"
-          type="datetime"
-          [fieldOptions]="{
-            format: 'DD/MM/YYYY'
-          }"
-          icon="calendar-outline"
-        ></app-form-field>
-        <app-form-field
-          *ngIf="isRecurring"
-          formControlName="endDate"
-          label="Al"
-          placeholder="DD/MM/YYYY"
-          [value]="nextWeekDate"
-          name="endDate"
-          type="datetime"
-          [fieldOptions]="{
-            format: 'DD/MM/YYYY'
-          }"
-          icon="calendar-outline"
-        ></app-form-field>
+        <ion-item id="open-date-modal">
+          <ion-label position="stacked">
+            <ion-icon name="calendar-outline"></ion-icon>
+            {{ isRecurring ? 'Dal' : 'Data' }}</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['startDate']).value | date: 'EEE d MMM Y'
+          }}</ion-note>
+          <ion-popover trigger="open-date-modal">
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  formControlName="startDate"
+                  presentation="date"
+                  locale="it-IT"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </div>
+      <div class="row" *ngIf="isRecurring">
+        <ion-item id="open-end-date-popover">
+          <ion-label position="stacked">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Al</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['endDate']).value | date: 'EEE d MMM Y'
+          }}</ion-note>
+          <ion-popover trigger="open-end-date-popover">
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  formControlName="endDate"
+                  presentation="date"
+                  locale="it-IT"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
       </div>
       <div class="row">
-        <app-form-field
-          formControlName="time"
-          label="Orario"
-          placeholder="HH:mm"
-          name="time"
-          type="datetime"
-          [fieldOptions]="{
-            format: 'HH:mm',
-            minuteValues: '0,15,30,45'
-          }"
-          icon="time-outline"
-        ></app-form-field>
+        <ion-item id="open-time-modal">
+          <ion-label position="stacked">
+            <ion-icon name="time-outline"></ion-icon>
+            Orario</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['time']).value | date: 'HH:mm'
+          }}</ion-note>
+
+          <ion-popover trigger="open-time-modal">
+            <ng-template>
+              <ion-datetime
+                formControlName="time"
+                presentation="time"
+                locale="it-IT"
+                minuteValues="0,15,30,45"
+              ></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
       </div>
       <div class="row">
-        <app-form-field
-          formControlName="durationInMinutes"
-          label="Durata"
-          placeholder="60"
-          name="durationInMinutes"
-          type="info"
-          [fieldOptions]="{
-            info: 'min',
-            inputType: 'number'
-          }"
-          icon="timer-outline"
-        ></app-form-field>
-        <app-form-field
-          formControlName="participantsMaxNumber"
-          label="Membri"
-          placeholder="15"
-          name="participantsMaxNumber"
-          type="number"
-          icon="people-circle-outline"
-        ></app-form-field>
+        <ion-item>
+          <ion-label position="stacked">
+            <ion-icon name="timer-outline"></ion-icon>
+            Durata (min)</ion-label
+          >
+          <ion-input
+            formControlName="durationInMinutes"
+            type="number"
+            placeholder="60"
+          >
+            <!--        <ion-chip>
+              <ion-label>min</ion-label>
+            </ion-chip> -->
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            <ion-icon name="people-circle-outline"></ion-icon>
+            Membri</ion-label
+          >
+          <ion-input
+            formControlName="participantsMaxNumber"
+            type="number"
+            placeholder="15"
+          ></ion-input>
+        </ion-item>
       </div>
     </div>
     <div class="other-info-container">

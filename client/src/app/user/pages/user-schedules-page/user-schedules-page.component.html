@@ -20,28 +20,22 @@
         </ion-button>
         <ion-item lines="none">
           <ion-label><ion-icon name="calendar-outline"></ion-icon></ion-label>
-          <ion-datetime
-            mode="ios"
-            [value]="currentDate"
-            [min]="dateLimits.lowerLimit"
-            [max]="dateLimits.upperLimit"
-            [monthShortNames]="[
-              'Gen',
-              'Feb',
-              'Mar',
-              'Apr',
-              'Mag',
-              'Giu',
-              'Lug',
-              'Ago',
-              'Set',
-              'Ott',
-              'Nov',
-              'Dic'
-            ]"
-            (ionChange)="currentDate = $any($event).detail.value"
-            placeholder="Select Date"
-          ></ion-datetime>
+          <ion-text id="open-modal" class="current-date">{{
+            currentDate | date: 'EEE d MMM'
+          }}</ion-text>
+          <ion-modal trigger="open-modal" style="--background: transparent">
+            <ng-template>
+              <ion-datetime
+                style="margin: auto"
+                mode="ios"
+                [value]="currentDate"
+                presentation="date"
+                locale="it-IT"
+                (ionChange)="onDateChange($any($event))"
+                placeholder="Select Date"
+              ></ion-datetime>
+            </ng-template>
+          </ion-modal>
         </ion-item>
         <ion-button
           *ngIf="!hideRightArrow; else arrowReplace"

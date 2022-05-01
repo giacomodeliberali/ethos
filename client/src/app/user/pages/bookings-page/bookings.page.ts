@@ -25,10 +25,13 @@ export class BookingsPage extends BaseDirective implements OnInit {
     private toastSvc: ToastService
   ) {
     super();
-    this.bookings$ = this.bookingsSvc.getFutureBookings();
   }
 
   ngOnInit() {}
+
+  ionViewWillEnter() {
+    this.bookings$ = this.bookingsSvc.getFutureBookings();
+  }
 
   goToSchedulePage() {
     this.router.navigate(['user']);

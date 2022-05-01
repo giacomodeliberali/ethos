@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import {
@@ -10,6 +10,7 @@ import {
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
 import { UserService } from '@core/services/user.service';
+import { IonModal } from '@ionic/angular';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
@@ -29,6 +30,9 @@ export class UserSchedulesPageComponent extends BaseDirective {
     afternoon: Array<GeneratedScheduleDto>;
     evening: Array<GeneratedScheduleDto>;
   };
+
+  @ViewChild(IonModal)
+  modal: IonModal;
 
   private _currentDate: string;
   set currentDate(date: string) {
@@ -216,5 +220,10 @@ export class UserSchedulesPageComponent extends BaseDirective {
         this.schedules = schedules;
         event.target.complete();
       });
+  }
+
+  onDateChange(event: CustomEvent) {
+    this.currentDate = event.detail.value;
+    this.modal.dismiss();
   }
 }

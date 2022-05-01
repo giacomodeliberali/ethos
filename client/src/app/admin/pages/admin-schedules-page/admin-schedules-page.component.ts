@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseDirective } from '@core/directives';
 import {
@@ -18,7 +18,7 @@ import {
 import { MediaService } from '@core/services/media.service';
 import { SettingsService } from '@core/services/settings.service';
 import { UserService } from '@core/services/user.service';
-import { ModalController } from '@ionic/angular';
+import { IonModal, ModalController } from '@ionic/angular';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import moment from 'moment';
@@ -41,6 +41,9 @@ export class AdminSchedulesPageComponent extends BaseDirective {
     afternoon: Array<GeneratedScheduleDto>;
     evening: Array<GeneratedScheduleDto>;
   };
+
+  @ViewChild(IonModal)
+  modal: IonModal;
 
   private _currentDate: string;
   set currentDate(date: string) {
@@ -105,7 +108,7 @@ export class AdminSchedulesPageComponent extends BaseDirective {
       component: CreateEditScheduleModalComponent,
       componentProps: { currentDate: this.currentDate, trainers, schedule },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: false,
+      canDismiss: false,
       backdropDismiss: false,
       mode: 'ios',
     });
@@ -220,7 +223,7 @@ export class AdminSchedulesPageComponent extends BaseDirective {
       component: DeleteScheduleModalComponent,
       componentProps: { isRecurring: schedule.isRecurring },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      canDismiss: true,
       backdropDismiss: false,
       mode: 'ios',
     });
@@ -265,7 +268,7 @@ export class AdminSchedulesPageComponent extends BaseDirective {
       component: ShowBookingModalComponent,
       componentProps: { bookings },
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      canDismiss: true,
       backdropDismiss: false,
       mode: 'ios',
     });
@@ -322,5 +325,10 @@ export class AdminSchedulesPageComponent extends BaseDirective {
         this.schedules = schedules;
         event.target.complete();
       });
+  }
+
+  onDateChange(event: CustomEvent) {
+    this.currentDate = event.detail.value;
+    this.modal.dismiss();
   }
 }

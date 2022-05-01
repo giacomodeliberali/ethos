@@ -27,7 +27,7 @@ export class UserCardComponent implements OnInit {
     const logoutModal = await this.modalCtrl.create({
       component: LogoutModalComponent,
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      canDismiss: true,
       backdropDismiss: false,
       mode: 'ios',
     });

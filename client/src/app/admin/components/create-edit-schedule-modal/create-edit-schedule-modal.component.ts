@@ -99,10 +99,17 @@ export class CreateEditScheduleModalComponent implements OnInit {
     this.scheduleForm.get('startDate').setValue(this.currentDate);
     this.scheduleForm.get('endDate').setValue(this.nextWeekDate);
     this.scheduleForm.patchValue(this.schedule);
-    this.scheduleForm.get('time').patchValue(this.schedule?.startDate);
+    this.scheduleForm
+      .get('time')
+      .patchValue(
+        this.schedule?.startDate || moment().startOf('hour').toISOString()
+      );
     this.scheduleForm
       .get('organizerId')
       .patchValue(this.schedule?.organizer?.id);
+
+    this.scheduleForm.get('durationInMinutes').setValue(60);
+    this.scheduleForm.get('participantsMaxNumber').setValue(15);
   }
 
   /**
@@ -111,9 +118,11 @@ export class CreateEditScheduleModalComponent implements OnInit {
    * @param event tell if the user clicked on the success button or the cancel one
    * @returns nothing
    */
-  closeModal(event: 'success' | 'cancel') {
+  async closeModal(event: 'success' | 'cancel') {
+    const modal = await this.modalCtrl.getTop();
     if (event === 'cancel') {
-      this.modalCtrl.dismiss();
+      modal.canDismiss = true;
+      await this.modalCtrl.dismiss();
       return;
     }
 
@@ -147,6 +156,8 @@ export class CreateEditScheduleModalComponent implements OnInit {
         schedule = this.createSingleSchedule();
       }
     }
+
+    modal.canDismiss = true;
     this.modalCtrl.dismiss({
       schedule,
       isRecurring,

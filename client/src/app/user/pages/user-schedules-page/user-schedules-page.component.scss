@@ -30,14 +30,20 @@ ion-content {
         ion-item {
           max-width: 48rem;
           --background: var(--ion-color-primary);
+          --color: var(--ion-color-primary-contrast);
+          
           ion-label {
             --color: var(--ion-color-secondary);
           }
-          ion-datetime {
+
+          ion-text{
+            padding: 5px;
+          }
+/*           ion-datetime {
             --placeholder-color: var(--ion-color-light);
             --padding-top: 1rem;
             color: var(--ion-color-light);
-          }
+          } */
         }
         ion-button {
           margin: 0;

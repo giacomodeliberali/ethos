@@ -1,8 +1,3 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Aggiungi amministratore</ion-title>
-  </ion-toolbar>
-</ion-header>
 <ion-content>
   <div class="page-container">
     <div class="toolbar">
@@ -15,6 +10,7 @@
         color="light"
         (ionChange)="onSearchChange($any($event))"
         debounce="500"
+        placeholder="Utente da rendere amministratore..."
       ></ion-searchbar>
 
       <div class="list-container">

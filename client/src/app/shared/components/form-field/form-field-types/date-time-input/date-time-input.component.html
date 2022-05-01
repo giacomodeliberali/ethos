@@ -1,13 +1,30 @@
-<ion-datetime
-  class="input"
-  [displayFormat]="format"
+<app-form-field
+  [id]="'open-modal-' + name"
+  type="text"
+  [value]="valueChange | async | date: format"
+  [label]="label"
   [placeholder]="placeholder"
-  [name]="name"
-  [value]="valueChange | async"
-  [disabled]="disabled"
-  [minuteValues]="minuteValues"
-  (ionChange)="changeValue($event)"
-  (ionFocus)="changeFocus('focus')"
-  (ionBlur)="changeFocus('blur')"
->
-</ion-datetime>
+  [name]="'date-time-input-' + name"
+  [icon]="icon"
+></app-form-field>
+
+<ion-modal [trigger]="'open-modal-' + name" [backdropDismiss]="true">
+  <ng-template>
+    <ion-datetime
+      style="margin: auto"
+      class="input"
+      [presentation]="presentation"
+      [name]="name"
+      [value]="valueChange | async"
+      [disabled]="disabled"
+      [minuteValues]="minuteValues"
+      (ionChange)="changeValue($event)"
+      (ionFocus)="changeFocus('focus')"
+      (ionBlur)="changeFocus('blur')"
+    >
+    </ion-datetime>
+    <ion-button (click)="closeModal()" *ngIf="presentation == 'time'"
+      >Ok</ion-button
+    >
+  </ng-template>
+</ion-modal>

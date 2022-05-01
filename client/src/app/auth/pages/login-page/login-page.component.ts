@@ -61,7 +61,7 @@ export class LoginPageComponent extends BaseDirective {
     const modal = await this.modalCtrl.create({
       component: ForgotPasswordModalComponent,
       cssClass: MediaService.isSmartphone ? 'bottom' : '',
-      swipeToClose: true,
+      canDismiss: true,
       backdropDismiss: false,
       mode: 'ios',
     });

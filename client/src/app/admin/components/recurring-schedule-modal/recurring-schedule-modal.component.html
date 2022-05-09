@@ -1,0 +1,179 @@
+<div>
+  <div
+    class="form-container"
+    modal-default-content
+    [formGroup]="scheduleForm"
+    [cancelButton]="{
+      title: 'Annulla',
+      fill: false,
+      type: 'tertiary'
+    }"
+    [successButton]="{
+      title: 'Salva',
+      fill: true,
+      type: 'tertiary'
+    }"
+    [successDisabled]="!scheduleForm.valid"
+    (closeModalEvent)="closeModal($event)"
+  >
+    <div class="title-section">
+      <h2 id="show-info">
+        Modifica istanza di un corso riccorrente
+        <ion-popover trigger="show-info">
+          <ng-template>
+            <ion-text color="primary" style="padding: 10px"
+              >Aggiorna solo il corso del giorno
+              {{ schedule.startDate | date: 'EEE d MMM Y HH:mm' }}</ion-text
+            >
+          </ng-template>
+        </ion-popover>
+      </h2>
+    </div>
+    <div class="section">
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="barbell-outline"></ion-icon>
+          Nome del corso</ion-label
+        >
+        <ion-input
+          formControlName="name"
+          type="text"
+          placeholder="Crossfit"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="text-outline"></ion-icon>
+          Descrizione</ion-label
+        >
+        <ion-textarea
+          formControlName="description"
+          type="textarea"
+          placeholder="Esercizi a corpo libero"
+        ></ion-textarea>
+      </ion-item>
+
+      <div class="row">
+        <ion-item id="open-date-modal">
+          <ion-label position="stacked">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Data</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['startDate']).value | date: 'EEE d MMM Y'
+          }}</ion-note>
+          <ion-popover trigger="open-date-modal">
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  formControlName="startDate"
+                  presentation="date"
+                  locale="it-IT"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </div>
+      <!--       <div class="row">
+        <ion-item id="open-end-date-popover">
+          <ion-label position="stacked">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Al</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['endDate']).value | date: 'EEE d MMM Y'
+          }}</ion-note>
+          <ion-popover trigger="open-end-date-popover">
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  formControlName="endDate"
+                  presentation="date"
+                  locale="it-IT"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </div> -->
+      <div class="row">
+        <ion-item id="open-time-modal">
+          <ion-label position="stacked">
+            <ion-icon name="time-outline"></ion-icon>
+            Orario</ion-label
+          >
+          <ion-note>{{
+            scheduleForm.get(['time']).value | date: 'HH:mm'
+          }}</ion-note>
+
+          <ion-popover trigger="open-time-modal">
+            <ng-template>
+              <ion-datetime
+                formControlName="time"
+                presentation="time"
+                locale="it-IT"
+                minuteValues="0,15,30,45"
+              ></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </div>
+      <div class="row">
+        <ion-item>
+          <ion-label position="stacked">
+            <ion-icon name="timer-outline"></ion-icon>
+            Durata (min)</ion-label
+          >
+          <ion-input
+            formControlName="durationInMinutes"
+            type="number"
+            placeholder="60"
+          >
+            <!--        <ion-chip>
+              <ion-label>min</ion-label>
+            </ion-chip> -->
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            <ion-icon name="people-circle-outline"></ion-icon>
+            Membri</ion-label
+          >
+          <ion-input
+            formControlName="participantsMaxNumber"
+            type="number"
+            placeholder="15"
+          ></ion-input>
+        </ion-item>
+      </div>
+    </div>
+    <div class="other-info-container">
+      <!--       <ng-container>
+        <h5>Giorni</h5>
+        <div class="scroll-container">
+          <app-week-day-selector
+            formControlName="days"
+            [weekDaysLocalization]="[
+              'lun',
+              'mar',
+              'mer',
+              'gio',
+              'ven',
+              'sab',
+              'dom'
+            ]"
+          ></app-week-day-selector>
+        </div>
+      </ng-container> -->
+      <h5>Allenatore</h5>
+      <div class="scroll-container">
+        <app-user-selector
+          [users]="trainers"
+          formControlName="organizerId"
+        ></app-user-selector>
+      </div>
+    </div>
+  </div>
+</div>

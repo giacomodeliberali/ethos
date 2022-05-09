@@ -26,6 +26,7 @@ import { of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { CreateEditScheduleModalComponent } from '../../components/create-edit-schedule-modal/create-edit-schedule-modal.component';
 import { DeleteScheduleModalComponent } from '../../components/delete-schedule-modal/delete-schedule-modal.component';
+import { RecurringScheduleModalComponent } from '../../components/recurring-schedule-modal/recurring-schedule-modal.component';
 import { ShowBookingModalComponent } from '../../components/show-booking-modal/show-booking-modal.component';
 
 @Component({
@@ -105,7 +106,9 @@ export class AdminSchedulesPageComponent extends BaseDirective {
     schedule?: GeneratedScheduleDto
   ) {
     const editModal = await this.modalCtrl.create({
-      component: CreateEditScheduleModalComponent,
+      component: schedule?.isRecurring
+        ? RecurringScheduleModalComponent
+        : CreateEditScheduleModalComponent,
       componentProps: { currentDate: this.currentDate, trainers, schedule },
       canDismiss: false,
       backdropDismiss: false,
